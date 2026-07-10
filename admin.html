@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DPRO Esthe Relaxation｜シンプル管理画面</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <style>
+    :root{
+      --bg:#fbf6f2;
+      --bg2:#fffaf7;
+      --card:#ffffff;
+      --main:#7b4b3e;
+      --main2:#9b6758;
+      --soft:#f2ded3;
+      --soft2:#f8ece5;
+      --line:#ecd8ce;
+      --text:#2f211d;
+      --muted:#8a6f66;
+      --ok:#14855f;
+      --okbg:#eaf8f1;
+      --warn:#a86c00;
+      --warnbg:#fff6df;
+      --bad:#b33a3a;
+      --badbg:#fff0f0;
+      --shadow:0 22px 60px rgba(84,49,39,.12);
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Hiragino Sans","Yu Gothic",Meiryo,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(218,182,164,.32), transparent 36rem),
+        linear-gradient(180deg,#fff 0%,var(--bg) 100%);
+      min-height:100vh;
+      line-height:1.65;
+    }
+    a{color:inherit}
+    .wrap{width:min(1180px,calc(100% - 32px));margin:24px auto 80px}
+    .hero{
+      position:relative;overflow:hidden;
+      background:linear-gradient(135deg,#5d3932 0%,#a17163 100%);
+      color:#fff;border-radius:28px;padding:28px 30px;box-shadow:var(--shadow);
+    }
+    .hero:after{content:"";position:absolute;right:-70px;bottom:-90px;width:280px;height:280px;border-radius:999px;background:rgba(255,255,255,.16)}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid rgba(255,255,255,.35);border-radius:999px;background:rgba(255,255,255,.12);font-size:12px;font-weight:800}
+    h1{font-size:34px;letter-spacing:-.04em;margin:12px 0 4px;line-height:1.2}
+    .hero p{margin:4px 0 0;color:rgba(255,255,255,.92);font-weight:700}
+    .hero .meta{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:13px;color:rgba(255,255,255,.92);font-weight:800}
+    .topActions{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+    button,.btn,a.btn{
+      appearance:none;border:0;border-radius:16px;padding:12px 16px;
+      font-weight:900;cursor:pointer;text-decoration:none;font-size:14px;
+      transition:.15s transform,.15s opacity,.15s box-shadow;
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    }
+    button:active,.btn:active{transform:scale(.98)}
+    .btnMain{background:var(--main);color:#fff;box-shadow:0 10px 28px rgba(123,75,62,.20)}
+    .btnSub{background:#fff;color:var(--main);border:1px solid var(--line)}
+    .btnSoft{background:var(--soft2);color:var(--main);border:1px solid var(--line)}
+    .btnOk{background:#147d5c;color:#fff}
+    .btnWarn{background:#a86625;color:#fff}
+    .btnBad{background:#b84b4b;color:#fff}
+    .btnTiny{padding:8px 10px;border-radius:12px;font-size:12px}
+    button[disabled]{opacity:.55;cursor:not-allowed;transform:none}
+    .grid{display:grid;grid-template-columns:1.45fr .95fr;gap:18px;align-items:start}
+    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .card{background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+    .card h2{font-size:20px;margin:0 0 4px;letter-spacing:-.03em}
+    .card h3{font-size:16px;margin:0 0 8px}
+    .sub{color:var(--muted);font-size:13px;margin:0 0 14px;font-weight:700}
+    .statusBar{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:16px 0}
+    .stat{background:#fff;border:1px solid var(--line);border-radius:18px;padding:13px;min-height:74px}
+    .stat .num{font-size:25px;font-weight:1000;line-height:1;color:var(--main)}
+    .stat .label{font-size:12px;color:var(--muted);font-weight:800;margin-top:5px}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+    .tab{background:#fff;border:1px solid var(--line);color:var(--main);padding:10px 14px;border-radius:999px;font-size:13px;font-weight:900}
+    .tab.active{background:var(--main);color:#fff;border-color:var(--main)}
+    .panel{display:none}.panel.active{display:block}
+    .row{display:grid;grid-template-columns:150px 1fr;gap:12px;border-top:1px solid var(--line);padding:10px 0;align-items:center}
+    .row:first-child{border-top:0}
+    .key{color:var(--muted);font-size:12px;font-weight:900}.val{font-weight:900}
+    .resCard{border:1px solid var(--line);background:#fff;border-radius:18px;padding:14px;margin:10px 0}
+    .resHead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+    .time{font-size:22px;font-weight:1000;color:var(--main);letter-spacing:-.03em}
+    .name{font-size:18px;font-weight:1000}.menu{font-weight:900}.note{color:var(--muted);font-size:13px;margin-top:7px;white-space:pre-wrap}
+    .pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:900;background:var(--soft2);color:var(--main);border:1px solid var(--line)}
+    .pill.ok{background:var(--okbg);color:var(--ok);border-color:#bfe9d6}.pill.warn{background:var(--warnbg);color:var(--warn);border-color:#f4d995}.pill.bad{background:var(--badbg);color:var(--bad);border-color:#f2c9c9}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    .formGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{display:block;font-size:12px;font-weight:900;color:var(--muted);margin:0 0 6px}
+    input,select,textarea{
+      width:100%;border:1px solid var(--line);background:#fff;border-radius:14px;padding:12px 13px;
+      font:inherit;font-weight:800;color:var(--text);outline:none;
+    }
+    textarea{min-height:88px;resize:vertical}.full{grid-column:1/-1}
+    input:focus,select:focus,textarea:focus{border-color:var(--main);box-shadow:0 0 0 4px rgba(123,75,62,.10)}
+    .slots{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+    .slot{background:#fff;border:1px solid var(--line);color:var(--text);border-radius:14px;padding:10px;font-weight:1000;text-align:center}
+    .slot.active{background:var(--main);color:#fff;border-color:var(--main)}
+    .slot[disabled]{background:#f8f3f0;color:#b7a29a;text-decoration:line-through}
+    .notice{border:1px solid var(--line);background:var(--soft2);color:var(--main);border-radius:16px;padding:12px;font-weight:800;font-size:13px;margin:12px 0}
+    .notice.ok{background:var(--okbg);color:var(--ok);border-color:#bfe9d6}.notice.bad{background:var(--badbg);color:var(--bad);border-color:#f2c9c9}.notice.warn{background:var(--warnbg);color:var(--warn);border-color:#f4d995}
+    .followItem{border-top:1px solid var(--line);padding:10px 0}.followItem:first-child{border-top:0}.followTitle{font-weight:1000}.followMeta{font-size:12px;color:var(--muted);font-weight:800}
+    .small{font-size:12px;color:var(--muted);font-weight:800}.hidden{display:none!important}
+    .footer{margin-top:22px;text-align:center;color:var(--muted);font-size:12px;font-weight:800}
+    .loading{opacity:.7;pointer-events:none}
+    @media (max-width:900px){
+      .wrap{width:min(100% - 20px,760px);margin-top:12px}.grid{grid-template-columns:1fr}.grid3,.statusBar{grid-template-columns:repeat(2,1fr)}.formGrid{grid-template-columns:1fr}.slots{grid-template-columns:repeat(3,1fr)}h1{font-size:28px}.hero{padding:22px}.row{grid-template-columns:110px 1fr}
+    }
+    @media (max-width:520px){.statusBar{grid-template-columns:1fr 1fr}.slots{grid-template-columns:repeat(2,1fr)}.topActions .btn, .topActions button{width:100%}}
+  </style>
+</head>
+<body>
+  <div class="wrap" id="app">
+    <section class="hero">
+      <div class="badge">STEP ESTHE-4｜シンプル管理画面 admin.html</div>
+      <h1>DPRO Esthe Relaxation</h1>
+      <p>シンプル予約版の店舗管理画面です。本日の予約・予約一覧・電話予約登録を確認できます。</p>
+      <div class="meta">
+        <span id="apiMeta">API確認中...</span>
+        <span>管理コード：1234</span>
+        <span id="todayMeta"></span>
+      </div>
+    </section>
+
+    <div class="topActions">
+      <button class="btnMain" id="reloadBtn" type="button">最新に更新</button>
+      <button class="btnSoft" id="demoBtn" type="button">営業前デモ準備</button>
+      <a class="btn btnSub" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/" target="_blank" rel="noopener">予約画面を開く</a>
+      <a class="btn btnSub" href="https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/system-check?admin_key=1234" target="_blank" rel="noopener">system-check</a>
+    </div>
+
+    <div id="message"></div>
+
+    <section class="statusBar">
+      <div class="stat"><div class="num" id="statTotal">-</div><div class="label">本日の予約</div></div>
+      <div class="stat"><div class="num" id="statReserved">-</div><div class="label">予約済み</div></div>
+      <div class="stat"><div class="num" id="statProgress">-</div><div class="label">来店・施術中</div></div>
+      <div class="stat"><div class="num" id="statDone">-</div><div class="label">完了</div></div>
+      <div class="stat"><div class="num" id="statFollow">-</div><div class="label">未対応フォロー</div></div>
+    </section>
+
+    <div class="tabs">
+      <button class="tab active" type="button" data-tab="today">今日の予約</button>
+      <button class="tab" type="button" data-tab="list">予約一覧</button>
+      <button class="tab" type="button" data-tab="phone">電話予約登録</button>
+      <button class="tab" type="button" data-tab="settings">店舗設定確認</button>
+    </div>
+
+    <div class="grid">
+      <main>
+        <section class="panel active" id="panel-today">
+          <div class="card">
+            <h2>今日の予約</h2>
+            <p class="sub">来店済み・施術中・完了など、最低限のステータス変更ができます。</p>
+            <div class="formGrid" style="margin-bottom:12px">
+              <div>
+                <label for="dayDate">表示日</label>
+                <input type="date" id="dayDate" />
+              </div>
+              <div style="align-self:end">
+                <button class="btnMain" type="button" id="loadDayBtn" style="width:100%">この日を表示</button>
+              </div>
+            </div>
+            <div id="todayList"></div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-list">
+          <div class="card">
+            <h2>予約一覧</h2>
+            <p class="sub">今日から30日分の予約を確認します。</p>
+            <div class="formGrid" style="margin-bottom:12px">
+              <div><label for="fromDate">開始日</label><input type="date" id="fromDate" /></div>
+              <div><label for="toDate">終了日</label><input type="date" id="toDate" /></div>
+              <div><label for="statusFilter">ステータス</label><select id="statusFilter"><option value="">すべて</option><option value="reserved">予約済み</option><option value="checked_in">来店済み</option><option value="in_treatment">施術中</option><option value="waiting_payment">会計待ち</option><option value="completed">完了</option><option value="cancelled">キャンセル</option><option value="no_show">無断キャンセル</option></select></div>
+              <div style="align-self:end"><button class="btnMain" type="button" id="loadListBtn" style="width:100%">予約一覧を表示</button></div>
+            </div>
+            <div id="reservationList"></div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-phone">
+          <div class="card">
+            <h2>電話予約登録</h2>
+            <p class="sub">LINE以外で受けた予約を店舗側から登録します。</p>
+            <div class="formGrid">
+              <div>
+                <label for="phoneMenu">メニュー</label>
+                <select id="phoneMenu"></select>
+              </div>
+              <div>
+                <label for="phoneStaff">スタッフ</label>
+                <select id="phoneStaff"></select>
+              </div>
+              <div>
+                <label for="phoneDate">予約日</label>
+                <input type="date" id="phoneDate" />
+              </div>
+              <div>
+                <label>空き時間</label>
+                <div class="small">メニュー・スタッフ・日付を選ぶと表示されます。</div>
+              </div>
+              <div class="full">
+                <div id="slotList" class="slots"></div>
+              </div>
+              <div>
+                <label for="phoneName">お客様名</label>
+                <input id="phoneName" placeholder="例：予約 花子" />
+              </div>
+              <div>
+                <label for="phoneTel">電話番号</label>
+                <input id="phoneTel" inputmode="tel" placeholder="例：08000003002" />
+              </div>
+              <div class="full">
+                <label for="phoneNote">ご要望・メモ</label>
+                <textarea id="phoneNote" placeholder="例：肩こり中心。初回来店。"></textarea>
+              </div>
+              <div class="full" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+                <label style="display:flex;gap:8px;align-items:center;margin:0;color:var(--text)"><input type="checkbox" id="phoneDemo" checked style="width:auto"> デモ予約として登録</label>
+                <span class="small">営業デモ中はチェックONでOKです。</span>
+              </div>
+              <div class="full">
+                <button class="btnMain" type="button" id="createPhoneBtn" style="width:100%">電話予約を登録する</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-settings">
+          <div class="card">
+            <h2>店舗設定確認</h2>
+            <p class="sub">STEP ESTHE-4では確認中心です。編集機能は後続STEPで追加します。</p>
+            <div id="settingsView"></div>
+          </div>
+        </section>
+      </main>
+
+      <aside>
+        <div class="card">
+          <h2>今日やること</h2>
+          <p class="sub">シンプル版では本日の予約と未対応フォローを軽く表示します。</p>
+          <div id="todoView"></div>
+        </div>
+
+        <div class="card" style="margin-top:18px">
+          <h2>確認URL</h2>
+          <p class="sub">コピペ確認用です。</p>
+          <div class="notice">
+            予約画面<br>
+            <span class="small">https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/</span>
+          </div>
+          <div class="notice">
+            API<br>
+            <span class="small">https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/health</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="footer">
+      API：<span id="apiUrlText"></span><br>
+      この画面はシンプル管理画面です。カルテ・回数券・再来店フォローの本格管理はSTEP以降のブラッシュアップ版で表示します。
+    </div>
+  </div>
+
+  <script>
+    const VERSION = 'ESTHE-4-ADMIN-SIMPLE-COMPLETE-20260710';
+    const API_BASE = 'https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev';
+    const SHOP_CODE = 'esthe_demo_default';
+    const ADMIN_KEY = '1234';
+
+    const state = {
+      settings: null,
+      menus: [],
+      staff: [],
+      rooms: [],
+      todayData: null,
+      listData: null,
+      selectedSlot: '',
+    };
+
+    const $ = (id) => document.getElementById(id);
+
+    document.addEventListener('DOMContentLoaded', init);
+
+    async function init(){
+      $('apiUrlText').textContent = API_BASE;
+      const today = todayLocal();
+      $('todayMeta').textContent = `本日：${formatDateJa(today)}`;
+      $('dayDate').value = today;
+      $('fromDate').value = today;
+      $('toDate').value = addDays(today, 30);
+      $('phoneDate').value = addDays(today, 1);
+
+      bindEvents();
+      await loadAll();
+    }
+
+    function bindEvents(){
+      document.querySelectorAll('.tab').forEach(btn=>{
+        btn.addEventListener('click',()=>switchTab(btn.dataset.tab));
+      });
+      $('reloadBtn').addEventListener('click', loadAll);
+      $('demoBtn').addEventListener('click', prepareDemo);
+      $('loadDayBtn').addEventListener('click', loadDay);
+      $('loadListBtn').addEventListener('click', loadReservations);
+      $('phoneMenu').addEventListener('change', loadPhoneSlots);
+      $('phoneStaff').addEventListener('change', loadPhoneSlots);
+      $('phoneDate').addEventListener('change', loadPhoneSlots);
+      $('createPhoneBtn').addEventListener('click', createPhoneReservation);
+    }
+
+    function switchTab(name){
+      document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active', b.dataset.tab===name));
+      document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+      $(`panel-${name}`).classList.add('active');
+      if(name === 'list') loadReservations();
+      if(name === 'phone') loadPhoneSlots();
+    }
+
+    async function loadAll(){
+      setLoading(true);
+      try{
+        await Promise.all([loadSettings(), loadDay(), loadReservations(false)]);
+        showMessage('最新情報に更新しました。','ok');
+      }catch(e){
+        console.error(e);
+        showMessage(e.message || '読み込みに失敗しました。','bad');
+      }finally{
+        setLoading(false);
+      }
+    }
+
+    async function loadSettings(){
+      const data = await api('/api/admin/settings', { admin:true });
+      state.settings = data;
+      state.menus = data.menus || [];
+      state.staff = data.staff || [];
+      state.rooms = data.rooms || [];
+      $('apiMeta').textContent = data.ok ? 'API接続：OK' : 'API接続：確認が必要';
+      renderPhoneOptions();
+      renderSettings();
+    }
+
+    async function loadDay(){
+      const date = $('dayDate').value || todayLocal();
+      const data = await api(`/api/admin/day?date=${encodeURIComponent(date)}`, { admin:true });
+      state.todayData = data;
+      renderSummary(data);
+      renderToday(data);
+      renderTodo(data);
+    }
+
+    async function loadReservations(showToast=true){
+      const from = $('fromDate').value || todayLocal();
+      const to = $('toDate').value || addDays(from, 30);
+      const status = $('statusFilter').value;
+      let path = `/api/admin/reservations?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
+      if(status) path += `&status=${encodeURIComponent(status)}`;
+      const data = await api(path, { admin:true });
+      state.listData = data;
+      renderReservationList(data.reservations || []);
+      if(showToast) showMessage('予約一覧を更新しました。','ok');
+    }
+
+    async function prepareDemo(){
+      if(!confirm('営業前デモ準備を実行します。デモデータを今日基準で整えます。')) return;
+      setLoading(true);
+      try{
+        const data = await api('/api/admin/demo/prepare', { admin:true });
+        showMessage(data.message || '営業前デモ準備を実行しました。','ok');
+        await loadAll();
+      }catch(e){
+        showMessage(e.message || '営業前デモ準備に失敗しました。','bad');
+      }finally{ setLoading(false); }
+    }
+
+    function renderSummary(data){
+      const reservations = data.reservations || [];
+      const followups = data.followups || [];
+      const reserved = reservations.filter(r=>r.status==='reserved').length;
+      const progress = reservations.filter(r=>['checked_in','in_treatment','waiting_payment'].includes(r.status)).length;
+      const done = reservations.filter(r=>r.status==='completed').length;
+      $('statTotal').textContent = reservations.length;
+      $('statReserved').textContent = reserved;
+      $('statProgress').textContent = progress;
+      $('statDone').textContent = done;
+      $('statFollow').textContent = followups.length;
+    }
+
+    function renderToday(data){
+      const box = $('todayList');
+      const rows = data.reservations || [];
+      if(!rows.length){ box.innerHTML = '<div class="notice">この日の予約はありません。</div>'; return; }
+      box.innerHTML = rows.map(renderReservationCard).join('');
+      bindReservationButtons(box);
+    }
+
+    function renderReservationList(rows){
+      const box = $('reservationList');
+      if(!rows.length){ box.innerHTML = '<div class="notice">該当する予約はありません。</div>'; return; }
+      box.innerHTML = rows.map(renderReservationCard).join('');
+      bindReservationButtons(box);
+    }
+
+    function renderReservationCard(r){
+      const d = parseApiDate(r.start_at);
+      const status = statusInfo(r.status);
+      const cancelled = ['cancelled','no_show'].includes(r.status);
+      return `
+        <div class="resCard" data-id="${escapeHtml(r.id)}">
+          <div class="resHead">
+            <div>
+              <div class="time">${formatTime(d)} <span class="small">${formatDateShort(d)}</span></div>
+              <div class="name">${escapeHtml(r.customer_name || '')}</div>
+              <div class="menu">${escapeHtml(r.menu_name || '')} / ${escapeHtml(r.staff_name || '指名なし')}</div>
+            </div>
+            <div><span class="pill ${status.kind}">${status.label}</span></div>
+          </div>
+          <div class="note">
+            電話：${escapeHtml(r.customer_phone || '-')}<br>
+            予約番号：${escapeHtml(r.reservation_code || '-')}<br>
+            ${r.request_note ? `要望：${escapeHtml(r.request_note)}` : '要望：-'}
+          </div>
+          <div class="actions">
+            <button class="btnSoft btnTiny" data-status="checked_in" ${cancelled?'disabled':''}>来店済み</button>
+            <button class="btnSoft btnTiny" data-status="in_treatment" ${cancelled?'disabled':''}>施術中</button>
+            <button class="btnSoft btnTiny" data-status="waiting_payment" ${cancelled?'disabled':''}>会計待ち</button>
+            <button class="btnOk btnTiny" data-status="completed" ${cancelled?'disabled':''}>完了</button>
+            <button class="btnBad btnTiny" data-status="cancelled" ${cancelled?'disabled':''}>キャンセル</button>
+            <button class="btnSub btnTiny" data-copy="true">文面コピー</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function bindReservationButtons(root){
+      root.querySelectorAll('[data-status]').forEach(btn=>{
+        btn.addEventListener('click', async ()=>{
+          const card = btn.closest('.resCard');
+          const id = card.dataset.id;
+          const status = btn.dataset.status;
+          await updateStatus(id, status);
+        });
+      });
+      root.querySelectorAll('[data-copy]').forEach(btn=>{
+        btn.addEventListener('click', ()=>copyReservationMessage(btn.closest('.resCard')));
+      });
+    }
+
+    async function updateStatus(id, status){
+      const label = statusInfo(status).label;
+      if(status === 'cancelled' && !confirm('この予約をキャンセルにしますか？')) return;
+      setLoading(true);
+      try{
+        await api('/api/admin/reservations/status', {
+          admin:true,
+          method:'PATCH',
+          body:{ reservation_id:id, status, reason:'シンプル管理画面で変更' }
+        });
+        showMessage(`ステータスを「${label}」に変更しました。`,'ok');
+        await Promise.all([loadDay(), loadReservations(false)]);
+      }catch(e){
+        showMessage(e.message || 'ステータス変更に失敗しました。','bad');
+      }finally{ setLoading(false); }
+    }
+
+    function copyReservationMessage(card){
+      const text = card.innerText.replace(/来店済み|施術中|会計待ち|完了|キャンセル|文面コピー/g,'').trim();
+      const msg = `ご予約内容の確認です。\n\n${text}\n\n変更やキャンセルがある場合は、お早めにLINEでお知らせください。`;
+      navigator.clipboard.writeText(msg).then(()=>showMessage('予約確認文をコピーしました。','ok')).catch(()=>showMessage('コピーに失敗しました。','bad'));
+    }
+
+    function renderTodo(data){
+      const reservations = data.reservations || [];
+      const followups = data.followups || [];
+      const box = $('todoView');
+      const upcoming = reservations.filter(r=>r.status==='reserved').slice(0,4);
+      let html = '';
+      if(upcoming.length){
+        html += '<h3>本日の予約</h3>';
+        html += upcoming.map(r=>`<div class="followItem"><div class="followTitle">${formatTime(parseApiDate(r.start_at))} ${escapeHtml(r.customer_name || '')}</div><div class="followMeta">${escapeHtml(r.menu_name || '')}</div></div>`).join('');
+      }else{
+        html += '<div class="notice">本日の未完了予約はありません。</div>';
+      }
+      if(followups.length){
+        html += '<h3 style="margin-top:14px">未対応フォロー</h3>';
+        html += followups.slice(0,6).map(f=>`<div class="followItem"><div class="followTitle">${escapeHtml(f.customer_name || '顧客')}：${escapeHtml(f.title || f.followup_type || 'フォロー')}</div><div class="followMeta">期限 ${escapeHtml(f.due_date || '')} / ${escapeHtml(f.status || '')}</div></div>`).join('');
+      }
+      box.innerHTML = html;
+    }
+
+    function renderSettings(){
+      const data = state.settings;
+      if(!data){ $('settingsView').innerHTML = '<div class="notice">店舗設定を読み込み中です。</div>'; return; }
+      const shop = data.shop || {};
+      const hours = data.business_hours || [];
+      const closed = data.closed_days || [];
+      $('settingsView').innerHTML = `
+        <div class="row"><div class="key">店舗名</div><div class="val">${escapeHtml(shop.shop_name || shop.display_name || '')}</div></div>
+        <div class="row"><div class="key">電話番号</div><div class="val">${escapeHtml(shop.phone || '')}</div></div>
+        <div class="row"><div class="key">住所</div><div class="val">${escapeHtml(shop.address || '-')}</div></div>
+        <div class="row"><div class="key">予約受付</div><div class="val">${escapeHtml(data.booking_range?.from || '')} 〜 ${escapeHtml(data.booking_range?.to || '')}</div></div>
+        <div class="row"><div class="key">有効メニュー</div><div class="val">${state.menus.length}件</div></div>
+        <div class="row"><div class="key">スタッフ</div><div class="val">${state.staff.length}名</div></div>
+        <div class="row"><div class="key">ベッド/個室</div><div class="val">${state.rooms.length}件</div></div>
+        <div class="row"><div class="key">臨時休業</div><div class="val">${closed.length}件</div></div>
+        <div class="notice">営業時間：${hours.map(h=>`${weekdayName(h.day_of_week)} ${h.is_open ? `${h.open_time || ''}-${h.close_time || ''}` : '休み'}`).join(' / ')}</div>
+      `;
+    }
+
+    function renderPhoneOptions(){
+      $('phoneMenu').innerHTML = state.menus.map(m=>`<option value="${escapeHtml(m.id)}">${escapeHtml(m.menu_name)}（${Number(m.duration_minutes||0)}分 / ${formatYen(m.price_yen)}）</option>`).join('');
+      $('phoneStaff').innerHTML = state.staff.map(s=>`<option value="${escapeHtml(s.id)}">${escapeHtml(s.staff_name)}</option>`).join('');
+    }
+
+    async function loadPhoneSlots(){
+      if(!state.menus.length) return;
+      state.selectedSlot = '';
+      const menuId = $('phoneMenu').value;
+      const staffId = $('phoneStaff').value;
+      const date = $('phoneDate').value || addDays(todayLocal(),1);
+      const box = $('slotList');
+      box.innerHTML = '<div class="notice full">空き時間を読み込み中...</div>';
+      try{
+        let path = `/api/public/slots?date=${encodeURIComponent(date)}&menu_id=${encodeURIComponent(menuId)}`;
+        if(staffId) path += `&staff_id=${encodeURIComponent(staffId)}`;
+        const data = await api(path, { admin:false });
+        const slots = data.slots || [];
+        if(!slots.length){ box.innerHTML = '<div class="notice warn full">この日は予約可能枠がありません。</div>'; return; }
+        box.innerHTML = slots.map(s=>`<button type="button" class="slot" data-time="${escapeHtml(s.time)}" ${s.available?'':'disabled'}>${escapeHtml(s.time)}<br><span class="small">${s.available?'予約可':'不可'}</span></button>`).join('');
+        box.querySelectorAll('.slot:not([disabled])').forEach(btn=>{
+          btn.addEventListener('click',()=>{
+            box.querySelectorAll('.slot').forEach(b=>b.classList.remove('active'));
+            btn.classList.add('active');
+            state.selectedSlot = btn.dataset.time;
+          });
+        });
+      }catch(e){
+        box.innerHTML = `<div class="notice bad full">${escapeHtml(e.message || '空き時間を取得できませんでした。')}</div>`;
+      }
+    }
+
+    async function createPhoneReservation(){
+      const menuId = $('phoneMenu').value;
+      const staffId = $('phoneStaff').value;
+      const date = $('phoneDate').value;
+      const time = state.selectedSlot;
+      const customerName = $('phoneName').value.trim();
+      const customerPhone = normalizePhone($('phoneTel').value);
+      const note = $('phoneNote').value.trim();
+      if(!menuId) return showMessage('メニューを選択してください。','bad');
+      if(!date) return showMessage('日付を選択してください。','bad');
+      if(!time) return showMessage('空き時間を選択してください。','bad');
+      if(!customerName) return showMessage('お客様名を入力してください。','bad');
+      if(!customerPhone) return showMessage('電話番号を入力してください。','bad');
+      setLoading(true);
+      try{
+        const data = await api('/api/admin/reservations', {
+          admin:true,
+          method:'POST',
+          body:{
+            shop_code:SHOP_CODE,
+            menu_id:menuId,
+            staff_id:staffId,
+            date,
+            time,
+            customer_name:customerName,
+            customer_phone:customerPhone,
+            request_note:note,
+            source:'phone',
+            created_by:'admin.html',
+            is_demo:$('phoneDemo').checked,
+            is_first_visit:true
+          }
+        });
+        showMessage(`電話予約を登録しました。予約番号：${data.reservation?.reservation_code || ''}`,'ok');
+        $('phoneName').value=''; $('phoneTel').value=''; $('phoneNote').value=''; state.selectedSlot='';
+        await Promise.all([loadDay(), loadReservations(false), loadPhoneSlots()]);
+      }catch(e){
+        showMessage(e.message || '電話予約登録に失敗しました。','bad');
+      }finally{ setLoading(false); }
+    }
+
+    async function api(path, opts={}){
+      const method = opts.method || 'GET';
+      const admin = opts.admin !== false && path.startsWith('/api/admin/');
+      const url = new URL(API_BASE + path);
+      if(!url.searchParams.has('shop_code')) url.searchParams.set('shop_code', SHOP_CODE);
+      if(admin && !url.searchParams.has('admin_key')) url.searchParams.set('admin_key', ADMIN_KEY);
+      const res = await fetch(url.toString(), {
+        method,
+        headers:{ 'Content-Type':'application/json', 'x-admin-secret': ADMIN_KEY },
+        body: opts.body ? JSON.stringify(opts.body) : undefined,
+      });
+      const text = await res.text();
+      let data = {};
+      try{ data = text ? JSON.parse(text) : {}; }catch(e){ data = { ok:false, message:text }; }
+      if(!res.ok || data.ok === false){ throw new Error(data.message || data.error || `API error ${res.status}`); }
+      return data;
+    }
+
+    function showMessage(text, type='ok'){
+      $('message').innerHTML = `<div class="notice ${type}">${escapeHtml(text)}</div>`;
+      if(type==='ok') setTimeout(()=>{ if($('message').innerText === text) $('message').innerHTML=''; }, 4500);
+    }
+
+    function setLoading(flag){ $('app').classList.toggle('loading', flag); }
+    function todayLocal(){ const d=new Date(); const j=new Date(d.getTime()+9*60*60000); return j.toISOString().slice(0,10); }
+    function addDays(dateStr,days){ const d=new Date(dateStr+'T00:00:00+09:00'); d.setDate(d.getDate()+days); return formatDateInput(d); }
+    function formatDateInput(d){ const y=d.getFullYear(); const m=String(d.getMonth()+1).padStart(2,'0'); const day=String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${day}`; }
+    function parseApiDate(iso){ return new Date(iso); }
+    function formatTime(d){ return new Intl.DateTimeFormat('ja-JP',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Tokyo'}).format(d); }
+    function formatDateShort(d){ return new Intl.DateTimeFormat('ja-JP',{month:'numeric',day:'numeric',weekday:'short',timeZone:'Asia/Tokyo'}).format(d); }
+    function formatDateJa(dateStr){ const d=new Date(dateStr+'T00:00:00+09:00'); return new Intl.DateTimeFormat('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'short'}).format(d); }
+    function formatYen(v){ return Number(v||0) === 0 ? '無料' : `${Number(v||0).toLocaleString('ja-JP')}円`; }
+    function normalizePhone(v){ return String(v||'').replace(/[ー−―‐\s-]/g,'').trim(); }
+    function weekdayName(n){ return ['日','月','火','水','木','金','土'][Number(n)] || n; }
+    function statusInfo(status){
+      const map={
+        reserved:['予約済み',''], checked_in:['来店済み','ok'], in_treatment:['施術中','warn'], waiting_payment:['会計待ち','warn'], completed:['完了','ok'], cancelled:['キャンセル','bad'], no_show:['無断キャンセル','bad']
+      };
+      const v=map[status] || [status || '-','']; return {label:v[0],kind:v[1]};
+    }
+    function escapeHtml(v){ return String(v ?? '').replace(/[&<>'"]/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;' }[c])); }
+  </script>
+</body>
+</html>
