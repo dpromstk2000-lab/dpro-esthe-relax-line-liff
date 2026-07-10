@@ -621,7 +621,7 @@
 <body>
   <div class="page">
     <header class="hero">
-      <div class="version">STEP ESTHE-3｜シンプル予約版 index.html</div>
+      <div class="version">STEP ESTHE-3-R1｜予約送信 source 修正版 index.html</div>
       <h1 id="shopTitle">DPRO エステリラクゼーション</h1>
       <p id="shopLead">LINEからかんたん予約。メニュー・日時・お名前を入力するだけで予約できます。</p>
       <div class="shop-mini">
@@ -775,7 +775,7 @@
     // Version: ESTHE-3-SIMPLE-RESERVATION-INDEX-20260710
     // =========================================================
 
-    const VERSION = 'ESTHE-3-SIMPLE-RESERVATION-INDEX-20260710';
+    const VERSION = 'ESTHE-3-R1-SOURCE-LIFF-FIX-20260710';
     const API_BASE = 'https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev';
     const SHOP_CODE = 'esthe_demo_default';
     const JST_TIMEZONE = 'Asia/Tokyo';
@@ -1216,8 +1216,8 @@
         time: state.selectedSlot.time,
         request_note: el('requestNote').value.trim(),
         is_first_visit: el('firstVisit').checked,
-        source: 'simple_index',
-        created_by: 'STEP_ESTHE_3_index_html'
+        source: 'liff',
+        created_by: 'STEP_ESTHE_3_R1_index_html'
       };
 
       try {
