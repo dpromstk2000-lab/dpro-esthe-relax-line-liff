@@ -616,12 +616,59 @@
       .fixed-footer { margin-left: -24px; margin-right: -24px; }
       .footer-inner { grid-template-columns: 1fr 260px; align-items: center; }
     }
+  
+/* STEP ESTHE-7: Windows/Chromeのdate入力で曜日が空欄表示になる対策 */
+.dateFieldV7{
+  position:relative;
+  width:100%;
+}
+.dateFieldV7 > input[type="date"]{
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  opacity:0.01 !important;
+  z-index:2 !important;
+  cursor:pointer !important;
+}
+.dateFieldV7 > .dateDisplayV7{
+  width:100% !important;
+  min-height:48px !important;
+  border:1px solid var(--line) !important;
+  background:#fff !important;
+  color:var(--text, var(--ink, #2d2522)) !important;
+  border-radius:14px !important;
+  padding:12px 42px 12px 13px !important;
+  text-align:left !important;
+  font:inherit !important;
+  font-weight:900 !important;
+  box-shadow:none !important;
+  cursor:pointer !important;
+  justify-content:flex-start !important;
+}
+.dateFieldV7 > .dateDisplayV7:focus{
+  outline:none !important;
+  border-color:var(--main) !important;
+  box-shadow:0 0 0 4px rgba(123,75,62,.10) !important;
+}
+.dateFieldV7::after{
+  content:"📅";
+  position:absolute;
+  right:13px;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:1;
+  pointer-events:none;
+  opacity:.72;
+  font-size:15px;
+}
+
   </style>
 </head>
 <body>
   <div class="page">
     <header class="hero">
-      <div class="version">STEP ESTHE-3-R1｜予約送信 source 修正版 index.html</div>
+      <div class="version">STEP ESTHE-7｜シンプル予約版ブラッシュアップ index.html</div>
       <h1 id="shopTitle">DPRO エステリラクゼーション</h1>
       <p id="shopLead">LINEからかんたん予約。メニュー・日時・お名前を入力するだけで予約できます。</p>
       <div class="shop-mini">
@@ -769,13 +816,13 @@
 
   <script>
     // =========================================================
-    // STEP ESTHE-3
+    // STEP ESTHE-7
     // DPRO エステ・リラクゼーション LINE
     // シンプル予約版 index.html 完全版
     // Version: ESTHE-3-SIMPLE-RESERVATION-INDEX-20260710
     // =========================================================
 
-    const VERSION = 'ESTHE-3-R1-SOURCE-LIFF-FIX-20260710';
+    const VERSION = 'ESTHE-7-SIMPLE-INDEX-DATE-NAV-BRUSHUP-20260710';
     const API_BASE = 'https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev';
     const SHOP_CODE = 'esthe_demo_default';
     const JST_TIMEZONE = 'Asia/Tokyo';
@@ -1395,6 +1442,72 @@
         hour12: false
       }).format(new Date(iso));
     }
-  </script>
+  
+
+/* STEP ESTHE-7: date入力の曜日表示ブラッシュアップ */
+(function(){
+  function weekdayLabelV7(yyyyMmDd){
+    const parts = String(yyyyMmDd || "").split("-").map(Number);
+    if(parts.length !== 3 || parts.some(Number.isNaN)) return "";
+    const day = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2])).getUTCDay();
+    return ["日","月","火","水","木","金","土"][day] || "";
+  }
+
+  function dateDisplayTextV7(value){
+    if(!value) return "日付を選択";
+    const parts = String(value).split("-");
+    if(parts.length !== 3) return value;
+    const y = Number(parts[0]);
+    const m = Number(parts[1]);
+    const d = Number(parts[2]);
+    const w = weekdayLabelV7(value);
+    return `${y}年${m}月${d}日（${w}）`;
+  }
+
+  function updateDateDisplaysV7(){
+    document.querySelectorAll(".dateFieldV7").forEach((wrap) => {
+      const input = wrap.querySelector('input[type="date"]');
+      const display = wrap.querySelector(".dateDisplayV7");
+      if(input && display) display.textContent = dateDisplayTextV7(input.value);
+    });
+  }
+
+  function enhanceDateInputsV7(){
+    document.querySelectorAll('input[type="date"]:not([data-esthe-v7-date])').forEach((input) => {
+      input.setAttribute("data-esthe-v7-date", "1");
+      const wrap = document.createElement("div");
+      wrap.className = "dateFieldV7";
+      input.parentNode.insertBefore(wrap, input);
+      wrap.appendChild(input);
+
+      const display = document.createElement("button");
+      display.type = "button";
+      display.className = "dateDisplayV7";
+      wrap.insertBefore(display, input);
+
+      display.addEventListener("click", () => {
+        if(typeof input.showPicker === "function"){
+          input.showPicker();
+        }else{
+          input.focus();
+          input.click();
+        }
+      });
+
+      input.addEventListener("change", updateDateDisplaysV7);
+      updateDateDisplaysV7();
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(enhanceDateInputsV7, 80);
+    setTimeout(updateDateDisplaysV7, 160);
+  });
+  document.addEventListener("click", () => setTimeout(updateDateDisplaysV7, 60), true);
+  document.addEventListener("change", () => setTimeout(updateDateDisplaysV7, 30), true);
+  window.dproEstheUpdateDateDisplaysV7 = updateDateDisplaysV7;
+})();
+
+</script>
 </body>
 </html>
