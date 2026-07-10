@@ -126,12 +126,59 @@
       .wrap{width:min(100% - 20px,760px);margin-top:12px}.grid{grid-template-columns:1fr}.grid3,.statusBar{grid-template-columns:repeat(2,1fr)}.formGrid{grid-template-columns:1fr}.slots{grid-template-columns:repeat(3,1fr)}h1{font-size:28px}.hero{padding:22px}.row{grid-template-columns:110px 1fr}
     }
     @media (max-width:520px){.statusBar{grid-template-columns:1fr 1fr}.slots{grid-template-columns:repeat(2,1fr)}.topActions .btn, .topActions button{width:100%}}
+  
+/* STEP ESTHE-7: Windows/Chromeのdate入力で曜日が空欄表示になる対策 */
+.dateFieldV7{
+  position:relative;
+  width:100%;
+}
+.dateFieldV7 > input[type="date"]{
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  opacity:0.01 !important;
+  z-index:2 !important;
+  cursor:pointer !important;
+}
+.dateFieldV7 > .dateDisplayV7{
+  width:100% !important;
+  min-height:48px !important;
+  border:1px solid var(--line) !important;
+  background:#fff !important;
+  color:var(--text, var(--ink, #2d2522)) !important;
+  border-radius:14px !important;
+  padding:12px 42px 12px 13px !important;
+  text-align:left !important;
+  font:inherit !important;
+  font-weight:900 !important;
+  box-shadow:none !important;
+  cursor:pointer !important;
+  justify-content:flex-start !important;
+}
+.dateFieldV7 > .dateDisplayV7:focus{
+  outline:none !important;
+  border-color:var(--main) !important;
+  box-shadow:0 0 0 4px rgba(123,75,62,.10) !important;
+}
+.dateFieldV7::after{
+  content:"📅";
+  position:absolute;
+  right:13px;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:1;
+  pointer-events:none;
+  opacity:.72;
+  font-size:15px;
+}
+
   </style>
 </head>
 <body>
   <div class="wrap" id="app">
     <section class="hero">
-      <div class="badge">STEP ESTHE-4-R1｜確認画面・アクション改善 admin.html</div>
+      <div class="badge">STEP ESTHE-7｜シンプル管理画面ブラッシュアップ admin.html</div>
       <h1>DPRO Esthe Relaxation</h1>
       <p>シンプル予約版の店舗管理画面です。本日の予約・予約一覧・電話予約登録を確認できます。</p>
       <div class="meta">
@@ -145,7 +192,8 @@
       <button class="btnMain" id="reloadBtn" type="button">最新に更新</button>
       <button class="btnSoft" id="demoBtn" type="button">営業前デモ準備</button>
       <a class="btn btnSub" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/" target="_blank" rel="noopener">予約画面を開く</a>
-      <a class="btn btnSub" href="https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/system-check?admin_key=1234" target="_blank" rel="noopener">system-check</a>
+      <a class="btn btnSub" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/staff.html" target="_blank" rel="noopener">スタッフ画面を開く</a>
+      <a class="btn btnSub" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/system-check.html" target="_blank" rel="noopener">system-check</a>
     </div>
 
     <div id="message"></div>
@@ -252,7 +300,7 @@
         <section class="panel" id="panel-settings">
           <div class="card">
             <h2>店舗設定確認</h2>
-            <p class="sub">STEP ESTHE-4では確認中心です。編集機能は後続STEPで追加します。</p>
+            <p class="sub">STEP ESTHE-7では確認中心です。編集機能は後続STEPで追加します。</p>
             <div id="settingsView"></div>
           </div>
         </section>
@@ -301,7 +349,7 @@
   </div>
 
   <script>
-    const VERSION = 'ESTHE-4-R1-ADMIN-CONFIRM-ACTION-FEEDBACK-20260710';
+    const VERSION = 'ESTHE-7-SIMPLE-ADMIN-DATE-NAV-BRUSHUP-20260710';
     const API_BASE = 'https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev';
     const SHOP_CODE = 'esthe_demo_default';
     const ADMIN_KEY = '1234';
@@ -774,6 +822,72 @@
       const v=map[status] || [status || '-','']; return {label:v[0],kind:v[1]};
     }
     function escapeHtml(v){ return String(v ?? '').replace(/[&<>'"]/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;' }[c])); }
-  </script>
+  
+
+/* STEP ESTHE-7: date入力の曜日表示ブラッシュアップ */
+(function(){
+  function weekdayLabelV7(yyyyMmDd){
+    const parts = String(yyyyMmDd || "").split("-").map(Number);
+    if(parts.length !== 3 || parts.some(Number.isNaN)) return "";
+    const day = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2])).getUTCDay();
+    return ["日","月","火","水","木","金","土"][day] || "";
+  }
+
+  function dateDisplayTextV7(value){
+    if(!value) return "日付を選択";
+    const parts = String(value).split("-");
+    if(parts.length !== 3) return value;
+    const y = Number(parts[0]);
+    const m = Number(parts[1]);
+    const d = Number(parts[2]);
+    const w = weekdayLabelV7(value);
+    return `${y}年${m}月${d}日（${w}）`;
+  }
+
+  function updateDateDisplaysV7(){
+    document.querySelectorAll(".dateFieldV7").forEach((wrap) => {
+      const input = wrap.querySelector('input[type="date"]');
+      const display = wrap.querySelector(".dateDisplayV7");
+      if(input && display) display.textContent = dateDisplayTextV7(input.value);
+    });
+  }
+
+  function enhanceDateInputsV7(){
+    document.querySelectorAll('input[type="date"]:not([data-esthe-v7-date])').forEach((input) => {
+      input.setAttribute("data-esthe-v7-date", "1");
+      const wrap = document.createElement("div");
+      wrap.className = "dateFieldV7";
+      input.parentNode.insertBefore(wrap, input);
+      wrap.appendChild(input);
+
+      const display = document.createElement("button");
+      display.type = "button";
+      display.className = "dateDisplayV7";
+      wrap.insertBefore(display, input);
+
+      display.addEventListener("click", () => {
+        if(typeof input.showPicker === "function"){
+          input.showPicker();
+        }else{
+          input.focus();
+          input.click();
+        }
+      });
+
+      input.addEventListener("change", updateDateDisplaysV7);
+      updateDateDisplaysV7();
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(enhanceDateInputsV7, 80);
+    setTimeout(updateDateDisplaysV7, 160);
+  });
+  document.addEventListener("click", () => setTimeout(updateDateDisplaysV7, 60), true);
+  document.addEventListener("change", () => setTimeout(updateDateDisplaysV7, 30), true);
+  window.dproEstheUpdateDateDisplaysV7 = updateDateDisplaysV7;
+})();
+
+</script>
 </body>
 </html>
