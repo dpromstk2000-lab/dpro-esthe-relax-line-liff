@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DPRO Esthe Relaxation｜STEP ESTHE-12C｜member.html</title>
+  <title>DPRO Esthe Relaxation｜STEP ESTHE-16｜member.html</title>
   <style>
     :root{
       --bg:#fffaf7;
@@ -158,7 +158,7 @@
 <body>
   <main class="wrap">
     <section class="hero">
-      <div class="badge">STEP ESTHE-12C｜店舗設定反映確認版 member.html</div>
+      <div class="badge">STEP ESTHE-16｜電話番号正規化対応版 member.html</div>
       <h1 id="shopTitle">DPRO Esthe Relaxation</h1>
       <p id="shopLead">次回予約・予約変更・キャンセル・回数券残数・来店履歴をLINE上で確認できる、お客様用マイページです。</p>
       <div class="hero-meta">
@@ -193,7 +193,7 @@
           <div class="form-grid">
             <div class="field">
               <label>電話番号</label>
-              <input id="phoneInput" inputmode="tel" placeholder="例：08000003002" value="">
+              <input id="phoneInput" inputmode="tel" placeholder="例：08000003002 / 080-0000-3002" value="">
             </div>
             <div class="field">
               <label>表示名 任意</label>
@@ -362,6 +362,29 @@
       return ["日","月","火","水","木","金","土"][new Date(Date.UTC(y,m-1,d)).getUTCDay()];
     }
 
+
+    function normalizePhone(value){
+      let s = String(value || "")
+        .replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0))
+        .replace(/[＋]/g, "+")
+        .trim();
+
+      s = s.replace(/[ー－―‐‑‒–—ｰ]/g, "-");
+      s = s.replace(/[^\d+]/g, "");
+
+      if(s.startsWith("+81")){
+        s = "0" + s.slice(3);
+      }else if(s.startsWith("81") && s.length === 12){
+        s = "0" + s.slice(2);
+      }
+
+      return s.replace(/\D/g, "");
+    }
+
+    function isPhoneLike(value){
+      return normalizePhone(value).length >= 8;
+    }
+
     function dateText(dateStr){
       if(!dateStr) return "-";
       const [y,m,d] = String(dateStr).split("-").map(Number);
@@ -456,7 +479,8 @@
     }
 
     async function loadMyPage(){
-      const phone = $("phoneInput").value.trim();
+      const phone = normalizePhone($("phoneInput").value);
+      $("phoneInput").value = phone;
       if(!phone){
         setMessage("ng", "電話番号を入力してください。");
         return;
@@ -651,8 +675,8 @@
           body:{
             reservation_id: reservationId(r),
             reservation_code: r.reservation_code,
-            phone: state.customer?.phone || $("phoneInput").value.trim(),
-            customer_phone: state.customer?.phone || $("phoneInput").value.trim(),
+            phone: normalizePhone(state.customer?.phone || $("phoneInput").value),
+            customer_phone: normalizePhone(state.customer?.phone || $("phoneInput").value),
             reason: "member_page_cancel",
             source: "member"
           }
@@ -779,8 +803,8 @@
           body:{
             reservation_id: reservationId(r),
             reservation_code: r.reservation_code,
-            phone: state.customer?.phone || $("phoneInput").value.trim(),
-            customer_phone: state.customer?.phone || $("phoneInput").value.trim(),
+            phone: normalizePhone(state.customer?.phone || $("phoneInput").value),
+            customer_phone: normalizePhone(state.customer?.phone || $("phoneInput").value),
             date: state.changeDate,
             time: state.changeTime,
             source: "member"
@@ -814,6 +838,11 @@
           notice.textContent = `${dateText(state.changeDate)} ${state.changeTime} を選択中です。次に「変更内容を確認する」を押してください。`;
         }
       }
+    });
+
+    $("phoneInput").addEventListener("blur", () => {
+      const normalized = normalizePhone($("phoneInput").value);
+      if(normalized) $("phoneInput").value = normalized;
     });
 
     $("loadBtn").addEventListener("click", loadMyPage);
@@ -862,7 +891,7 @@
       const params = new URLSearchParams(location.search);
       const phone = params.get("phone") || params.get("tel");
       if(phone){
-        $("phoneInput").value = phone;
+        $("phoneInput").value = normalizePhone(phone);
         loadMyPage();
       }
     }
