@@ -1,0 +1,1098 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DPRO Esthe Relaxation｜system-check｜STEP ESTHE-6</title>
+  <style>
+    :root {
+      --bg: #fffaf7;
+      --bg2: #f5ebe5;
+      --card: #ffffff;
+      --main: #805246;
+      --main2: #9f6a5b;
+      --accent: #0f8a6a;
+      --danger: #c94444;
+      --warn: #b7791f;
+      --text: #2d211f;
+      --muted: #7e6861;
+      --line: #ead7cf;
+      --soft: #fbf1ec;
+      --shadow: 0 24px 70px rgba(91, 61, 52, 0.14);
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 8%, rgba(197, 150, 128, 0.22), transparent 34%),
+        radial-gradient(circle at 90% 4%, rgba(128, 82, 70, 0.14), transparent 32%),
+        linear-gradient(180deg, #fffaf7 0%, #fff 48%, #fffaf7 100%);
+      min-height: 100vh;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    select {
+      font-family: inherit;
+    }
+
+    .wrap {
+      width: min(1180px, calc(100% - 28px));
+      margin: 28px auto 110px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 28px;
+      padding: 30px 34px;
+      color: white;
+      background:
+        radial-gradient(circle at 94% 92%, rgba(255,255,255,0.2) 0 24%, transparent 25%),
+        linear-gradient(135deg, #6e433a, #a16d5d);
+      box-shadow: var(--shadow);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -34px;
+      top: -40px;
+      width: 260px;
+      height: 260px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.14);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.12);
+      color: white;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      backdrop-filter: blur(8px);
+    }
+
+    .hero h1 {
+      margin: 16px 0 8px;
+      font-size: clamp(30px, 4vw, 48px);
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+
+    .hero p {
+      position: relative;
+      z-index: 2;
+      margin: 0;
+      color: rgba(255,255,255,0.92);
+      font-size: 16px;
+      font-weight: 650;
+    }
+
+    .hero-meta {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 22px 0;
+    }
+
+    .btn {
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--main);
+      border-radius: 999px;
+      padding: 12px 16px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: 0.15s ease;
+      box-shadow: 0 8px 24px rgba(91, 61, 52, 0.08);
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 28px rgba(91, 61, 52, 0.12);
+    }
+
+    .btn.primary {
+      background: var(--main);
+      color: white;
+      border-color: var(--main);
+    }
+
+    .btn.success {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .btn.danger {
+      background: var(--danger);
+      color: white;
+      border-color: var(--danger);
+    }
+
+    .btn.ghost {
+      background: rgba(255,255,255,0.62);
+    }
+
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: wait;
+      transform: none;
+    }
+
+    .notice {
+      margin: 14px 0;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--muted);
+      font-weight: 800;
+      display: none;
+      box-shadow: 0 12px 34px rgba(91, 61, 52, 0.08);
+    }
+
+    .notice.show {
+      display: block;
+    }
+
+    .notice.ok {
+      border-color: #bee8d9;
+      background: #eefaf5;
+      color: #067255;
+    }
+
+    .notice.ng {
+      border-color: #f3caca;
+      background: #fff0f0;
+      color: #b03636;
+    }
+
+    .notice.warn {
+      border-color: #f1d8ab;
+      background: #fff8e8;
+      color: #8b5c0b;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.45fr 0.9fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .metric {
+      background: rgba(255,255,255,0.9);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 12px 34px rgba(91, 61, 52, 0.07);
+      min-height: 98px;
+    }
+
+    .metric strong {
+      display: block;
+      color: var(--main);
+      font-size: 30px;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      margin-top: 8px;
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .panel {
+      background: rgba(255,255,255,0.94);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+
+    .panel h2 {
+      margin: 0 0 6px;
+      font-size: 22px;
+      letter-spacing: -0.03em;
+    }
+
+    .panel .sub {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 750;
+      line-height: 1.65;
+    }
+
+    .check-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .check {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--line);
+      background: var(--soft);
+      border-radius: 16px;
+      padding: 13px;
+      min-height: 62px;
+    }
+
+    .dot {
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      font-weight: 1000;
+      flex: 0 0 auto;
+      background: #f2e6e0;
+      color: var(--muted);
+    }
+
+    .check.ok .dot {
+      background: #e2f8ee;
+      color: #077a58;
+    }
+
+    .check.ng .dot {
+      background: #ffe6e6;
+      color: var(--danger);
+    }
+
+    .check-title {
+      font-weight: 950;
+      font-size: 13px;
+    }
+
+    .check-text {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 750;
+    }
+
+    .url-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .url-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--soft);
+      padding: 12px;
+      overflow: hidden;
+    }
+
+    .url-card b {
+      display: block;
+      color: var(--main);
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+
+    .url-card code {
+      display: block;
+      color: var(--text);
+      word-break: break-all;
+      white-space: normal;
+      font-size: 12px;
+      font-weight: 850;
+      line-height: 1.45;
+    }
+
+    .url-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .mini {
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--main);
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 11px;
+      font-weight: 950;
+      cursor: pointer;
+    }
+
+    .mini.primary {
+      background: var(--main);
+      color: white;
+      border-color: var(--main);
+    }
+
+    .status-row {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 0;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+
+    .status-row div {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
+      font-weight: 800;
+      min-height: 44px;
+    }
+
+    .status-row div:nth-child(odd) {
+      background: var(--soft);
+      color: var(--muted);
+    }
+
+    .status-row div:nth-child(even) {
+      background: white;
+      color: var(--text);
+    }
+
+    .status-row div:nth-last-child(-n+2) {
+      border-bottom: 0;
+    }
+
+    .manual-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .manual-item {
+      display: grid;
+      grid-template-columns: 34px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      border: 1px solid var(--line);
+      background: white;
+      border-radius: 16px;
+      padding: 12px;
+    }
+
+    .manual-num {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background: var(--soft);
+      color: var(--main);
+      display: grid;
+      place-items: center;
+      font-weight: 1000;
+    }
+
+    .manual-title {
+      font-weight: 950;
+      font-size: 14px;
+    }
+
+    .manual-text {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+      margin-top: 3px;
+      line-height: 1.5;
+    }
+
+    .log {
+      max-height: 280px;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #2d211f;
+      color: #fff7f2;
+      padding: 14px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.65;
+      white-space: pre-wrap;
+    }
+
+    .bottom-bar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255,250,247,0.92);
+      border-top: 1px solid var(--line);
+      backdrop-filter: blur(16px);
+      z-index: 30;
+    }
+
+    .bottom-inner {
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      justify-content: space-between;
+      padding: 13px 0;
+    }
+
+    .bottom-status {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(45, 33, 31, 0.56);
+      z-index: 80;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal {
+      width: min(560px, 100%);
+      background: white;
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: 0 26px 100px rgba(0,0,0,0.24);
+      border: 1px solid var(--line);
+    }
+
+    .modal h3 {
+      margin: 0 0 8px;
+      font-size: 22px;
+      letter-spacing: -0.03em;
+    }
+
+    .modal p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-weight: 750;
+      line-height: 1.6;
+      font-size: 13px;
+    }
+
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 82px;
+      background: #2d211f;
+      color: white;
+      border-radius: 16px;
+      padding: 13px 16px;
+      font-weight: 900;
+      box-shadow: 0 18px 44px rgba(0,0,0,0.22);
+      z-index: 100;
+      display: none;
+      max-width: 420px;
+    }
+
+    .toast.show {
+      display: block;
+    }
+
+    @media (max-width: 980px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cards {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .check-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .wrap {
+        width: min(100% - 18px, 1180px);
+        margin-top: 12px;
+      }
+
+      .hero {
+        padding: 22px 20px;
+        border-radius: 22px;
+      }
+
+      .hero h1 {
+        font-size: 32px;
+      }
+
+      .grid {
+        gap: 12px;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .check-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .panel {
+        padding: 16px;
+      }
+
+      .manual-item {
+        grid-template-columns: 30px 1fr;
+      }
+
+      .manual-item .mini {
+        grid-column: 1 / -1;
+      }
+
+      .status-row {
+        grid-template-columns: 120px 1fr;
+      }
+
+      .bottom-inner {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .bottom-inner .btn {
+        width: 100%;
+      }
+
+      .modal-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <div class="badge">STEP ESTHE-6｜営業前確認 system-check.html</div>
+      <h1>DPRO Esthe Relaxation</h1>
+      <p>シンプル予約版の営業前確認画面です。API・DB・予約画面・管理画面・スタッフ画面・デモ準備をまとめて確認できます。</p>
+      <div class="hero-meta">
+        <span>API接続：<span id="heroApi">確認中</span></span>
+        <span>管理コード：1234</span>
+        <span>本日：<span id="heroToday">-</span></span>
+        <span>Worker：dpro-esthe-relax-line-api</span>
+      </div>
+    </section>
+
+    <div class="top-actions">
+      <button class="btn primary" id="btnReload">最新状態を確認</button>
+      <button class="btn success" id="btnPrepare">営業前デモ準備</button>
+      <a class="btn ghost" href="index.html" target="_blank" rel="noopener">予約画面を開く</a>
+      <a class="btn ghost" href="admin.html" target="_blank" rel="noopener">管理画面を開く</a>
+      <a class="btn ghost" href="staff.html" target="_blank" rel="noopener">スタッフ画面を開く</a>
+    </div>
+
+    <div id="notice" class="notice">確認中です。</div>
+
+    <section class="cards">
+      <div class="metric"><strong id="metricHealth">-</strong><span>API / DB</span></div>
+      <div class="metric"><strong id="metricTodayReservations">-</strong><span>本日の予約</span></div>
+      <div class="metric"><strong id="metricCustomers">-</strong><span>デモ顧客</span></div>
+      <div class="metric"><strong id="metricFollowups">-</strong><span>未対応フォロー</span></div>
+    </section>
+
+    <div class="grid">
+      <section>
+        <div class="panel">
+          <h2>システム確認</h2>
+          <p class="sub">Worker API と Supabase の状態、店舗データ、メニュー、スタッフ、予約、フォローなどを確認します。</p>
+          <div class="check-grid" id="checks"></div>
+
+          <div class="status-row" id="statusRows">
+            <div>状態</div><div id="rowStatus">確認中</div>
+            <div>店舗コード</div><div id="rowShopCode">-</div>
+            <div>店舗名</div><div id="rowShopName">-</div>
+            <div>Worker version</div><div id="rowVersion">-</div>
+            <div>応答時間</div><div id="rowResponse">-</div>
+            <div>最終確認</div><div id="rowTime">-</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>営業前チェック</h2>
+          <p class="sub">営業前はこの順番で確認すると安全です。各画面は新しいタブで開きます。</p>
+          <div class="manual-list">
+            <div class="manual-item">
+              <div class="manual-num">1</div>
+              <div>
+                <div class="manual-title">営業前デモ準備を実行</div>
+                <div class="manual-text">本日基準の予約・顧客・回数券・フォローを作り直します。</div>
+              </div>
+              <button class="mini primary" id="miniPrepare">実行</button>
+            </div>
+            <div class="manual-item">
+              <div class="manual-num">2</div>
+              <div>
+                <div class="manual-title">予約画面 index.html を確認</div>
+                <div class="manual-text">メニュー、スタッフ、空き時間、予約送信が見えるか確認します。</div>
+              </div>
+              <a class="mini" href="index.html" target="_blank" rel="noopener">開く</a>
+            </div>
+            <div class="manual-item">
+              <div class="manual-num">3</div>
+              <div>
+                <div class="manual-title">管理画面 admin.html を確認</div>
+                <div class="manual-text">本日の予約、予約一覧、電話予約登録、ステータス変更を確認します。</div>
+              </div>
+              <a class="mini" href="admin.html" target="_blank" rel="noopener">開く</a>
+            </div>
+            <div class="manual-item">
+              <div class="manual-num">4</div>
+              <div>
+                <div class="manual-title">スタッフ画面 staff.html を確認</div>
+                <div class="manual-text">本日の担当予約、確認モーダル、施術中・会計待ち・完了への変更を確認します。</div>
+              </div>
+              <a class="mini" href="staff.html" target="_blank" rel="noopener">開く</a>
+            </div>
+            <div class="manual-item">
+              <div class="manual-num">5</div>
+              <div>
+                <div class="manual-title">API health を確認</div>
+                <div class="manual-text">Worker と Supabase の接続状態を直接確認します。</div>
+              </div>
+              <a class="mini" href="https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/health" target="_blank" rel="noopener">開く</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>取得ログ</h2>
+          <p class="sub">APIから取得した状態を確認できます。エラー時はここに内容が表示されます。</p>
+          <div class="log" id="log">起動中...</div>
+        </div>
+      </section>
+
+      <aside>
+        <div class="panel">
+          <h2>件数確認</h2>
+          <p class="sub">営業デモに必要なデータが揃っているか確認します。</p>
+          <div class="cards" style="grid-template-columns: 1fr 1fr; margin-bottom: 0;">
+            <div class="metric"><strong id="countReservations">-</strong><span>デモ予約</span></div>
+            <div class="metric"><strong id="countTickets">-</strong><span>回数券</span></div>
+            <div class="metric"><strong id="countMenus">-</strong><span>メニュー</span></div>
+            <div class="metric"><strong id="countStaff">-</strong><span>スタッフ</span></div>
+            <div class="metric"><strong id="countRooms">-</strong><span>ルーム</span></div>
+            <div class="metric"><strong id="countTemplates">-</strong><span>文面</span></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>確認URL</h2>
+          <p class="sub">そのままコピペできるURLです。</p>
+          <div class="url-list">
+            <div class="url-card">
+              <b>予約画面 index.html</b>
+              <code id="urlIndex">https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/</code>
+              <div class="url-actions">
+                <button class="mini" data-copy="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/">コピー</button>
+                <a class="mini primary" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/" target="_blank" rel="noopener">開く</a>
+              </div>
+            </div>
+            <div class="url-card">
+              <b>管理画面 admin.html</b>
+              <code>https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/admin.html</code>
+              <div class="url-actions">
+                <button class="mini" data-copy="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/admin.html">コピー</button>
+                <a class="mini primary" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/admin.html" target="_blank" rel="noopener">開く</a>
+              </div>
+            </div>
+            <div class="url-card">
+              <b>スタッフ画面 staff.html</b>
+              <code>https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/staff.html</code>
+              <div class="url-actions">
+                <button class="mini" data-copy="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/staff.html">コピー</button>
+                <a class="mini primary" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/staff.html" target="_blank" rel="noopener">開く</a>
+              </div>
+            </div>
+            <div class="url-card">
+              <b>system-check.html</b>
+              <code>https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/system-check.html</code>
+              <div class="url-actions">
+                <button class="mini" data-copy="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/system-check.html">コピー</button>
+                <a class="mini primary" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/system-check.html" target="_blank" rel="noopener">開く</a>
+              </div>
+            </div>
+            <div class="url-card">
+              <b>Worker health</b>
+              <code>https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/health</code>
+              <div class="url-actions">
+                <button class="mini" data-copy="https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/health">コピー</button>
+                <a class="mini primary" href="https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/health" target="_blank" rel="noopener">開く</a>
+              </div>
+            </div>
+            <div class="url-card">
+              <b>Worker system-check API</b>
+              <code>https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/system-check?admin_key=1234</code>
+              <div class="url-actions">
+                <button class="mini" data-copy="https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/system-check?admin_key=1234">コピー</button>
+                <a class="mini primary" href="https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/system-check?admin_key=1234" target="_blank" rel="noopener">開く</a>
+              </div>
+            </div>
+            <div class="url-card">
+              <b>営業前デモ準備API</b>
+              <code>https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/demo/prepare?admin_key=1234</code>
+              <div class="url-actions">
+                <button class="mini" data-copy="https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/demo/prepare?admin_key=1234">コピー</button>
+                <a class="mini primary" href="https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/demo/prepare?admin_key=1234" target="_blank" rel="noopener">開く</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <div class="bottom-bar">
+    <div class="bottom-inner">
+      <div class="bottom-status" id="bottomStatus">営業前確認中...</div>
+      <button class="btn primary" id="bottomReload">最新状態を確認</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal">
+      <h3>営業前デモ準備を実行しますか？</h3>
+      <p>本日基準でデモ顧客・予約・回数券・フォローを作り直します。営業前に実行すると、当日のデモに使いやすい状態になります。</p>
+      <div class="status-row">
+        <div>実行API</div><div>https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/demo/prepare?admin_key=1234</div>
+        <div>管理コード</div><div>1234</div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn ghost" id="modalCancel">戻る</button>
+        <button class="btn success" id="modalRunPrepare">営業前デモ準備を実行</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const STEP = "STEP ESTHE-6";
+    const VERSION = "ESTHE-6-SYSTEM-CHECK-COMPLETE-20260710";
+    const API_BASE = "https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev";
+    const ADMIN_KEY = "1234";
+    const FRONT_BASE = "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff";
+
+    const ENDPOINTS = {
+      health: `${API_BASE}/api/health`,
+      systemCheck: `${API_BASE}/api/admin/system-check?admin_key=${encodeURIComponent(ADMIN_KEY)}`,
+      demoPrepare: `${API_BASE}/api/admin/demo/prepare?admin_key=${encodeURIComponent(ADMIN_KEY)}`,
+    };
+
+    const CHECK_LABELS = [
+      ["api", "API", "Worker が応答している"],
+      ["db", "DB", "Supabase 接続"],
+      ["shop", "店舗", "店舗情報取得"],
+      ["business_hours", "営業時間", "営業日設定"],
+      ["menus", "メニュー", "有効メニュー"],
+      ["staff", "スタッフ", "スタッフ情報"],
+      ["rooms", "ルーム", "ベッド/個室"],
+      ["templates", "文面", "テンプレート"],
+      ["demo_customers", "顧客", "デモ顧客"],
+      ["demo_reservations", "予約", "デモ予約"],
+      ["demo_followups", "フォロー", "デモフォロー"],
+    ];
+
+    let lastSystem = null;
+    let loading = false;
+
+    const $ = (id) => document.getElementById(id);
+
+    function nowText() {
+      const d = new Date();
+      return d.toLocaleString("ja-JP", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        weekday: "short",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function setNotice(type, message) {
+      const el = $("notice");
+      el.className = `notice show ${type || ""}`;
+      el.textContent = message;
+    }
+
+    function hideNotice() {
+      $("notice").className = "notice";
+    }
+
+    function showToast(message) {
+      const el = $("toast");
+      el.textContent = message;
+      el.classList.add("show");
+      setTimeout(() => el.classList.remove("show"), 2600);
+    }
+
+    function log(message, data) {
+      const text = `[${nowText()}] ${message}` + (data ? `\n${JSON.stringify(data, null, 2)}` : "");
+      $("log").textContent = text;
+    }
+
+    function setLoading(flag) {
+      loading = flag;
+      ["btnReload", "bottomReload", "btnPrepare", "miniPrepare", "modalRunPrepare"].forEach((id) => {
+        const btn = $(id);
+        if (btn) btn.disabled = flag;
+      });
+    }
+
+    async function apiGet(url, options = {}) {
+      const res = await fetch(url, {
+        method: options.method || "GET",
+        headers: {
+          "Accept": "application/json",
+          ...(options.headers || {}),
+        },
+        body: options.body,
+      });
+
+      let data = null;
+      const text = await res.text();
+      try {
+        data = text ? JSON.parse(text) : null;
+      } catch (e) {
+        data = { raw: text };
+      }
+
+      if (!res.ok || data?.ok === false) {
+        const msg = data?.message || data?.error || `HTTP ${res.status}`;
+        const err = new Error(msg);
+        err.status = res.status;
+        err.data = data;
+        throw err;
+      }
+
+      return data;
+    }
+
+    function renderChecks(system) {
+      const checks = system?.checks || {};
+      $("checks").innerHTML = CHECK_LABELS.map(([key, title, text]) => {
+        const ok = checks[key] === true;
+        return `
+          <div class="check ${ok ? "ok" : "ng"}">
+            <div class="dot">${ok ? "✓" : "!"}</div>
+            <div>
+              <div class="check-title">${escapeHtml(title)}</div>
+              <div class="check-text">${escapeHtml(text)}</div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderCounts(system) {
+      const c = system?.counts || {};
+      $("metricTodayReservations").textContent = c.today_reservations ?? "-";
+      $("metricCustomers").textContent = c.demo_customers ?? "-";
+      $("metricFollowups").textContent = c.pending_followups ?? c.demo_followups ?? "-";
+
+      $("countReservations").textContent = c.demo_reservations ?? "-";
+      $("countTickets").textContent = c.demo_tickets ?? "-";
+      $("countMenus").textContent = c.active_menus ?? "-";
+      $("countStaff").textContent = c.active_staff ?? "-";
+      $("countRooms").textContent = c.active_rooms ?? "-";
+      $("countTemplates").textContent = c.active_templates ?? "-";
+    }
+
+    function renderStatus(system, health) {
+      const ok = Boolean(system?.ok && health?.ok && system?.checks?.api && system?.checks?.db);
+      $("metricHealth").textContent = ok ? "OK" : "NG";
+      $("heroApi").textContent = ok ? "OK" : "NG";
+      $("heroToday").textContent = system?.today || "-";
+      $("rowStatus").textContent = system?.status || (ok ? "OK" : "確認不可");
+      $("rowShopCode").textContent = system?.shop_code || health?.shop_code || "-";
+      $("rowShopName").textContent = system?.shop_name || health?.shop_name || "-";
+      $("rowVersion").textContent = system?.version || health?.version || "-";
+      $("rowResponse").textContent = `${system?.response_ms ?? "-"} ms`;
+      $("rowTime").textContent = nowText();
+      $("bottomStatus").textContent = ok
+        ? `営業前確認OK｜本日の予約 ${system?.counts?.today_reservations ?? "-"}件｜未対応フォロー ${system?.counts?.pending_followups ?? "-"}件`
+        : "営業前確認でエラーがあります。";
+    }
+
+    async function loadAll() {
+      if (loading) return;
+      setLoading(true);
+      setNotice("warn", "API・DB・デモデータを確認中です。");
+      log("確認開始");
+
+      try {
+        const [health, system] = await Promise.all([
+          apiGet(ENDPOINTS.health),
+          apiGet(ENDPOINTS.systemCheck),
+        ]);
+
+        lastSystem = system;
+
+        renderChecks(system);
+        renderCounts(system);
+        renderStatus(system, health);
+
+        const allOk = Boolean(system.ok && health.ok && Object.values(system.checks || {}).every(Boolean));
+        if (allOk) {
+          setNotice("ok", "営業前確認OKです。API・DB・店舗設定・デモデータが正常です。");
+        } else {
+          setNotice("warn", "一部の確認項目に注意が必要です。チェック項目を確認してください。");
+        }
+
+        log("確認完了", { health, system });
+      } catch (err) {
+        $("metricHealth").textContent = "NG";
+        $("heroApi").textContent = "NG";
+        $("bottomStatus").textContent = "営業前確認でエラーが発生しました。";
+        setNotice("ng", `確認に失敗しました：${err.message}`);
+        log("確認エラー", err.data || { message: err.message, status: err.status });
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function openPrepareModal() {
+      $("modalBackdrop").classList.add("show");
+    }
+
+    function closePrepareModal() {
+      $("modalBackdrop").classList.remove("show");
+    }
+
+    async function runPrepare() {
+      if (loading) return;
+      closePrepareModal();
+      setLoading(true);
+      setNotice("warn", "営業前デモ準備を実行中です。");
+      log("営業前デモ準備 実行開始");
+
+      try {
+        const result = await apiGet(ENDPOINTS.demoPrepare);
+        setNotice("ok", "営業前デモ準備が完了しました。最新状態を再確認します。");
+        showToast("営業前デモ準備が完了しました。");
+        log("営業前デモ準備 完了", result);
+        setLoading(false);
+        await loadAll();
+      } catch (err) {
+        setNotice("ng", `営業前デモ準備に失敗しました：${err.message}`);
+        showToast("営業前デモ準備に失敗しました。");
+        log("営業前デモ準備 エラー", err.data || { message: err.message, status: err.status });
+        setLoading(false);
+      }
+    }
+
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast("コピーしました。");
+      } catch (e) {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+        showToast("コピーしました。");
+      }
+    }
+
+    document.addEventListener("click", (event) => {
+      const copyBtn = event.target.closest("[data-copy]");
+      if (copyBtn) {
+        copyText(copyBtn.getAttribute("data-copy"));
+      }
+    });
+
+    $("btnReload").addEventListener("click", loadAll);
+    $("bottomReload").addEventListener("click", loadAll);
+    $("btnPrepare").addEventListener("click", openPrepareModal);
+    $("miniPrepare").addEventListener("click", openPrepareModal);
+    $("modalCancel").addEventListener("click", closePrepareModal);
+    $("modalRunPrepare").addEventListener("click", runPrepare);
+    $("modalBackdrop").addEventListener("click", (event) => {
+      if (event.target.id === "modalBackdrop") closePrepareModal();
+    });
+
+    loadAll();
+  </script>
+</body>
+</html>
