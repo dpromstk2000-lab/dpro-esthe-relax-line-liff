@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DPRO Esthe Relaxation｜スタッフ用</title>
+  <style>
+    :root{
+      --bg:#fbf6f2; --card:#fffdfb; --ink:#39251f; --muted:#8a6c61;
+      --line:#ead8cf; --main:#7b4a3e; --main2:#9d6a5b; --soft:#f4e7df;
+      --ok:#0f8a67; --okBg:#e8f7f1; --warn:#b87b16; --warnBg:#fff3d8;
+      --bad:#bb3f46; --badBg:#fff0f1; --shadow:0 18px 50px rgba(88,52,39,.12);
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:linear-gradient(90deg,#fff 0%,var(--bg) 18%,#fffaf7 50%,var(--bg) 82%,#fff 100%);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}
+    body{padding-bottom:88px}
+    .wrap{width:min(1050px,94vw);margin:26px auto 46px}
+    .hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#5c382f,#a36f60);color:#fff;border-radius:26px;padding:28px 32px;box-shadow:var(--shadow)}
+    .hero:after{content:"";position:absolute;right:-35px;bottom:-65px;width:245px;height:245px;border-radius:50%;background:rgba(255,255,255,.18)}
+    .badge{display:inline-flex;gap:6px;align-items:center;border:1px solid rgba(255,255,255,.32);background:rgba(255,255,255,.14);border-radius:999px;padding:7px 12px;font-weight:800;font-size:12px;letter-spacing:.01em}
+    h1{margin:16px 0 8px;font-size:34px;line-height:1.05;letter-spacing:-.03em}
+    .hero p{margin:0;font-weight:700;line-height:1.7}
+    .meta{margin-top:16px;display:flex;flex-wrap:wrap;gap:12px;font-size:13px;font-weight:800}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:18px 0}
+    button,a.btn{appearance:none;border:0;border-radius:999px;background:var(--main);color:#fff;padding:12px 18px;font-weight:900;cursor:pointer;text-decoration:none;box-shadow:none;font-size:14px;display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px}
+    button:hover,a.btn:hover{filter:brightness(.98)}
+    button:disabled{opacity:.5;cursor:not-allowed}
+    .btnSoft{background:var(--soft);color:var(--main);border:1px solid var(--line)}
+    .btnSub{background:#fff;color:var(--main);border:1px solid var(--line)}
+    .btnOk{background:var(--ok);color:#fff}.btnWarn{background:var(--warn);color:#fff}.btnBad{background:var(--bad);color:#fff}
+    .btnTiny{padding:8px 11px;min-height:34px;font-size:12px;border-radius:12px}
+    .grid{display:grid;grid-template-columns:1fr 360px;gap:18px;align-items:start}
+    .card{background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+    .card h2{margin:0 0 6px;font-size:22px}.card p{margin:0;color:var(--muted);line-height:1.7;font-weight:700;font-size:14px}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0 18px}.stat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px}.stat b{font-size:26px;color:var(--main)}.stat span{display:block;color:var(--muted);font-weight:800;font-size:12px;margin-top:2px}
+    .filters{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:15px}.field label{display:block;font-weight:900;font-size:12px;margin:0 0 6px;color:var(--muted)}
+    input,select,textarea{width:100%;border:1px solid var(--line);background:#fff;border-radius:14px;padding:13px 14px;font:inherit;font-weight:800;color:var(--ink);outline:none} input:focus,select:focus,textarea:focus{border-color:var(--main);box-shadow:0 0 0 3px rgba(123,74,62,.12)}
+    .staffTabs{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px}.staffTab{background:#fff;color:var(--main);border:1px solid var(--line);padding:10px 14px;border-radius:999px;font-weight:900}.staffTab.active{background:var(--main);color:#fff;border-color:var(--main)}
+    .list{display:flex;flex-direction:column;gap:12px;margin-top:16px}.resCard{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;position:relative;overflow:hidden}.resCard.now{border-color:#d8a58e;box-shadow:0 10px 28px rgba(157,106,91,.12)}
+    .resTop{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.time{font-size:24px;font-weight:950;color:var(--main);letter-spacing:-.02em}.date{font-size:12px;color:var(--muted);font-weight:900}.name{font-size:21px;font-weight:950;margin-top:3px}.menu{font-size:14px;font-weight:900;margin-top:5px}.small{font-size:12px;color:var(--muted);font-weight:800}.note{margin-top:12px;padding:12px;border-radius:14px;background:#fff8f4;border:1px solid #f1ddd4;color:#5d4139;line-height:1.7;font-weight:800;font-size:13px}.pill{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:8px 11px;font-size:12px;font-weight:950;white-space:nowrap}.pill.reserved{background:#fff4e5;color:#8f560f}.pill.checked_in,.pill.in_treatment,.pill.waiting_payment{background:#eaf7f3;color:#0f775d}.pill.completed{background:#e8f4ea;color:#166d3d}.pill.cancelled,.pill.no_show{background:#fff0f1;color:#a02b34}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.actionTitle{font-weight:950;color:var(--main);font-size:12px;margin-top:12px}
+    .empty{padding:22px;background:#fff8f4;border:1px dashed var(--line);border-radius:18px;color:var(--muted);font-weight:900;text-align:center}.sideList{display:flex;flex-direction:column;gap:10px;margin-top:14px}.todo{border-bottom:1px solid var(--line);padding:0 0 10px}.todo:last-child{border-bottom:0}.todo b{display:block;font-size:14px}.todo span{display:block;color:var(--muted);font-weight:800;font-size:12px;margin-top:3px}.notice{border-radius:16px;padding:14px 15px;font-weight:850;line-height:1.6;margin:12px 0}.notice.ok{background:var(--okBg);color:#0f6c53;border:1px solid #bde6d8}.notice.bad{background:var(--badBg);color:#a2323a;border:1px solid #f2cbd0}.notice.info{background:#fff8f4;color:var(--muted);border:1px solid var(--line)}
+    .footer{margin:22px 0 0;text-align:center;color:var(--muted);font-size:12px;font-weight:800}.bottomBar{position:fixed;left:0;right:0;bottom:0;background:rgba(255,247,243,.94);border-top:1px solid var(--line);backdrop-filter:blur(10px);z-index:20}.bottomInner{width:min(1050px,94vw);margin:0 auto;display:flex;justify-content:space-between;gap:12px;align-items:center;padding:14px 0}.bottomText{color:var(--muted);font-weight:900;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.toast{position:fixed;right:22px;bottom:88px;z-index:50;min-width:min(380px,90vw);background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow);font-weight:900}.toast.ok{border-color:#bde6d8;color:#0f6c53}.toast.bad{border-color:#f2cbd0;color:#a2323a}.toast.hidden{display:none}.modalLayer{position:fixed;inset:0;background:rgba(44,25,20,.42);display:none;align-items:center;justify-content:center;z-index:80;padding:20px}.modal{width:min(560px,94vw);background:#fff;border-radius:24px;border:1px solid var(--line);box-shadow:0 30px 80px rgba(35,18,14,.28);padding:22px}.modal h3{margin:0 0 8px;font-size:22px}.modal p{margin:0 0 14px;color:var(--muted);font-weight:800;line-height:1.7}.confirmRows{border:1px solid var(--line);border-radius:16px;overflow:hidden;margin:12px 0}.confirmRow{display:grid;grid-template-columns:120px 1fr;border-bottom:1px solid var(--line)}.confirmRow:last-child{border-bottom:0}.confirmRow span{padding:12px;font-size:13px}.confirmRow span:first-child{background:#fff8f4;color:var(--muted);font-weight:950}.confirmRow span:last-child{font-weight:950}.modalActions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+    @media(max-width:850px){.wrap{width:min(640px,94vw);margin-top:14px}.hero{padding:24px 22px}h1{font-size:30px}.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.filters{grid-template-columns:1fr}.bottomInner{padding:10px 0}.bottomText{font-size:11px}.bottomInner .btn{padding:10px 13px;font-size:12px}.confirmRow{grid-template-columns:96px 1fr}.modalActions{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <span class="badge">STEP ESTHE-5｜シンプルスタッフ画面 staff.html</span>
+      <h1>DPRO Esthe Relaxation</h1>
+      <p>スタッフが本日の担当予約・お客様メモ・進行状況を確認するための画面です。</p>
+      <div class="meta">
+        <span id="apiMeta">API接続：確認中</span>
+        <span>管理コード：1234</span>
+        <span id="todayMeta">本日：-</span>
+      </div>
+    </section>
+
+    <div class="toolbar">
+      <button id="refreshBtn">最新に更新</button>
+      <a class="btn btnSoft" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/admin.html">管理画面を開く</a>
+      <a class="btn btnSub" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/">予約画面を開く</a>
+      <button class="btnSub" id="copyTodayBtn">本日の担当メモをコピー</button>
+    </div>
+
+    <div id="message"></div>
+
+    <section class="stats">
+      <div class="stat"><b id="statTotal">0</b><span>本日の予約</span></div>
+      <div class="stat"><b id="statMine">0</b><span>表示中の担当</span></div>
+      <div class="stat"><b id="statProgress">0</b><span>来店・施術中</span></div>
+      <div class="stat"><b id="statDone">0</b><span>完了</span></div>
+    </section>
+
+    <div class="grid">
+      <main class="card">
+        <h2>本日のスタッフ確認</h2>
+        <p>スタッフを選ぶと、自分の担当予約だけに絞り込めます。ステータス変更は確認画面を出してから実行します。</p>
+
+        <div class="filters">
+          <div class="field">
+            <label>表示日</label>
+            <input type="date" id="dayDate">
+          </div>
+          <div class="field">
+            <label>ステータス</label>
+            <select id="statusFilter">
+              <option value="active">未完了のみ</option>
+              <option value="all">すべて</option>
+              <option value="reserved">予約済み</option>
+              <option value="checked_in">来店済み</option>
+              <option value="in_treatment">施術中</option>
+              <option value="waiting_payment">会計待ち</option>
+              <option value="completed">完了</option>
+              <option value="cancelled">キャンセル</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="staffTabs" id="staffTabs"></div>
+        <div id="selectedSummary" class="notice info">読み込み中です。</div>
+        <div class="list" id="reservationList"></div>
+      </main>
+
+      <aside>
+        <section class="card">
+          <h2>今日の流れ</h2>
+          <p>表示中スタッフの予約を時系列で軽く確認できます。</p>
+          <div class="sideList" id="timelineList"></div>
+        </section>
+        <section class="card" style="margin-top:18px">
+          <h2>確認URL</h2>
+          <p>コピペ確認用です。</p>
+          <div class="notice info">
+            <b>スタッフ画面</b><br>
+            https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/staff.html
+          </div>
+          <div class="notice info">
+            <b>API</b><br>
+            https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/health
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <div class="footer">
+      API： https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev<br>
+      この画面はシンプル版スタッフ用です。カルテ・回数券・再来店フォローの本格管理はSTEP以降のブラッシュアップ版で表示します。
+    </div>
+  </div>
+
+  <div class="bottomBar">
+    <div class="bottomInner">
+      <div class="bottomText" id="bottomText">本日の担当予約を読み込み中です。</div>
+      <button id="bottomRefresh" class="btn">最新に更新</button>
+    </div>
+  </div>
+
+  <div class="modalLayer" id="modalLayer">
+    <div class="modal">
+      <h3 id="modalTitle">確認</h3>
+      <p id="modalMessage">内容を確認してください。</p>
+      <div class="confirmRows" id="modalRows"></div>
+      <div class="modalActions">
+        <button class="btnSub" id="modalCancel">戻る</button>
+        <button id="modalOk">実行する</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+<script>
+(() => {
+  const VERSION = 'ESTHE-5-STAFF-SIMPLE-TODAY-20260710';
+  const API_BASE = 'https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev';
+  const SHOP_CODE = 'esthe_demo_default';
+  const ADMIN_KEY = '1234';
+  const $ = (id) => document.getElementById(id);
+  const state = { settings:null, staff:[], reservations:[], selectedStaff:'all', date:'', filter:'active' };
+
+  document.addEventListener('DOMContentLoaded', init);
+
+  function init(){
+    state.date = todayLocal();
+    $('dayDate').value = state.date;
+    $('todayMeta').textContent = `本日：${formatDateLong(new Date(state.date + 'T00:00:00'))}`;
+    $('refreshBtn').addEventListener('click', loadAll);
+    $('bottomRefresh').addEventListener('click', loadAll);
+    $('dayDate').addEventListener('change', () => { state.date = $('dayDate').value || todayLocal(); loadDay(); });
+    $('statusFilter').addEventListener('change', () => { state.filter = $('statusFilter').value; renderAll(); });
+    $('copyTodayBtn').addEventListener('click', copyTodayMemo);
+    $('modalCancel').addEventListener('click', closeConfirm);
+    $('modalLayer').addEventListener('click', (e)=>{ if(e.target === $('modalLayer')) closeConfirm(); });
+    loadAll();
+  }
+
+  async function api(path, opts={}){
+    const method = opts.method || 'GET';
+    const admin = opts.admin !== false && path.startsWith('/api/admin/');
+    const url = new URL(API_BASE + path);
+    if(!url.searchParams.has('shop_code')) url.searchParams.set('shop_code', SHOP_CODE);
+    if(admin && !url.searchParams.has('admin_key')) url.searchParams.set('admin_key', ADMIN_KEY);
+    const res = await fetch(url.toString(), {
+      method,
+      headers:{ 'Content-Type':'application/json', 'x-admin-secret': ADMIN_KEY },
+      body: opts.body ? JSON.stringify(opts.body) : undefined,
+    });
+    const text = await res.text();
+    let data = {};
+    try{ data = text ? JSON.parse(text) : {}; }catch(e){ data = { ok:false, message:text }; }
+    if(!res.ok || data.ok === false) throw new Error(data.message || data.error || `API error ${res.status}`);
+    return data;
+  }
+
+  async function loadAll(){
+    showMessage('読み込み中です。','info', false);
+    try{
+      await loadSettings();
+      await loadDay();
+      showMessage('最新情報に更新しました。','ok');
+    }catch(e){
+      console.error(e);
+      showMessage(e.message || '読み込みに失敗しました。','bad');
+    }
+  }
+
+  async function loadSettings(){
+    const data = await api('/api/admin/settings', { admin:true });
+    state.settings = data;
+    state.staff = data.staff || [];
+    $('apiMeta').textContent = data.ok ? 'API接続：OK' : 'API接続：確認が必要';
+    renderStaffTabs();
+  }
+
+  async function loadDay(){
+    state.date = $('dayDate').value || todayLocal();
+    const data = await api(`/api/admin/day?date=${encodeURIComponent(state.date)}`, { admin:true });
+    state.reservations = data.reservations || [];
+    renderAll();
+  }
+
+  function renderAll(){
+    renderStats();
+    renderReservations();
+    renderTimeline();
+    renderBottom();
+  }
+
+  function renderStaffTabs(){
+    const tabs = [{id:'all', name:'全員'}, {id:'none', name:'指名なし'}, ...state.staff.map(s=>({id:s.id, name:s.staff_name}))];
+    $('staffTabs').innerHTML = tabs.map(t=>`<button class="staffTab ${state.selectedStaff===t.id?'active':''}" data-staff="${escapeHtml(t.id)}">${escapeHtml(t.name)}</button>`).join('');
+    $('staffTabs').querySelectorAll('[data-staff]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        state.selectedStaff = btn.dataset.staff;
+        localStorage.setItem('esthe_staff_selected', state.selectedStaff);
+        renderStaffTabs();
+        renderAll();
+      });
+    });
+    const saved = localStorage.getItem('esthe_staff_selected');
+    if(saved && state.selectedStaff === 'all'){
+      const exists = tabs.some(t=>t.id===saved);
+      if(exists){ state.selectedStaff = saved; renderStaffTabs(); }
+    }
+  }
+
+  function filteredReservations(){
+    let rows = [...state.reservations];
+    if(state.selectedStaff === 'none') rows = rows.filter(r => !r.staff_id || r.staff_name === '指名なし');
+    else if(state.selectedStaff !== 'all') rows = rows.filter(r => String(r.staff_id || '') === String(state.selectedStaff));
+    const f = state.filter;
+    if(f === 'active') rows = rows.filter(r => !['completed','cancelled','no_show'].includes(r.status));
+    else if(f !== 'all') rows = rows.filter(r => r.status === f);
+    return rows.sort((a,b)=>new Date(a.start_at)-new Date(b.start_at));
+  }
+
+  function renderStats(){
+    const all = state.reservations || [];
+    const rows = filteredReservations();
+    $('statTotal').textContent = all.length;
+    $('statMine').textContent = rows.length;
+    $('statProgress').textContent = all.filter(r=>['checked_in','in_treatment','waiting_payment'].includes(r.status)).length;
+    $('statDone').textContent = all.filter(r=>r.status==='completed').length;
+    const staffName = selectedStaffName();
+    $('selectedSummary').innerHTML = `表示日：<b>${escapeHtml(formatDateLong(new Date(state.date + 'T00:00:00')))}</b>　表示：<b>${escapeHtml(staffName)}</b>　対象：<b>${rows.length}件</b>`;
+  }
+
+  function renderReservations(){
+    const rows = filteredReservations();
+    const box = $('reservationList');
+    if(!rows.length){
+      box.innerHTML = '<div class="empty">表示条件に合う予約はありません。</div>';
+      return;
+    }
+    box.innerHTML = rows.map(renderCard).join('');
+    bindCardActions(box);
+  }
+
+  function renderCard(r){
+    const d = parseApiDate(r.start_at);
+    const end = parseApiDate(r.end_at);
+    const st = statusInfo(r.status);
+    const detail = makeDetail(r);
+    const nowClass = isNearNow(d, end) ? ' now' : '';
+    const disabled = ['cancelled','no_show'].includes(r.status) ? 'disabled' : '';
+    return `
+      <div class="resCard${nowClass}" data-id="${escapeHtml(r.id)}" data-detail="${escapeHtml(JSON.stringify(detail))}">
+        <div class="resTop">
+          <div>
+            <div class="time">${escapeHtml(formatTime(d))} <span class="date">${escapeHtml(formatDateShort(d))}</span></div>
+            <div class="name">${escapeHtml(r.customer_name || '')}</div>
+            <div class="menu">${escapeHtml(r.menu_name || '')} / ${escapeHtml(r.staff_name || '指名なし')}</div>
+          </div>
+          <span class="pill ${escapeHtml(r.status || 'reserved')}">${escapeHtml(st.label)}</span>
+        </div>
+        <div class="note">
+          <b>電話：</b>${escapeHtml(r.customer_phone || '-')}<br>
+          <b>予約番号：</b>${escapeHtml(r.reservation_code || '-')}<br>
+          <b>ご要望：</b>${escapeHtml(r.request_note || '-')}
+        </div>
+        <div class="actionTitle">スタッフ操作</div>
+        <div class="actions">
+          <button class="btnSoft btnTiny" data-status="checked_in" ${disabled}>来店済みにする</button>
+          <button class="btnWarn btnTiny" data-status="in_treatment" ${disabled}>施術開始</button>
+          <button class="btnSoft btnTiny" data-status="waiting_payment" ${disabled}>会計待ち</button>
+          <button class="btnOk btnTiny" data-status="completed" ${disabled}>完了にする</button>
+          <button class="btnSub btnTiny" data-copy="true">確認文コピー</button>
+        </div>
+      </div>`;
+  }
+
+  function bindCardActions(root){
+    root.querySelectorAll('[data-status]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const card = btn.closest('.resCard');
+        const status = btn.dataset.status;
+        confirmStatus(card.dataset.id, status, card);
+      });
+    });
+    root.querySelectorAll('[data-copy]').forEach(btn=>{
+      btn.addEventListener('click', ()=>copyMessage(btn.closest('.resCard')));
+    });
+  }
+
+  function confirmStatus(id, status, card){
+    const detail = getCardDetail(card);
+    const label = statusInfo(status).label;
+    openConfirm({
+      title:`「${label}」に変更しますか？`,
+      message:'押し間違い防止のため、内容を確認してから反映します。',
+      rows:[
+        ['お客様', detail.customer_name || '-'],
+        ['日時', `${detail.date || '-'} ${detail.time || ''}`],
+        ['メニュー', detail.menu_name || '-'],
+        ['スタッフ', detail.staff_name || '指名なし'],
+        ['変更後', label]
+      ],
+      okLabel:`${label}に変更する`,
+      onOk: async()=> updateStatus(id, status, label)
+    });
+  }
+
+  async function updateStatus(id, status, label){
+    try{
+      await api('/api/admin/reservations/status', { admin:true, method:'PATCH', body:{ reservation_id:id, status, reason:'スタッフ画面で変更' } });
+      showMessage(`ステータスを「${label}」に変更しました。`,'ok');
+      await loadDay();
+    }catch(e){ showMessage(e.message || 'ステータス変更に失敗しました。','bad'); }
+  }
+
+  function renderTimeline(){
+    const rows = filteredReservations();
+    const box = $('timelineList');
+    if(!rows.length){ box.innerHTML = '<div class="empty">表示中の予約はありません。</div>'; return; }
+    box.innerHTML = rows.map(r=>{
+      const d = parseApiDate(r.start_at); const st = statusInfo(r.status);
+      return `<div class="todo"><b>${escapeHtml(formatTime(d))} ${escapeHtml(r.customer_name || '')}</b><span>${escapeHtml(r.menu_name || '')} / ${escapeHtml(st.label)}</span></div>`;
+    }).join('');
+  }
+
+  function renderBottom(){
+    const rows = filteredReservations();
+    const next = rows.find(r=>!['completed','cancelled','no_show'].includes(r.status));
+    if(!next){ $('bottomText').textContent = `${selectedStaffName()}：未完了の予約はありません。`; return; }
+    const d = parseApiDate(next.start_at);
+    $('bottomText').textContent = `${selectedStaffName()}：次は ${formatTime(d)} ${next.customer_name || ''} / ${next.menu_name || ''}`;
+  }
+
+  function copyMessage(card){
+    const d = getCardDetail(card);
+    const msg = `${d.customer_name}様\n\n本日のご予約確認です。\n日時：${d.date} ${d.time}\nメニュー：${d.menu_name}\n担当：${d.staff_name || '指名なし'}\n\nお気をつけてお越しください。`;
+    navigator.clipboard.writeText(msg).then(()=>showMessage('予約確認文をコピーしました。','ok')).catch(()=>showMessage('コピーに失敗しました。','bad'));
+  }
+
+  function copyTodayMemo(){
+    const rows = filteredReservations();
+    if(!rows.length){ showMessage('コピーする予約がありません。','bad'); return; }
+    const lines = rows.map(r=>{
+      const d = parseApiDate(r.start_at);
+      return `${formatTime(d)} ${r.customer_name || ''}｜${r.menu_name || ''}｜${r.staff_name || '指名なし'}｜${statusInfo(r.status).label}`;
+    });
+    const text = `本日の担当予約 ${formatDateLong(new Date(state.date + 'T00:00:00'))}\n表示：${selectedStaffName()}\n\n${lines.join('\n')}`;
+    navigator.clipboard.writeText(text).then(()=>showMessage('本日の担当メモをコピーしました。','ok')).catch(()=>showMessage('コピーに失敗しました。','bad'));
+  }
+
+  function openConfirm({title,message,rows,okLabel,onOk}){
+    $('modalTitle').textContent = title;
+    $('modalMessage').textContent = message;
+    $('modalRows').innerHTML = rows.map(([k,v])=>`<div class="confirmRow"><span>${escapeHtml(k)}</span><span>${escapeHtml(v)}</span></div>`).join('');
+    $('modalOk').textContent = okLabel || '実行する';
+    $('modalOk').onclick = async()=>{ closeConfirm(); await onOk(); };
+    $('modalLayer').style.display = 'flex';
+  }
+  function closeConfirm(){ $('modalLayer').style.display = 'none'; }
+
+  function showMessage(text, type='ok', auto=true){
+    const cls = type==='bad' ? 'bad' : type==='info' ? 'info' : 'ok';
+    $('message').innerHTML = `<div class="notice ${cls}">${escapeHtml(text)}</div>`;
+    showToast(text, cls);
+    if(auto && cls !== 'bad') setTimeout(()=>{ if($('message').innerText === text) $('message').innerHTML=''; }, 4200);
+  }
+  function showToast(text,type='ok'){
+    const t = $('toast');
+    t.textContent = text; t.className = `toast ${type}`;
+    clearTimeout(showToast.timer); showToast.timer = setTimeout(()=>t.classList.add('hidden'), 3200);
+  }
+
+  function selectedStaffName(){
+    if(state.selectedStaff === 'all') return '全員';
+    if(state.selectedStaff === 'none') return '指名なし';
+    const s = state.staff.find(x=>String(x.id)===String(state.selectedStaff));
+    return s ? s.staff_name : 'スタッフ';
+  }
+  function makeDetail(r){
+    const d = parseApiDate(r.start_at);
+    return { customer_name:r.customer_name||'', customer_phone:r.customer_phone||'', menu_name:r.menu_name||'', staff_name:r.staff_name||'指名なし', date:formatDateLong(d), time:formatTime(d), status_label:statusInfo(r.status).label };
+  }
+  function getCardDetail(card){ try{return JSON.parse(card.dataset.detail || '{}')}catch(e){return {}} }
+  function statusInfo(s){
+    return ({reserved:{label:'予約済み'}, checked_in:{label:'来店済み'}, in_treatment:{label:'施術中'}, waiting_payment:{label:'会計待ち'}, completed:{label:'完了'}, cancelled:{label:'キャンセル'}, no_show:{label:'無断キャンセル'}})[s] || {label:s || '予約済み'};
+  }
+  function isNearNow(start,end){ const now = new Date(); return now >= new Date(start.getTime()-30*60000) && now <= new Date(end.getTime()+15*60000); }
+  function todayLocal(){ const d = new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
+  function parseApiDate(v){ return new Date(v); }
+  function formatTime(d){ return d.toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit',hour12:false}); }
+  function formatDateShort(d){ return d.toLocaleDateString('ja-JP',{month:'numeric',day:'numeric',weekday:'short'}); }
+  function formatDateLong(d){ return d.toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'short'}); }
+  function escapeHtml(v){ return String(v ?? '').replace(/[&<>'"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+})();
+</script>
+</body>
+</html>
