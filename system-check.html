@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>DPRO Esthe Relaxation｜system-check｜STEP ESTHE-13</title>
+  <title>DPRO Esthe Relaxation｜system-check｜STEP ESTHE-14</title>
   <style>
     :root {
       --bg: #fffaf7;
@@ -678,14 +678,14 @@
 <body>
   <main class="wrap">
     <section class="hero">
-      <div class="badge">STEP ESTHE-13｜最新採用ファイル・店舗設定反映チェック system-check.html</div>
+      <div class="badge">STEP ESTHE-14｜最終ブラッシュアップ確認 system-check.html</div>
       <h1>DPRO Esthe Relaxation</h1>
-      <p>エステ・リラクゼーションLINEの営業前確認画面です。API・DB・最新採用ファイル・店舗設定反映・営業前デモ準備をまとめて確認できます。</p>
+      <p>エステ・リラクゼーションLINEの最終確認画面です。API・DB・最新採用ファイル・店舗設定反映・営業前デモ準備をまとめて確認できます。</p>
       <div class="hero-meta">
         <span>API接続：<span id="heroApi">確認中</span></span>
         <span>管理コード：1234</span>
         <span>本日：<span id="heroToday">-</span></span>
-        <span>Worker：dpro-esthe-relax-line-api</span><span>採用：STEP ESTHE-13</span>
+        <span>Worker：dpro-esthe-relax-line-api</span><span>採用：STEP ESTHE-14</span>
       </div>
     </section>
 
@@ -795,7 +795,11 @@
 
         <div class="panel">
           <h2>最新採用ファイル</h2>
-          <p class="sub">GitHub Pages上の各HTMLが、最新STEPのファイルに置き換わっているか確認します。</p>
+          <p class="sub">GitHub Pages上の各HTMLと、Workerの最新バージョンが採用されているか確認します。</p>
+          <div class="worker-version-card" id="workerVersionCard">
+            <b>Worker</b>
+            <span>確認中です。</span>
+          </div>
           <div class="adopt-list" id="adoptList">
             <div class="reflect-card">確認中です。</div>
           </div>
@@ -916,8 +920,8 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    const STEP = "STEP ESTHE-13";
-    const VERSION = "ESTHE-13-SYSTEM-CHECK-LATEST-FILES-SETTINGS-REFLECT-20260710";
+    const STEP = "STEP ESTHE-14";
+    const VERSION = "ESTHE-14-FINAL-POLISH-SYSTEM-CHECK-20260710";
     const API_BASE = "https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev";
     const ADMIN_KEY = "1234";
     const FRONT_BASE = "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff";
@@ -929,13 +933,15 @@
       adminSettings: `${API_BASE}/api/admin/settings?admin_key=${encodeURIComponent(ADMIN_KEY)}`,
     };
 
+    const EXPECTED_WORKER_VERSION = "ESTHE-14-FINAL-POLISH-SYSTEM-STATUS-20260710";
+
     const ADOPTED_FILES = [
       { label: "ブラッシュアップ予約", file: "index-brush.html", expect: "STEP ESTHE-12C" },
       { label: "シンプル予約", file: "index.html", expect: "STEP ESTHE-12C" },
       { label: "お客様マイページ", file: "member.html", expect: "STEP ESTHE-12C" },
       { label: "スタッフ画面", file: "staff.html", expect: "STEP ESTHE-12C" },
       { label: "PC本格管理画面", file: "owner.html", expect: "STEP ESTHE-12B-R1" },
-      { label: "営業前確認画面", file: "system-check.html", expect: "STEP ESTHE-13" },
+      { label: "営業前確認画面", file: "system-check.html", expect: "STEP ESTHE-14" },
     ];
 
     const CHECK_LABELS = [
@@ -1098,6 +1104,19 @@
       `).join("");
     }
 
+    function renderWorkerVersion(health, system) {
+      const version = health?.version || system?.version || "-";
+      const ok = version === EXPECTED_WORKER_VERSION;
+      $("workerVersionCard").innerHTML = `
+        <b>Worker</b>
+        <span>期待：${escapeHtml(EXPECTED_WORKER_VERSION)}</span>
+        <code>${escapeHtml(version)}</code>
+        <div style="margin-top:8px">
+          <span class="${ok ? "adopt-ok" : "adopt-warn"}">${ok ? "OK" : "Worker STEP14反映待ち"}</span>
+        </div>
+      `;
+    }
+
     async function renderFileAdoption() {
       renderAdoptionChecking();
       const rows = await Promise.all(ADOPTED_FILES.map(async (item) => {
@@ -1172,6 +1191,7 @@
         renderChecks(system);
         renderCounts(system);
         renderStatus(system, health);
+        renderWorkerVersion(health, system);
         await Promise.allSettled([
           renderFileAdoption(),
           renderSettingsReflection(),
