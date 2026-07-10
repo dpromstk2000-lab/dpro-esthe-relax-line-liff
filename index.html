@@ -668,11 +668,12 @@
 <body>
   <div class="page">
     <header class="hero">
-      <div class="version">STEP ESTHE-7｜シンプル予約版ブラッシュアップ index.html</div>
+      <div class="version">STEP ESTHE-12C｜店舗設定反映確認版 index.html</div>
       <h1 id="shopTitle">DPRO エステリラクゼーション</h1>
       <p id="shopLead">LINEからかんたん予約。メニュー・日時・お名前を入力するだけで予約できます。</p>
       <div class="shop-mini">
         <span id="shopPhone">☎ 読み込み中</span>
+        <span id="shopAddress">住所：確認中</span>
         <span id="bookingRange">予約受付期間：確認中</span>
         <span id="apiStatus">API接続：確認中</span>
       </div>
@@ -943,6 +944,7 @@
       el('shopTitle').textContent = title;
       el('shopLead').textContent = shop.description || 'LINEからかんたん予約。メニュー・日時・お名前を入力するだけで予約できます。';
       el('shopPhone').textContent = shop.phone ? '☎ ' + shop.phone : '☎ 電話番号未設定';
+      el('shopAddress').textContent = shop.address ? '住所：' + shop.address : '住所：未設定';
 
       if (data.booking_range) {
         el('bookingRange').textContent = `予約受付期間：${formatDateShort(data.booking_range.from)}〜${formatDateShort(data.booking_range.to)}`;
