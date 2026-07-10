@@ -143,6 +143,17 @@
     .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
     .toast{position:fixed;right:18px;bottom:86px;z-index:120;background:#2d211f;color:#fff;border-radius:16px;padding:13px 16px;display:none;font-weight:950;box-shadow:0 18px 44px rgba(0,0,0,.22);max-width:420px}
     .toast.show{display:block}
+    .setting-block{border:1px solid var(--line);border-radius:20px;background:#fff;padding:16px;margin-bottom:14px}
+    .setting-block h3{margin:0 0 12px;font-size:18px;letter-spacing:-.03em}
+    .setting-row{display:grid;grid-template-columns:1.1fr 1fr 1fr .8fr .7fr;gap:10px;align-items:end;border:1px solid var(--line);border-radius:16px;padding:12px;margin:10px 0;background:#fffaf7}
+    .setting-row.menu{grid-template-columns:1fr 1.2fr .7fr .7fr .7fr .6fr}
+    .setting-row.staff{grid-template-columns:1fr 1.2fr .8fr .7fr .6fr}
+    .setting-row.room{grid-template-columns:1fr 1.2fr 1fr .7fr .6fr}
+    .setting-row.hours{grid-template-columns:.7fr .7fr .8fr .8fr 1fr}
+    .checkline{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:950;color:var(--main)}
+    .checkline input{width:auto}
+    .settings-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .muted-line{font-size:12px;color:var(--muted);font-weight:800;line-height:1.7}
     @media(max-width:1060px){
       .grid,.grid-wide{grid-template-columns:1fr}
       .cards{grid-template-columns:repeat(2,1fr)}
@@ -163,7 +174,7 @@
 <body>
   <main class="wrap">
     <section class="hero">
-      <div class="badge">STEP ESTHE-11-R2｜文面テンプレート表示改善版 owner.html</div>
+      <div class="badge">STEP ESTHE-12B｜店舗設定編集保存版 owner.html</div>
       <h1>DPRO Esthe Relaxation</h1>
       <p>本日の予約、予約一覧、顧客カルテ、回数券、未対応フォロー、文面テンプレートをまとめて確認できるPC用の本格管理画面です。</p>
       <div class="hero-meta">
@@ -360,14 +371,14 @@
       </div>
     </section>
 
-    <section id="tabSettings" class="hidden">
+        <section id="tabSettings" class="hidden">
       <div class="panel">
         <div class="section-title">
           <div>
-            <h2>店舗設定確認</h2>
-            <p class="sub">店舗情報・営業時間・メニュー・スタッフ・ルームを確認します。編集画面は後続STEPで強化します。</p>
+            <h2>店舗設定</h2>
+            <p class="sub">店舗情報・予約受付・営業時間・メニュー・スタッフ・ルームを編集して保存できます。保存後、予約画面やスタッフ画面に反映されます。</p>
           </div>
-          <span class="pill">設定</span>
+          <span class="pill ok">編集・保存</span>
         </div>
         <div id="settingsBox" class="list"></div>
       </div>
@@ -396,7 +407,7 @@
   <div class="toast" id="toast"></div>
 
 <script>
-const VERSION = "ESTHE-11-R2-TEMPLATE-DISPLAY-CLEANUP-20260710";
+const VERSION = "ESTHE-12B-OWNER-SETTINGS-EDIT-SAVE-20260710";
 const API_BASE = "https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev";
 const SHOP_CODE = "esthe_demo_default";
 const ADMIN_KEY = "1234";
@@ -995,17 +1006,291 @@ async function loadSettings(){
   try{
     const data = await api(`/api/admin/settings`);
     state.settings = data;
-    const shop = data.shop || {};
-    $("settingsBox").innerHTML = `
-      <div class="mini-card"><b>店舗</b><div class="card-meta">${escapeHtml(shop.display_name || shop.shop_name || "-")} / ${escapeHtml(shop.phone || "-")}</div></div>
-      <div class="mini-card"><b>予約受付</b><div class="card-meta">受付期間：${escapeHtml(data.booking_range?.from || "-")}〜${escapeHtml(data.booking_range?.to || "-")} / ${shop.default_booking_days_ahead || "-"}日先まで</div></div>
-      <div class="mini-card"><b>メニュー</b><div class="card-meta">${(data.menus || []).map(m => escapeHtml(m.menu_name)).join(" / ") || "-"}</div></div>
-      <div class="mini-card"><b>スタッフ</b><div class="card-meta">${(data.staff || []).map(s => escapeHtml(s.staff_name)).join(" / ") || "-"}</div></div>
-      <div class="mini-card"><b>ルーム</b><div class="card-meta">${(data.rooms || []).map(r => escapeHtml(r.room_name)).join(" / ") || "-"}</div></div>
-    `;
-    setMessage("ok", "店舗設定を表示しました。");
+    renderSettingsEditor();
+    setMessage("ok", "店舗設定を編集できます。");
   }catch(e){
     setMessage("ng", "店舗設定取得に失敗しました：" + e.message);
+  }
+}
+
+function boolAttr(v){ return v ? "checked" : ""; }
+
+function valueAttr(v){
+  return escapeHtml(v ?? "");
+}
+
+function dayNameByNumber(n){
+  return ["日","月","火","水","木","金","土"][Number(n)] || "-";
+}
+
+function safeTime(v, fallback){
+  return String(v || fallback || "").slice(0,5);
+}
+
+function menuRowHtml(m = {}, i = 0){
+  const code = m.menu_code || `menu_new_${Date.now()}_${i}`;
+  return `
+    <div class="setting-row menu" data-setting-menu-row>
+      <div class="field"><label>メニューコード</label><input data-menu-code value="${valueAttr(code)}" placeholder="menu_code"></div>
+      <div class="field"><label>メニュー名</label><input data-menu-name value="${valueAttr(m.menu_name || "")}" placeholder="例：アロマボディ 60分"></div>
+      <div class="field"><label>料金</label><input data-menu-price type="number" min="0" value="${valueAttr(m.price_yen ?? 0)}"></div>
+      <div class="field"><label>時間</label><input data-menu-duration type="number" min="10" value="${valueAttr(m.duration_minutes ?? 60)}"></div>
+      <div class="field"><label>並び順</label><input data-menu-order type="number" min="0" value="${valueAttr(m.display_order ?? (i+1)*10)}"></div>
+      <label class="checkline"><input data-menu-active type="checkbox" ${boolAttr(m.is_active !== false)}>表示</label>
+    </div>
+  `;
+}
+
+function staffRowHtml(st = {}, i = 0){
+  const code = st.staff_code || `staff_new_${Date.now()}_${i}`;
+  return `
+    <div class="setting-row staff" data-setting-staff-row>
+      <div class="field"><label>スタッフコード</label><input data-staff-code value="${valueAttr(code)}" placeholder="staff_code"></div>
+      <div class="field"><label>スタッフ名</label><input data-staff-name value="${valueAttr(st.staff_name || "")}" placeholder="例：美奈"></div>
+      <div class="field"><label>役割</label>
+        <select data-staff-role>
+          ${["therapist","owner","manager","reception","other"].map(r => `<option value="${r}" ${String(st.role || "therapist") === r ? "selected" : ""}>${roleLabel(r)}</option>`).join("")}
+        </select>
+      </div>
+      <label class="checkline"><input data-staff-selectable type="checkbox" ${boolAttr(st.can_be_selected !== false)}>指名可</label>
+      <label class="checkline"><input data-staff-active type="checkbox" ${boolAttr(st.is_active !== false)}>表示</label>
+    </div>
+  `;
+}
+
+function roomRowHtml(r = {}, i = 0){
+  const code = r.room_code || `room_new_${Date.now()}_${i}`;
+  return `
+    <div class="setting-row room" data-setting-room-row>
+      <div class="field"><label>ルームコード</label><input data-room-code value="${valueAttr(code)}" placeholder="room_code"></div>
+      <div class="field"><label>ルーム名</label><input data-room-name value="${valueAttr(r.room_name || "")}" placeholder="例：個室ベッド1"></div>
+      <div class="field"><label>タイプ</label>
+        <select data-room-type>
+          ${["bed","private_room","facial_room","headspa_seat","other"].map(x => `<option value="${x}" ${String(r.room_type || "bed") === x ? "selected" : ""}>${roomTypeLabel(x)}</option>`).join("")}
+        </select>
+      </div>
+      <div class="field"><label>並び順</label><input data-room-order type="number" min="0" value="${valueAttr(r.display_order ?? (i+1)*10)}"></div>
+      <label class="checkline"><input data-room-active type="checkbox" ${boolAttr(r.is_active !== false)}>使用</label>
+    </div>
+  `;
+}
+
+function hourRowHtml(h = {}, i = 0){
+  const day = h.day_of_week ?? i;
+  return `
+    <div class="setting-row hours" data-setting-hours-row>
+      <input type="hidden" data-hour-day value="${valueAttr(day)}">
+      <div><label>曜日</label><div class="pill">${dayNameByNumber(day)}曜日</div></div>
+      <label class="checkline"><input data-hour-open type="checkbox" ${boolAttr(h.is_open !== false)}>営業</label>
+      <div class="field"><label>開店</label><input data-hour-open-time type="time" value="${valueAttr(safeTime(h.open_time, "10:00"))}"></div>
+      <div class="field"><label>閉店</label><input data-hour-close-time type="time" value="${valueAttr(safeTime(h.close_time, "19:00"))}"></div>
+      <div class="field"><label>メモ</label><input data-hour-note value="${valueAttr(h.note || "")}" placeholder="例：最終受付18:00"></div>
+    </div>
+  `;
+}
+
+function roleLabel(v){
+  return ({therapist:"セラピスト", owner:"オーナー", manager:"店長", reception:"受付", other:"その他"})[v] || v;
+}
+
+function roomTypeLabel(v){
+  return ({bed:"ベッド", private_room:"個室", facial_room:"フェイシャル室", headspa_seat:"ヘッドスパ席", other:"その他"})[v] || v;
+}
+
+function renderSettingsEditor(){
+  const data = state.settings || {};
+  const shop = data.shop || {};
+  const hours = Array.isArray(data.business_hours) && data.business_hours.length
+    ? data.business_hours
+    : Array.from({length:7}, (_,i)=>({day_of_week:i,is_open:i !== 1,open_time:"10:00",close_time:"19:00"}));
+
+  $("settingsBox").innerHTML = `
+    <div class="setting-block">
+      <h3>店舗基本情報</h3>
+      <div class="form-grid">
+        <div class="field"><label>店舗名</label><input id="setShopName" value="${valueAttr(shop.shop_name || "")}" placeholder="例：DPRO Esthe Relaxation"></div>
+        <div class="field"><label>表示名</label><input id="setDisplayName" value="${valueAttr(shop.display_name || shop.shop_name || "")}" placeholder="例：DPRO Esthe Relaxation"></div>
+        <div class="field"><label>電話番号</label><input id="setPhone" value="${valueAttr(shop.phone || "")}" placeholder="例：090-0000-0000"></div>
+        <div class="field"><label>住所</label><input id="setAddress" value="${valueAttr(shop.address || "")}" placeholder="例：大分県..."></div>
+      </div>
+      <div class="field"><label>店舗説明</label><textarea id="setDescription" placeholder="予約画面に表示する説明">${escapeHtml(shop.description || "")}</textarea></div>
+      <div class="field"><label>予約完了メッセージ</label><textarea id="setCompletionMessage" placeholder="予約完了画面に表示する文面">${escapeHtml(shop.completion_message || "")}</textarea></div>
+    </div>
+
+    <div class="setting-block">
+      <h3>予約受付設定</h3>
+      <div class="form-grid">
+        <div class="field"><label>何日先まで予約可能</label><input id="setBookingDays" type="number" min="1" max="365" value="${valueAttr(shop.default_booking_days_ahead ?? 60)}"></div>
+        <div class="field"><label>予約締切 何時間前</label><input id="setBookingDeadline" type="number" min="0" max="168" value="${valueAttr(shop.booking_deadline_hours ?? 3)}"></div>
+        <div class="field"><label>キャンセル締切 何時間前</label><input id="setCancelDeadline" type="number" min="0" max="720" value="${valueAttr(shop.cancel_deadline_hours ?? 6)}"></div>
+        <div class="field"><label>予約枠間隔</label>
+          <select id="setSlotInterval">
+            ${[10,15,20,30,45,60].map(n => `<option value="${n}" ${Number(shop.slot_interval_minutes || 30) === n ? "selected" : ""}>${n}分</option>`).join("")}
+          </select>
+        </div>
+        <div class="field"><label>1日の予約上限</label><input id="setMaxDaily" type="number" min="1" max="200" value="${valueAttr(shop.max_daily_reservations ?? 12)}"></div>
+        <div class="field"><label>ルーム数</label><input id="setRoomsCount" type="number" min="1" max="50" value="${valueAttr(shop.rooms_count ?? 2)}"></div>
+      </div>
+      <label class="checkline"><input id="setSameDay" type="checkbox" ${boolAttr(shop.same_day_booking === true)}> 当日予約を許可する</label>
+    </div>
+
+    <div class="setting-block">
+      <div class="section-title">
+        <h3>曜日別営業時間</h3>
+        <span class="pill">定休日もここで設定</span>
+      </div>
+      <div id="settingsHoursRows">
+        ${hours.map((h,i)=>hourRowHtml(h,i)).join("")}
+      </div>
+    </div>
+
+    <div class="setting-block">
+      <div class="section-title">
+        <h3>メニュー</h3>
+        <button class="mini primary" id="addMenuBtn" type="button">メニュー追加</button>
+      </div>
+      <div class="muted-line">メニュー名・料金・施術時間・表示/非表示を編集できます。</div>
+      <div id="settingsMenuRows">
+        ${(data.menus || []).map((m,i)=>menuRowHtml(m,i)).join("") || menuRowHtml({},0)}
+      </div>
+    </div>
+
+    <div class="setting-block">
+      <div class="section-title">
+        <h3>スタッフ</h3>
+        <button class="mini primary" id="addStaffBtn" type="button">スタッフ追加</button>
+      </div>
+      <div id="settingsStaffRows">
+        ${(data.staff || []).map((st,i)=>staffRowHtml(st,i)).join("") || staffRowHtml({},0)}
+      </div>
+    </div>
+
+    <div class="setting-block">
+      <div class="section-title">
+        <h3>ルーム・ベッド</h3>
+        <button class="mini primary" id="addRoomBtn" type="button">ルーム追加</button>
+      </div>
+      <div id="settingsRoomRows">
+        ${(data.rooms || []).map((r,i)=>roomRowHtml(r,i)).join("") || roomRowHtml({},0)}
+      </div>
+    </div>
+
+    <div class="settings-actions">
+      <button class="btn primary" id="saveSettingsBtn" type="button">店舗設定を保存</button>
+      <button class="btn" id="reloadSettingsBtn" type="button">設定を再読み込み</button>
+    </div>
+  `;
+
+  $("addMenuBtn").addEventListener("click", () => {
+    $("settingsMenuRows").insertAdjacentHTML("beforeend", menuRowHtml({}, document.querySelectorAll("[data-setting-menu-row]").length));
+  });
+  $("addStaffBtn").addEventListener("click", () => {
+    $("settingsStaffRows").insertAdjacentHTML("beforeend", staffRowHtml({}, document.querySelectorAll("[data-setting-staff-row]").length));
+  });
+  $("addRoomBtn").addEventListener("click", () => {
+    $("settingsRoomRows").insertAdjacentHTML("beforeend", roomRowHtml({}, document.querySelectorAll("[data-setting-room-row]").length));
+  });
+  $("saveSettingsBtn").addEventListener("click", confirmSaveSettings);
+  $("reloadSettingsBtn").addEventListener("click", loadSettings);
+}
+
+function intValue(id, fallback){
+  const n = Number($(id)?.value);
+  return Number.isFinite(n) ? Math.round(n) : fallback;
+}
+
+function collectSettingsPayload(){
+  const menus = Array.from(document.querySelectorAll("[data-setting-menu-row]")).map((row, i) => ({
+    menu_code: row.querySelector("[data-menu-code]")?.value.trim(),
+    menu_name: row.querySelector("[data-menu-name]")?.value.trim(),
+    price_yen: Number(row.querySelector("[data-menu-price]")?.value || 0),
+    duration_minutes: Number(row.querySelector("[data-menu-duration]")?.value || 60),
+    display_order: Number(row.querySelector("[data-menu-order]")?.value || (i+1)*10),
+    is_active: row.querySelector("[data-menu-active]")?.checked === true,
+    category: "body",
+    is_ticket_target: true
+  })).filter(m => m.menu_code || m.menu_name);
+
+  const staff = Array.from(document.querySelectorAll("[data-setting-staff-row]")).map((row, i) => ({
+    staff_code: row.querySelector("[data-staff-code]")?.value.trim(),
+    staff_name: row.querySelector("[data-staff-name]")?.value.trim(),
+    role: row.querySelector("[data-staff-role]")?.value || "therapist",
+    can_be_selected: row.querySelector("[data-staff-selectable]")?.checked === true,
+    is_active: row.querySelector("[data-staff-active]")?.checked === true,
+    display_order: (i+1)*10
+  })).filter(s => s.staff_code || s.staff_name);
+
+  const rooms = Array.from(document.querySelectorAll("[data-setting-room-row]")).map((row, i) => ({
+    room_code: row.querySelector("[data-room-code]")?.value.trim(),
+    room_name: row.querySelector("[data-room-name]")?.value.trim(),
+    room_type: row.querySelector("[data-room-type]")?.value || "bed",
+    display_order: Number(row.querySelector("[data-room-order]")?.value || (i+1)*10),
+    is_active: row.querySelector("[data-room-active]")?.checked === true
+  })).filter(r => r.room_code || r.room_name);
+
+  const business_hours = Array.from(document.querySelectorAll("[data-setting-hours-row]")).map(row => ({
+    day_of_week: Number(row.querySelector("[data-hour-day]")?.value),
+    is_open: row.querySelector("[data-hour-open]")?.checked === true,
+    open_time: row.querySelector("[data-hour-open-time]")?.value || "10:00",
+    close_time: row.querySelector("[data-hour-close-time]")?.value || "19:00",
+    note: row.querySelector("[data-hour-note]")?.value.trim() || ""
+  }));
+
+  return {
+    shop_code: SHOP_CODE,
+    shop: {
+      shop_name: $("setShopName").value.trim(),
+      display_name: $("setDisplayName").value.trim(),
+      phone: $("setPhone").value.trim(),
+      address: $("setAddress").value.trim(),
+      description: $("setDescription").value.trim(),
+      completion_message: $("setCompletionMessage").value.trim(),
+      default_booking_days_ahead: intValue("setBookingDays", 60),
+      booking_deadline_hours: intValue("setBookingDeadline", 3),
+      cancel_deadline_hours: intValue("setCancelDeadline", 6),
+      slot_interval_minutes: Number($("setSlotInterval").value || 30),
+      max_daily_reservations: intValue("setMaxDaily", 12),
+      rooms_count: intValue("setRoomsCount", 2),
+      same_day_booking: $("setSameDay").checked === true
+    },
+    business_hours,
+    menus,
+    staff,
+    rooms
+  };
+}
+
+function confirmSaveSettings(){
+  const payload = collectSettingsPayload();
+  const closed = payload.business_hours.filter(h => !h.is_open).map(h => `${dayNameByNumber(h.day_of_week)}曜`).join("、") || "なし";
+  openModal(
+    "店舗設定を保存しますか？",
+    "保存すると予約画面・ブラッシュアップ予約画面・スタッフ画面に反映されます。",
+    `<div class="summary-row">
+      <div>店舗名</div><div>${escapeHtml(payload.shop.display_name || payload.shop.shop_name || "-")}</div>
+      <div>電話番号</div><div>${escapeHtml(payload.shop.phone || "-")}</div>
+      <div>予約受付</div><div>${escapeHtml(payload.shop.default_booking_days_ahead)}日先まで / ${escapeHtml(payload.shop.booking_deadline_hours)}時間前締切</div>
+      <div>定休日</div><div>${escapeHtml(closed)}</div>
+      <div>メニュー</div><div>${payload.menus.length}件</div>
+      <div>スタッフ</div><div>${payload.staff.length}件</div>
+      <div>ルーム</div><div>${payload.rooms.length}件</div>
+    </div>`,
+    "この内容で保存",
+    async () => saveSettings(payload)
+  );
+}
+
+async function saveSettings(payload){
+  closeModal();
+  setMessage("warn", "店舗設定を保存中です。");
+  try{
+    const data = await api(`/api/admin/settings/save`, {method:"POST", body:payload});
+    state.settings = data.settings || state.settings;
+    showToast("店舗設定を保存しました。");
+    setMessage("ok", "店舗設定を保存しました。予約画面にも反映されます。");
+    await loadSettings();
+  }catch(e){
+    setMessage("ng", "店舗設定の保存に失敗しました：" + e.message);
   }
 }
 
