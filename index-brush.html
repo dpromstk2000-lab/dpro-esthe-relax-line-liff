@@ -283,6 +283,7 @@
     .day-btn small{display:block;color:var(--muted);font-weight:800;margin-top:3px}
     .day-btn.on{background:var(--main);color:#fff;border-color:var(--main)}
     .day-btn.on small{color:#fff}
+    .day-btn.off{opacity:.45;background:#f7efeb;cursor:not-allowed;color:var(--muted)}
     .slot-grid{
       display:grid;
       grid-template-columns:repeat(4,1fr);
@@ -435,7 +436,7 @@
 <body>
   <main class="wrap">
     <section class="hero">
-      <div class="badge">STEP ESTHE-9-R2｜日時表示同期修正版 index-brush.html</div>
+      <div class="badge">STEP ESTHE-9-R3｜過去日・過去時間防止版 index-brush.html</div>
       <h1>DPRO Esthe Relaxation</h1>
       <p>初回カウンセリング・回数券状況・次回予約導線までつながる、エステ・リラクゼーション向けのブラッシュアップ版予約画面です。</p>
       <div class="hero-meta">
@@ -726,7 +727,7 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    const VERSION = "ESTHE-9-R2-DATE-BOTTOM-SYNC-FIX-20260710";
+    const VERSION = "ESTHE-9-R3-NO-PAST-DATE-TIME-20260710";
     const API_BASE = "https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev";
     const SHOP_CODE = "esthe_demo_default";
 
@@ -786,6 +787,46 @@
       if(!dateStr) return "-";
       const [,m,d] = dateStr.split("-").map(Number);
       return `${m}/${d}`;
+    }
+
+    function compareDate(a, b){
+      return String(a || "").localeCompare(String(b || ""));
+    }
+
+    function maxDate(a, b){
+      if(!a) return b;
+      if(!b) return a;
+      return compareDate(a, b) >= 0 ? a : b;
+    }
+
+    function minSelectableDate(){
+      const today = jstDate();
+      const from = state.settings?.booking_range?.from || today;
+      return maxDate(today, from);
+    }
+
+    function isPastDate(dateStr){
+      return compareDate(dateStr, minSelectableDate()) < 0;
+    }
+
+    function nowMinutesJst(){
+      const parts = new Intl.DateTimeFormat("ja-JP", {
+        timeZone: "Asia/Tokyo",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+      }).formatToParts(new Date()).reduce((a,p)=>{a[p.type]=p.value;return a;},{});
+      return Number(parts.hour || 0) * 60 + Number(parts.minute || 0);
+    }
+
+    function timeToMinutes(timeStr){
+      const [h,m] = String(timeStr || "0:0").split(":").map(Number);
+      return (Number(h) || 0) * 60 + (Number(m) || 0);
+    }
+
+    function isPastSlot(dateStr, timeStr){
+      if(compareDate(dateStr, jstDate()) !== 0) return false;
+      return timeToMinutes(timeStr) <= nowMinutesJst();
     }
 
     function isoDateText(iso){
@@ -862,6 +903,10 @@
       }
       if(state.step === 3){
         if(!state.selectedDate || !state.selectedTime){ setMessage("ng","日時を選択してください。"); return false; }
+        if(isPastDate(state.selectedDate) || isPastSlot(state.selectedDate, state.selectedTime)){
+          setMessage("ng","過去の日付・過去時間は予約できません。別の日時を選択してください。");
+          return false;
+        }
       }
       if(state.step === 4){
         const name = $("customerName").value.trim();
@@ -940,13 +985,16 @@
     }
 
     function renderDayRow(){
-      const start = jstDate();
+      const start = minSelectableDate();
       const days = Array.from({length:10}, (_,i)=>addDays(start,i));
-      $("dayRow").innerHTML = days.map(d => `
-        <button class="day-btn ${state.selectedDate === d ? "on" : ""}" data-date="${d}">
-          ${shortDate(d)}<small>${weekday(d)}</small>
-        </button>
-      `).join("");
+      $("dayRow").innerHTML = days.map(d => {
+        const past = isPastDate(d);
+        return `
+          <button class="day-btn ${state.selectedDate === d ? "on" : ""} ${past ? "off" : ""}" data-date="${d}" ${past ? "disabled" : ""}>
+            ${shortDate(d)}<small>${weekday(d)}</small>
+          </button>
+        `;
+      }).join("");
     }
 
     function updateDateDisplay(){
@@ -957,6 +1005,16 @@
 
     async function loadSlots(){
       if(!state.selectedMenu || !state.selectedDate) return;
+
+      if(isPastDate(state.selectedDate)){
+        state.selectedDate = minSelectableDate();
+        state.selectedTime = "";
+        renderDayRow();
+        updateDateDisplay();
+        renderSideSummary();
+        updateBottom();
+      }
+
       $("slotNotice").className = "notice warn";
       $("slotNotice").textContent = "空き時間を確認中です。";
       $("slotList").innerHTML = "";
@@ -970,9 +1028,17 @@
           $("slotNotice").textContent = data.reason || "この日は予約できません。";
           return;
         }
+        state.slots = state.slots.map(s => {
+          const pastTime = isPastSlot(state.selectedDate, s.time);
+          return {
+            ...s,
+            available: s.available && !pastTime,
+            reasons: pastTime ? ["過去時間"] : (s.reasons || [])
+          };
+        });
         const available = state.slots.filter(s => s.available).length;
         $("slotNotice").className = available ? "notice ok" : "notice warn";
-        $("slotNotice").textContent = `${dateText(state.selectedDate)} は ${available} 枠予約できます。`;
+        $("slotNotice").textContent = `${dateText(state.selectedDate)} は ${available} 枠予約できます。過去日・過去時間は選択できません。`;
         $("slotList").innerHTML = state.slots.map(s => `
           <button class="slot ${!s.available ? "off" : ""} ${state.selectedTime === s.time ? "on" : ""}" data-time="${s.time}" ${!s.available ? "disabled" : ""}>
             ${escapeHtml(s.time)}<small>${s.available ? "予約可" : (s.reasons?.[0] || "不可")}</small>
@@ -1146,6 +1212,9 @@
       $("submitNotice").className = "notice warn";
       $("submitNotice").textContent = "予約を送信中です。";
       try{
+        if(isPastDate(state.selectedDate) || isPastSlot(state.selectedDate, state.selectedTime)){
+          throw new Error("過去の日付・過去時間は予約できません。別の日時を選択してください。");
+        }
         const body = {
           shop_code: SHOP_CODE,
           customer_name: $("customerName").value.trim(),
@@ -1217,9 +1286,9 @@
         $("apiStatus").textContent = "OK";
         $("shopName").textContent = state.shop?.display_name || state.shop?.shop_name || "DPRO Esthe Relaxation";
         $("rangeText").textContent = `${(data.booking_range?.from || "").replaceAll("-","/")}〜${(data.booking_range?.to || "").replaceAll("-","/")}`;
-        $("dateInput").min = data.booking_range?.from || jstDate();
+        $("dateInput").min = minSelectableDate();
         $("dateInput").max = data.booking_range?.to || addDays(jstDate(), 60);
-        state.selectedDate = addDays(jstDate(), 1);
+        state.selectedDate = minSelectableDate();
         $("dateInput").value = state.selectedDate;
         renderMenus();
         renderDayRow();
@@ -1250,6 +1319,10 @@
 
       const day = e.target.closest("[data-date]");
       if(day){
+        if(isPastDate(day.dataset.date)){
+          setMessage("ng", "過去の日付は選択できません。");
+          return;
+        }
         state.selectedDate = day.dataset.date;
         state.selectedTime = "";
         renderDayRow();
@@ -1283,8 +1356,16 @@
     });
 
     $("dateInput").addEventListener("change", async () => {
-      state.selectedDate = $("dateInput").value;
-      state.selectedTime = "";
+      const picked = $("dateInput").value;
+      if(isPastDate(picked)){
+        state.selectedDate = minSelectableDate();
+        $("dateInput").value = state.selectedDate;
+        state.selectedTime = "";
+        setMessage("ng", "過去の日付は選択できません。予約可能な最短日に戻しました。");
+      }else{
+        state.selectedDate = picked;
+        state.selectedTime = "";
+      }
       renderDayRow();
       updateDateDisplay();
       renderSideSummary();
