@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DPRO Esthe Relaxation｜STEP ESTHE-12B-R1｜owner.html</title>
+  <title>DPRO Esthe Relaxation｜STEP ESTHE-16｜owner.html</title>
   <style>
     :root{
       --bg:#fffaf7;
@@ -190,7 +190,7 @@
 <body>
   <main class="wrap">
     <section class="hero">
-      <div class="badge">STEP ESTHE-12B-R1｜店舗設定インデックス・折りたたみ版 owner.html</div>
+      <div class="badge">STEP ESTHE-16｜電話番号正規化・検索強化版 owner.html</div>
       <h1>DPRO Esthe Relaxation</h1>
       <p>本日の予約、予約一覧、顧客カルテ、回数券、未対応フォロー、文面テンプレートをまとめて確認できるPC用の本格管理画面です。</p>
       <div class="hero-meta">
@@ -315,7 +315,7 @@
             <span class="pill">カルテ</span>
           </div>
           <div class="form-grid">
-            <div class="field"><label>検索キーワード</label><input id="customerQuery" placeholder="例：佐藤 / 08000003002"></div>
+            <div class="field"><label>検索キーワード</label><input id="customerQuery" placeholder="例：佐藤 / 08000003002 / 080-0000-3002"></div>
             <div class="field"><label>操作</label><button class="btn primary" id="searchCustomerBtn">顧客を検索</button></div>
           </div>
           <div id="customerList" class="list"></div>
@@ -423,7 +423,7 @@
   <div class="toast" id="toast"></div>
 
 <script>
-const VERSION = "ESTHE-12B-R1-SETTINGS-INDEX-COLLAPSE-20260710";
+const VERSION = "ESTHE-16-OWNER-PHONE-NORMALIZE-SEARCH-20260711";
 const API_BASE = "https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev";
 const SHOP_CODE = "esthe_demo_default";
 const ADMIN_KEY = "1234";
@@ -451,6 +451,29 @@ function escapeHtml(v){
     .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
     .replaceAll('"',"&quot;").replaceAll("'","&#039;");
 }
+
+
+    function normalizePhone(value){
+      let s = String(value || "")
+        .replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0))
+        .replace(/[＋]/g, "+")
+        .trim();
+
+      s = s.replace(/[ー－―‐‑‒–—ｰ]/g, "-");
+      s = s.replace(/[^\d+]/g, "");
+
+      if(s.startsWith("+81")){
+        s = "0" + s.slice(3);
+      }else if(s.startsWith("81") && s.length === 12){
+        s = "0" + s.slice(2);
+      }
+
+      return s.replace(/\D/g, "");
+    }
+
+    function isPhoneLike(value){
+      return normalizePhone(value).length >= 8;
+    }
 
 function jstDate(d = new Date()){
   const parts = new Intl.DateTimeFormat("ja-JP", {timeZone:"Asia/Tokyo", year:"numeric", month:"2-digit", day:"2-digit"}).formatToParts(d).reduce((a,p)=>{a[p.type]=p.value;return a;},{});
@@ -715,7 +738,9 @@ function copyReservation(source, idx){
 }
 
 async function searchCustomers(){
-  const q = $("customerQuery").value.trim();
+  const rawQ = $("customerQuery").value.trim();
+  const q = isPhoneLike(rawQ) ? normalizePhone(rawQ) : rawQ;
+  if(isPhoneLike(rawQ)) $("customerQuery").value = q;
   setMessage("warn", "顧客を検索中です。");
   try{
     const data = await api(`/api/admin/customers/search?q=${encodeURIComponent(q)}&limit=50`);
@@ -737,7 +762,7 @@ async function loadCustomerDetailByCustomer(c){
   state.selectedCustomerId = c.id;
   setMessage("warn", "顧客カルテを読み込み中です。");
   try{
-    const qs = c.id ? `customer_id=${encodeURIComponent(c.id)}` : `phone=${encodeURIComponent(c.phone || "")}`;
+    const qs = c.id ? `customer_id=${encodeURIComponent(c.id)}` : `phone=${encodeURIComponent(normalizePhone(c.phone || ""))}`;
     const data = await api(`/api/admin/customers/detail?${qs}`);
     state.customerDetail = data;
     renderCustomerDetail();
@@ -1501,7 +1526,7 @@ document.addEventListener("click", async (e) => {
     const phone = customerDetail.dataset.phone;
     if(customerId) await loadCustomerDetailByCustomer({id:customerId});
     else if(phone){
-      $("customerQuery").value = phone;
+      $("customerQuery").value = normalizePhone(phone);
       setTab("customers");
       await searchCustomers();
       if(state.customers[0]) await loadCustomerDetailByCustomer(state.customers[0]);
@@ -1560,6 +1585,11 @@ $("reloadBtn").addEventListener("click", loadAll);
 $("bottomReloadBtn").addEventListener("click", loadAll);
 $("prepareBtn").addEventListener("click", runPrepare);
 $("loadReservationsBtn").addEventListener("click", loadReservations);
+$("customerQuery").addEventListener("blur", () => {
+  const raw = $("customerQuery").value;
+  if(isPhoneLike(raw)) $("customerQuery").value = normalizePhone(raw);
+});
+
 $("searchCustomerBtn").addEventListener("click", searchCustomers);
 $("saveNoteBtn").addEventListener("click", saveKarteNote);
 $("loadTicketsBtn").addEventListener("click", loadTickets);
