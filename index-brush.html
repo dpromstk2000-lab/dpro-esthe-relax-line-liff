@@ -435,7 +435,7 @@
 <body>
   <main class="wrap">
     <section class="hero">
-      <div class="badge">STEP ESTHE-9-R1｜会員確認表示修正版 index-brush.html</div>
+      <div class="badge">STEP ESTHE-9-R2｜日時表示同期修正版 index-brush.html</div>
       <h1>DPRO Esthe Relaxation</h1>
       <p>初回カウンセリング・回数券状況・次回予約導線までつながる、エステ・リラクゼーション向けのブラッシュアップ版予約画面です。</p>
       <div class="hero-meta">
@@ -487,7 +487,7 @@
 
           <div class="actions">
             <button class="btn primary" id="lookupBtn">電話番号で確認する</button>
-            <button class="btn" id="skipLookupBtn">初回として進む</button>
+            <button class="btn" id="skipLookupBtn">会員情報を使わず初回として進む</button>
           </div>
 
           <div id="memberResult" class="notice hidden"></div>
@@ -726,7 +726,7 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    const VERSION = "ESTHE-9-R1-MEMBER-LOOKUP-DISPLAY-FIX-20260710";
+    const VERSION = "ESTHE-9-R2-DATE-BOTTOM-SYNC-FIX-20260710";
     const API_BASE = "https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev";
     const SHOP_CODE = "esthe_demo_default";
 
@@ -983,6 +983,7 @@
         $("slotNotice").textContent = e.message;
       }
       renderSideSummary();
+      updateBottom();
     }
 
     async function lookupMember(){
@@ -1253,6 +1254,8 @@
         state.selectedTime = "";
         renderDayRow();
         updateDateDisplay();
+        renderSideSummary();
+        updateBottom();
         await loadSlots();
         return;
       }
@@ -1284,6 +1287,8 @@
       state.selectedTime = "";
       renderDayRow();
       updateDateDisplay();
+      renderSideSummary();
+      updateBottom();
       await loadSlots();
     });
 
@@ -1299,7 +1304,9 @@
       $("customerName").value = state.customerName;
       state.member = null;
       renderCustomerSide();
-      setMessage("ok","初回来店として進めます。");
+      renderSideSummary();
+      updateBottom();
+      setMessage("ok","会員情報を使わず、初回来店として進めます。");
       setStep(2);
     });
     $("nextBtn").addEventListener("click", next);
