@@ -158,7 +158,7 @@
 <body>
   <main class="wrap">
     <section class="hero">
-      <div class="badge">STEP ESTHE-10-R2｜お客様画面ボタン整理版 member.html</div>
+      <div class="badge">STEP ESTHE-10-R3｜日時変更前後確認版 member.html</div>
       <h1>DPRO Esthe Relaxation</h1>
       <p>次回予約・予約変更・キャンセル・回数券残数・来店履歴をLINE上で確認できる、お客様用マイページです。</p>
       <div class="hero-meta">
@@ -313,7 +313,7 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    const VERSION = "ESTHE-10-R2-MEMBER-CUSTOMER-ACTION-CLEANUP-20260710";
+    const VERSION = "ESTHE-10-R3-MEMBER-CHANGE-BEFORE-AFTER-CONFIRM-20260710";
     const API_BASE = "https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev";
     const SHOP_CODE = "esthe_demo_default";
 
@@ -685,7 +685,7 @@
         <div id="changeSlotNotice" class="notice warn">空き時間を確認してください。</div>
         <div class="slot-grid" id="changeSlotList"></div>
       `;
-      openModal("予約日時を変更しますか？", "変更後の日付と時間を選択してください。", body, "この日時に変更する", async () => changeReservation(r), false);
+      openModal("予約日時を変更しますか？", "変更後の日付と時間を選択してください。次の画面で、変更前と変更後を確認してから反映します。", body, "変更内容を確認する", async () => openChangeConfirm(r), false);
 
       setTimeout(() => {
         $("changeDateDisplay").addEventListener("click", () => {
@@ -732,11 +732,42 @@
       }
     }
 
+    async function openChangeConfirm(r){
+      if(!state.changeDate || !state.changeTime){
+        showToast("変更後の時間を選択してください。");
+        return;
+      }
+
+      const current = reservationDateTime(r);
+      const beforeText = current.date ? `${dateText(current.date)} ${current.time || ""}` : "-";
+      const afterText = `${dateText(state.changeDate)} ${state.changeTime}`;
+
+      $("modalTitle").textContent = "この日時に変更しますか？";
+      $("modalText").textContent = "変更前と変更後を確認してから反映します。";
+      $("modalBody").innerHTML = `
+        <div class="summary-row">
+          <div>お客様</div><div>${escapeHtml(state.customer?.customer_name || "-")}</div>
+          <div>メニュー</div><div>${escapeHtml(r.menu_name || "-")}</div>
+          <div>スタッフ</div><div>${escapeHtml(r.staff_name || "指名なし")}</div>
+          <div>変更前</div><div>${escapeHtml(beforeText)}</div>
+          <div>変更後</div><div>${escapeHtml(afterText)}</div>
+          <div>予約番号</div><div>${escapeHtml(r.reservation_code || "-")}</div>
+        </div>
+        <div class="notice warn">
+          この内容でよろしければ「この日時に変更する」を押してください。
+        </div>
+      `;
+      $("modalOk").textContent = "この日時に変更する";
+      $("modalOk").className = "btn primary";
+      state.pendingAction = async () => changeReservation(r);
+    }
+
     async function changeReservation(r){
       if(!state.changeDate || !state.changeTime){
         showToast("変更後の時間を選択してください。");
         return;
       }
+      const afterText = `${dateText(state.changeDate)} ${state.changeTime}`;
       closeModal();
       setMessage("warn", "予約日時を変更中です。");
       try{
@@ -752,8 +783,8 @@
             source: "member"
           }
         });
-        showToast("予約日時を変更しました。");
-        setMessage("ok", "予約日時を変更しました。");
+        showToast(`予約日時を ${afterText} に変更しました。`);
+        setMessage("ok", `予約日時を ${afterText} に変更しました。`);
         await loadMyPage();
       }catch(e){
         setMessage("ng", "予約変更に失敗しました：" + e.message);
@@ -774,6 +805,11 @@
       if(time && !time.disabled){
         state.changeTime = time.dataset.changeTime;
         document.querySelectorAll("[data-change-time]").forEach(b => b.classList.toggle("on", b.dataset.changeTime === state.changeTime));
+        const notice = $("changeSlotNotice");
+        if(notice){
+          notice.className = "notice ok";
+          notice.textContent = `${dateText(state.changeDate)} ${state.changeTime} を選択中です。次に「変更内容を確認する」を押してください。`;
+        }
       }
     });
 
