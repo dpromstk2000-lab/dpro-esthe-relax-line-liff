@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>DPRO Esthe Relaxation｜system-check｜STEP ESTHE-14</title>
+  <title>DPRO Esthe Relaxation｜system-check｜STEP ESTHE-16</title>
   <style>
     :root {
       --bg: #fffaf7;
@@ -678,14 +678,14 @@
 <body>
   <main class="wrap">
     <section class="hero">
-      <div class="badge">STEP ESTHE-14｜最終ブラッシュアップ確認 system-check.html</div>
+      <div class="badge">STEP ESTHE-16｜電話番号正規化確認 system-check.html</div>
       <h1>DPRO Esthe Relaxation</h1>
       <p>エステ・リラクゼーションLINEの最終確認画面です。API・DB・最新採用ファイル・店舗設定反映・営業前デモ準備をまとめて確認できます。</p>
       <div class="hero-meta">
         <span>API接続：<span id="heroApi">確認中</span></span>
         <span>管理コード：1234</span>
         <span>本日：<span id="heroToday">-</span></span>
-        <span>Worker：dpro-esthe-relax-line-api</span><span>採用：STEP ESTHE-14</span>
+        <span>Worker：dpro-esthe-relax-line-api</span><span>採用：STEP ESTHE-16</span>
       </div>
     </section>
 
@@ -814,6 +814,14 @@
         </div>
 
         <div class="panel">
+          <h2>電話番号正規化チェック</h2>
+          <p class="sub">ハイフンあり・なし・全角数字でも同じ電話番号として扱えるか確認します。</p>
+          <div class="reflect-grid" id="phoneNormalizeList">
+            <div class="reflect-card">確認中です。</div>
+          </div>
+        </div>
+
+        <div class="panel">
           <h2>確認URL</h2>
           <p class="sub">そのままコピペできるURLです。</p>
           <div class="url-list">
@@ -882,6 +890,14 @@
               </div>
             </div>
             <div class="url-card">
+              <b>電話番号正規化チェックAPI</b>
+              <code>https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/phone-normalize-check?admin_key=1234</code>
+              <div class="url-actions">
+                <button class="mini" data-copy="https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/phone-normalize-check?admin_key=1234">コピー</button>
+                <a class="mini primary" href="https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/phone-normalize-check?admin_key=1234" target="_blank" rel="noopener">開く</a>
+              </div>
+            </div>
+            <div class="url-card">
               <b>営業前デモ準備API</b>
               <code>https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/demo/prepare?admin_key=1234</code>
               <div class="url-actions">
@@ -920,8 +936,8 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    const STEP = "STEP ESTHE-14";
-    const VERSION = "ESTHE-14-FINAL-POLISH-SYSTEM-CHECK-20260710";
+    const STEP = "STEP ESTHE-16";
+    const VERSION = "ESTHE-16-PHONE-NORMALIZE-SYSTEM-CHECK-20260711";
     const API_BASE = "https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev";
     const ADMIN_KEY = "1234";
     const FRONT_BASE = "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff";
@@ -931,17 +947,18 @@
       systemCheck: `${API_BASE}/api/admin/system-check?admin_key=${encodeURIComponent(ADMIN_KEY)}`,
       demoPrepare: `${API_BASE}/api/admin/demo/prepare?admin_key=${encodeURIComponent(ADMIN_KEY)}`,
       adminSettings: `${API_BASE}/api/admin/settings?admin_key=${encodeURIComponent(ADMIN_KEY)}`,
+      phoneNormalizeCheck: `${API_BASE}/api/admin/phone-normalize-check?admin_key=${encodeURIComponent(ADMIN_KEY)}`,
     };
 
-    const EXPECTED_WORKER_VERSION = "ESTHE-14-FINAL-POLISH-SYSTEM-STATUS-20260710";
+    const EXPECTED_WORKER_VERSION = "ESTHE-16-PHONE-NORMALIZE-SEARCH-20260711";
 
     const ADOPTED_FILES = [
-      { label: "ブラッシュアップ予約", file: "index-brush.html", expect: "STEP ESTHE-12C" },
-      { label: "シンプル予約", file: "index.html", expect: "STEP ESTHE-12C" },
-      { label: "お客様マイページ", file: "member.html", expect: "STEP ESTHE-12C" },
-      { label: "スタッフ画面", file: "staff.html", expect: "STEP ESTHE-12C" },
-      { label: "PC本格管理画面", file: "owner.html", expect: "STEP ESTHE-12B-R1" },
-      { label: "営業前確認画面", file: "system-check.html", expect: "STEP ESTHE-14" },
+      { label: "ブラッシュアップ予約", file: "index-brush.html", expect: "STEP ESTHE-16" },
+      { label: "シンプル予約", file: "index.html", expect: "STEP ESTHE-16" },
+      { label: "お客様マイページ", file: "member.html", expect: "STEP ESTHE-16" },
+      { label: "スタッフ画面", file: "staff.html", expect: "STEP ESTHE-16" },
+      { label: "PC本格管理画面", file: "owner.html", expect: "STEP ESTHE-16" },
+      { label: "営業前確認画面", file: "system-check.html", expect: "STEP ESTHE-16" },
     ];
 
     const CHECK_LABELS = [
@@ -1150,6 +1167,27 @@
       return ["日", "月", "火", "水", "木", "金", "土"][Number(n)] || "-";
     }
 
+    async function renderPhoneNormalizeCheck() {
+      $("phoneNormalizeList").innerHTML = `<div class="reflect-card">電話番号正規化を確認中です。</div>`;
+      try {
+        const data = await apiGet(ENDPOINTS.phoneNormalizeCheck);
+        const samples = data.samples || [];
+        $("phoneNormalizeList").innerHTML = samples.map((s) => `
+          <div class="reflect-card">
+            <b>${escapeHtml(s.input)}</b>
+            <span>${escapeHtml(s.normalized)}</span>
+          </div>
+        `).join("") + `
+          <div class="reflect-card">
+            <b>判定</b>
+            <span>${data.ok ? "OK：すべて同じ電話番号として扱えます。" : "確認が必要です。"}</span>
+          </div>
+        `;
+      } catch (e) {
+        $("phoneNormalizeList").innerHTML = `<div class="reflect-card"><b>電話番号正規化チェックエラー</b><span>${escapeHtml(e.message)}</span></div>`;
+      }
+    }
+
     async function renderSettingsReflection() {
       $("reflectList").innerHTML = `<div class="reflect-card">店舗設定を確認中です。</div>`;
       try {
@@ -1195,6 +1233,7 @@
         await Promise.allSettled([
           renderFileAdoption(),
           renderSettingsReflection(),
+          renderPhoneNormalizeCheck(),
         ]);
 
         const allOk = Boolean(system.ok && health.ok && Object.values(system.checks || {}).every(Boolean));
