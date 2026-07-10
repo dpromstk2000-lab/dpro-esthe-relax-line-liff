@@ -158,7 +158,7 @@
 <body>
   <main class="wrap">
     <section class="hero">
-      <div class="badge">STEP ESTHE-10｜お客様マイページ member.html</div>
+      <div class="badge">STEP ESTHE-10-R1｜予約内容コピー改行修正版 member.html</div>
       <h1>DPRO Esthe Relaxation</h1>
       <p>次回予約・予約変更・キャンセル・回数券残数・来店履歴をLINE上で確認できる、お客様用マイページです。</p>
       <div class="hero-meta">
@@ -313,7 +313,7 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    const VERSION = "ESTHE-10-MEMBER-MYPAGE-COMPLETE-20260710";
+    const VERSION = "ESTHE-10-R1-MEMBER-COPY-NEWLINE-FIX-20260710";
     const API_BASE = "https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev";
     const SHOP_CODE = "esthe_demo_default";
 
@@ -616,7 +616,7 @@
         `予約番号：${r.reservation_code || "-"}`,
         "",
         "変更やキャンセルがある場合は、LINEでお早めにご連絡ください。"
-      ].join("\\n");
+      ].join("\n");
       navigator.clipboard?.writeText(text).then(()=>showToast("予約内容をコピーしました。")).catch(()=>showToast(text));
     }
 
