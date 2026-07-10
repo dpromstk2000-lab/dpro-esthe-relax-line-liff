@@ -94,13 +94,14 @@
 <body>
   <div class="wrap">
     <section class="hero">
-      <span class="badge">STEP ESTHE-7｜シンプルスタッフ画面ブラッシュアップ staff.html</span>
-      <h1>DPRO Esthe Relaxation</h1>
-      <p>スタッフが本日の担当予約・お客様メモ・進行状況を確認するための画面です。</p>
+      <span class="badge">STEP ESTHE-12C｜店舗設定反映確認版 staff.html</span>
+      <h1 id="shopTitle">DPRO Esthe Relaxation</h1>
+      <p id="shopLead">スタッフが本日の担当予約・お客様メモ・進行状況を確認するための画面です。</p>
       <div class="meta">
         <span id="apiMeta">API接続：確認中</span>
         <span>管理コード：1234</span>
         <span id="todayMeta">本日：-</span>
+        <span id="shopPhoneMeta">電話：確認中</span>
       </div>
     </section>
 
@@ -259,6 +260,13 @@
     state.settings = data;
     state.staff = data.staff || [];
     $('apiMeta').textContent = data.ok ? 'API接続：OK' : 'API接続：確認が必要';
+
+    const shop = data.shop || {};
+    const displayName = shop.display_name || shop.shop_name || 'DPRO Esthe Relaxation';
+    $('shopTitle').textContent = displayName;
+    $('shopLead').textContent = shop.description || 'スタッフが本日の担当予約・お客様メモ・進行状況を確認するための画面です。';
+    $('shopPhoneMeta').textContent = shop.phone ? '電話：' + shop.phone : '電話：未設定';
+
     renderStaffTabs();
   }
 
