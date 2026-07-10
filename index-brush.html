@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DPRO Esthe Relaxation｜STEP ESTHE-9｜index-brush</title>
+  <title>DPRO Esthe Relaxation｜STEP ESTHE-12C｜index-brush</title>
   <style>
     :root{
       --bg:#fffaf7;
@@ -436,14 +436,16 @@
 <body>
   <main class="wrap">
     <section class="hero">
-      <div class="badge">STEP ESTHE-9-R3｜過去日・過去時間防止版 index-brush.html</div>
-      <h1>DPRO Esthe Relaxation</h1>
-      <p>初回カウンセリング・回数券状況・次回予約導線までつながる、エステ・リラクゼーション向けのブラッシュアップ版予約画面です。</p>
+      <div class="badge">STEP ESTHE-12C｜店舗設定反映確認版 index-brush.html</div>
+      <h1 id="shopTitle">DPRO Esthe Relaxation</h1>
+      <p id="shopLead">初回カウンセリング・回数券状況・次回予約導線までつながる、エステ・リラクゼーション向けのブラッシュアップ版予約画面です。</p>
       <div class="hero-meta">
         <span>API接続：<span id="apiStatus">確認中</span></span>
         <span>管理コード：1234</span>
         <span>予約受付期間：<span id="rangeText">確認中</span></span>
         <span>店舗：<span id="shopName">DPRO Esthe Relaxation</span></span>
+        <span>電話：<span id="shopPhone">確認中</span></span>
+        <span>住所：<span id="shopAddress">確認中</span></span>
       </div>
     </section>
 
@@ -1284,7 +1286,12 @@
         state.menus = data.menus || [];
         state.staff = data.staff || [];
         $("apiStatus").textContent = "OK";
-        $("shopName").textContent = state.shop?.display_name || state.shop?.shop_name || "DPRO Esthe Relaxation";
+        const displayName = state.shop?.display_name || state.shop?.shop_name || "DPRO Esthe Relaxation";
+        $("shopTitle").textContent = displayName;
+        $("shopName").textContent = displayName;
+        $("shopLead").textContent = state.shop?.description || "初回カウンセリング・回数券状況・次回予約導線までつながる、エステ・リラクゼーション向けのブラッシュアップ版予約画面です。";
+        $("shopPhone").textContent = state.shop?.phone || "未設定";
+        $("shopAddress").textContent = state.shop?.address || "未設定";
         $("rangeText").textContent = `${(data.booking_range?.from || "").replaceAll("-","/")}〜${(data.booking_range?.to || "").replaceAll("-","/")}`;
         $("dateInput").min = minSelectableDate();
         $("dateInput").max = data.booking_range?.to || addDays(jstDate(), 60);
