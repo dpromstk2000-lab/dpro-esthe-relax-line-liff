@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>DPRO Esthe Relaxation｜system-check｜STEP ESTHE-7</title>
+  <title>DPRO Esthe Relaxation｜system-check｜STEP ESTHE-13</title>
   <style>
     :root {
       --bg: #fffaf7;
@@ -678,23 +678,25 @@
 <body>
   <main class="wrap">
     <section class="hero">
-      <div class="badge">STEP ESTHE-7｜シンプル版ブラッシュアップ確認 system-check.html</div>
+      <div class="badge">STEP ESTHE-13｜最新採用ファイル・店舗設定反映チェック system-check.html</div>
       <h1>DPRO Esthe Relaxation</h1>
-      <p>シンプル予約版の営業前確認画面です。API・DB・予約画面・管理画面・スタッフ画面・デモ準備をまとめて確認できます。</p>
+      <p>エステ・リラクゼーションLINEの営業前確認画面です。API・DB・最新採用ファイル・店舗設定反映・営業前デモ準備をまとめて確認できます。</p>
       <div class="hero-meta">
         <span>API接続：<span id="heroApi">確認中</span></span>
         <span>管理コード：1234</span>
         <span>本日：<span id="heroToday">-</span></span>
-        <span>Worker：dpro-esthe-relax-line-api</span>
+        <span>Worker：dpro-esthe-relax-line-api</span><span>採用：STEP ESTHE-13</span>
       </div>
     </section>
 
     <div class="top-actions">
       <button class="btn primary" id="btnReload">最新状態を確認</button>
       <button class="btn success" id="btnPrepare">営業前デモ準備</button>
-      <a class="btn ghost" href="index.html" target="_blank" rel="noopener">予約画面を開く</a>
-      <a class="btn ghost" href="admin.html" target="_blank" rel="noopener">管理画面を開く</a>
-      <a class="btn ghost" href="staff.html" target="_blank" rel="noopener">スタッフ画面を開く</a>
+      <a class="btn ghost" href="index-brush.html" target="_blank" rel="noopener">ブラッシュアップ予約</a>
+      <a class="btn ghost" href="index.html" target="_blank" rel="noopener">シンプル予約</a>
+      <a class="btn ghost" href="owner.html" target="_blank" rel="noopener">PC管理画面</a>
+      <a class="btn ghost" href="staff.html" target="_blank" rel="noopener">スタッフ画面</a>
+      <a class="btn ghost" href="member.html" target="_blank" rel="noopener">お客様マイページ</a>
     </div>
 
     <div id="notice" class="notice">確認中です。</div>
@@ -738,34 +740,34 @@
             <div class="manual-item">
               <div class="manual-num">2</div>
               <div>
-                <div class="manual-title">予約画面 index.html を確認</div>
-                <div class="manual-text">メニュー、スタッフ、空き時間、予約送信が見えるか確認します。</div>
+                <div class="manual-title">ブラッシュアップ予約 index-brush.html を確認</div>
+                <div class="manual-text">電話・住所・店舗説明、会員確認、メニュー、空き時間、カウンセリング、予約送信を確認します。</div>
               </div>
-              <a class="mini" href="index.html" target="_blank" rel="noopener">開く</a>
+              <a class="mini" href="index-brush.html" target="_blank" rel="noopener">開く</a>
             </div>
             <div class="manual-item">
               <div class="manual-num">3</div>
               <div>
-                <div class="manual-title">管理画面 admin.html を確認</div>
-                <div class="manual-text">本日の予約、予約一覧、電話予約登録、ステータス変更を確認します。</div>
+                <div class="manual-title">PC本格管理画面 owner.html を確認</div>
+                <div class="manual-text">今日の予約、顧客カルテ、回数券、フォロー、文面、店舗設定編集を確認します。</div>
               </div>
-              <a class="mini" href="admin.html" target="_blank" rel="noopener">開く</a>
+              <a class="mini" href="owner.html" target="_blank" rel="noopener">開く</a>
             </div>
             <div class="manual-item">
               <div class="manual-num">4</div>
               <div>
                 <div class="manual-title">スタッフ画面 staff.html を確認</div>
-                <div class="manual-text">本日の担当予約、確認モーダル、施術中・会計待ち・完了への変更を確認します。</div>
+                <div class="manual-text">店舗設定の電話番号反映、本日の担当予約、確認モーダル、施術中・会計待ち・完了への変更を確認します。</div>
               </div>
               <a class="mini" href="staff.html" target="_blank" rel="noopener">開く</a>
             </div>
             <div class="manual-item">
               <div class="manual-num">5</div>
               <div>
-                <div class="manual-title">API health を確認</div>
-                <div class="manual-text">Worker と Supabase の接続状態を直接確認します。</div>
+                <div class="manual-title">お客様マイページ member.html を確認</div>
+                <div class="manual-text">店舗設定の電話番号反映、次回予約、回数券、来店履歴を確認します。</div>
               </div>
-              <a class="mini" href="https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/health" target="_blank" rel="noopener">開く</a>
+              <a class="mini" href="member.html" target="_blank" rel="noopener">開く</a>
             </div>
           </div>
         </div>
@@ -792,23 +794,47 @@
         </div>
 
         <div class="panel">
+          <h2>最新採用ファイル</h2>
+          <p class="sub">GitHub Pages上の各HTMLが、最新STEPのファイルに置き換わっているか確認します。</p>
+          <div class="adopt-list" id="adoptList">
+            <div class="reflect-card">確認中です。</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>店舗設定反映チェック</h2>
+          <p class="sub">owner.htmlで保存した店舗設定がAPI上に残っているか確認します。</p>
+          <div class="reflect-grid" id="reflectList">
+            <div class="reflect-card">確認中です。</div>
+          </div>
+        </div>
+
+        <div class="panel">
           <h2>確認URL</h2>
           <p class="sub">そのままコピペできるURLです。</p>
           <div class="url-list">
             <div class="url-card">
-              <b>予約画面 index.html</b>
-              <code id="urlIndex">https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/</code>
+              <b>ブラッシュアップ予約 index-brush.html</b>
+              <code>https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/index-brush.html</code>
+              <div class="url-actions">
+                <button class="mini" data-copy="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/index-brush.html">コピー</button>
+                <a class="mini primary" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/index-brush.html" target="_blank" rel="noopener">開く</a>
+              </div>
+            </div>
+            <div class="url-card">
+              <b>シンプル予約 index.html</b>
+              <code>https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/</code>
               <div class="url-actions">
                 <button class="mini" data-copy="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/">コピー</button>
                 <a class="mini primary" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/" target="_blank" rel="noopener">開く</a>
               </div>
             </div>
             <div class="url-card">
-              <b>管理画面 admin.html</b>
-              <code>https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/admin.html</code>
+              <b>PC本格管理 owner.html</b>
+              <code>https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner.html</code>
               <div class="url-actions">
-                <button class="mini" data-copy="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/admin.html">コピー</button>
-                <a class="mini primary" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/admin.html" target="_blank" rel="noopener">開く</a>
+                <button class="mini" data-copy="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner.html">コピー</button>
+                <a class="mini primary" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner.html" target="_blank" rel="noopener">開く</a>
               </div>
             </div>
             <div class="url-card">
@@ -817,6 +843,14 @@
               <div class="url-actions">
                 <button class="mini" data-copy="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/staff.html">コピー</button>
                 <a class="mini primary" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/staff.html" target="_blank" rel="noopener">開く</a>
+              </div>
+            </div>
+            <div class="url-card">
+              <b>お客様マイページ member.html</b>
+              <code>https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/member.html</code>
+              <div class="url-actions">
+                <button class="mini" data-copy="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/member.html">コピー</button>
+                <a class="mini primary" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/member.html" target="_blank" rel="noopener">開く</a>
               </div>
             </div>
             <div class="url-card">
@@ -851,7 +885,7 @@
                 <a class="mini primary" href="https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/demo/prepare?admin_key=1234" target="_blank" rel="noopener">開く</a>
               </div>
             </div>
-          </div>
+          </div>          </div>
         </div>
       </aside>
     </div>
@@ -882,8 +916,8 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    const STEP = "STEP ESTHE-7";
-    const VERSION = "ESTHE-7-SYSTEM-CHECK-DATE-NAV-BRUSHUP-20260710";
+    const STEP = "STEP ESTHE-13";
+    const VERSION = "ESTHE-13-SYSTEM-CHECK-LATEST-FILES-SETTINGS-REFLECT-20260710";
     const API_BASE = "https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev";
     const ADMIN_KEY = "1234";
     const FRONT_BASE = "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff";
@@ -892,7 +926,17 @@
       health: `${API_BASE}/api/health`,
       systemCheck: `${API_BASE}/api/admin/system-check?admin_key=${encodeURIComponent(ADMIN_KEY)}`,
       demoPrepare: `${API_BASE}/api/admin/demo/prepare?admin_key=${encodeURIComponent(ADMIN_KEY)}`,
+      adminSettings: `${API_BASE}/api/admin/settings?admin_key=${encodeURIComponent(ADMIN_KEY)}`,
     };
+
+    const ADOPTED_FILES = [
+      { label: "ブラッシュアップ予約", file: "index-brush.html", expect: "STEP ESTHE-12C" },
+      { label: "シンプル予約", file: "index.html", expect: "STEP ESTHE-12C" },
+      { label: "お客様マイページ", file: "member.html", expect: "STEP ESTHE-12C" },
+      { label: "スタッフ画面", file: "staff.html", expect: "STEP ESTHE-12C" },
+      { label: "PC本格管理画面", file: "owner.html", expect: "STEP ESTHE-12B-R1" },
+      { label: "営業前確認画面", file: "system-check.html", expect: "STEP ESTHE-13" },
+    ];
 
     const CHECK_LABELS = [
       ["api", "API", "Worker が応答している"],
@@ -1040,6 +1084,77 @@
         : "営業前確認でエラーがあります。";
     }
 
+
+    function renderAdoptionChecking() {
+      $("adoptList").innerHTML = ADOPTED_FILES.map((item) => `
+        <div class="adopt-card">
+          <div>
+            <div class="adopt-title">${escapeHtml(item.label)}</div>
+            <div class="adopt-meta">${escapeHtml(item.file)}</div>
+          </div>
+          <div class="adopt-meta">期待STEP：${escapeHtml(item.expect)}</div>
+          <span class="adopt-warn">確認中</span>
+        </div>
+      `).join("");
+    }
+
+    async function renderFileAdoption() {
+      renderAdoptionChecking();
+      const rows = await Promise.all(ADOPTED_FILES.map(async (item) => {
+        const url = `${FRONT_BASE}/${item.file}`;
+        try {
+          const res = await fetch(url, { cache: "no-store" });
+          const text = await res.text();
+          const ok = res.ok && text.includes(item.expect);
+          return { ...item, ok, status: res.status, url };
+        } catch (e) {
+          return { ...item, ok: false, status: "error", error: e.message, url };
+        }
+      }));
+
+      $("adoptList").innerHTML = rows.map((item) => `
+        <div class="adopt-card">
+          <div>
+            <div class="adopt-title">${escapeHtml(item.label)}</div>
+            <div class="adopt-meta">${escapeHtml(item.file)}</div>
+          </div>
+          <div class="adopt-meta">
+            期待：${escapeHtml(item.expect)}<br>
+            ${escapeHtml(item.url)}
+          </div>
+          <span class="${item.ok ? "adopt-ok" : "adopt-ng"}">${item.ok ? "OK" : "確認必要"}</span>
+        </div>
+      `).join("");
+    }
+
+    function jpDayName(n) {
+      return ["日", "月", "火", "水", "木", "金", "土"][Number(n)] || "-";
+    }
+
+    async function renderSettingsReflection() {
+      $("reflectList").innerHTML = `<div class="reflect-card">店舗設定を確認中です。</div>`;
+      try {
+        const data = await apiGet(ENDPOINTS.adminSettings);
+        const shop = data.shop || {};
+        const hours = data.business_hours || [];
+        const closed = hours
+          .filter((h) => h.is_open === false)
+          .map((h) => jpDayName(h.day_of_week))
+          .join("・") || "なし";
+
+        $("reflectList").innerHTML = `
+          <div class="reflect-card"><b>店舗名</b><span>${escapeHtml(shop.display_name || shop.shop_name || "-")}</span></div>
+          <div class="reflect-card"><b>電話番号</b><span>${escapeHtml(shop.phone || "未設定")}</span></div>
+          <div class="reflect-card"><b>住所</b><span>${escapeHtml(shop.address || "未設定")}</span></div>
+          <div class="reflect-card"><b>予約受付</b><span>${escapeHtml(shop.default_booking_days_ahead || "-")}日先まで / ${escapeHtml(shop.booking_deadline_hours ?? "-")}時間前締切</span></div>
+          <div class="reflect-card"><b>定休日</b><span>${escapeHtml(closed)}</span></div>
+          <div class="reflect-card"><b>件数</b><span>メニュー ${escapeHtml((data.menus || []).length)}件 / スタッフ ${escapeHtml((data.staff || []).length)}件 / ルーム ${escapeHtml((data.rooms || []).length)}件</span></div>
+        `;
+      } catch (e) {
+        $("reflectList").innerHTML = `<div class="reflect-card"><b>店舗設定確認エラー</b><span>${escapeHtml(e.message)}</span></div>`;
+      }
+    }
+
     async function loadAll() {
       if (loading) return;
       setLoading(true);
@@ -1057,6 +1172,10 @@
         renderChecks(system);
         renderCounts(system);
         renderStatus(system, health);
+        await Promise.allSettled([
+          renderFileAdoption(),
+          renderSettingsReflection(),
+        ]);
 
         const allOk = Boolean(system.ok && health.ok && Object.values(system.checks || {}).every(Boolean));
         if (allOk) {
