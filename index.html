@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>DPRO エステ・リラクゼーション LINE｜シンプル予約</title>
+  <meta name="description" content="DPRO エステ・リラクゼーション LINE シンプル予約画面" />
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <style>
+    :root {
+      --bg: #f8f1ed;
+      --bg2: #fffaf7;
+      --card: #ffffff;
+      --ink: #2d2522;
+      --muted: #7f6b63;
+      --line: #eadbd3;
+      --main: #9b6b5b;
+      --main2: #6f473d;
+      --accent: #d9a77f;
+      --accent2: #f3dfd0;
+      --danger: #b64b4b;
+      --ok: #2f8060;
+      --shadow: 0 14px 40px rgba(82, 52, 42, 0.12);
+      --radius: 22px;
+      --radius2: 14px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(217, 167, 127, 0.34), transparent 36%),
+        linear-gradient(180deg, var(--bg) 0%, #ffffff 72%);
+      min-height: 100vh;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .page {
+      width: min(980px, 100%);
+      margin: 0 auto;
+      padding: 20px 14px 42px;
+    }
+
+    .hero {
+      border-radius: 30px;
+      padding: 24px 20px;
+      color: #fff;
+      background:
+        linear-gradient(135deg, rgba(65, 40, 35, 0.92), rgba(155, 107, 91, 0.95)),
+        radial-gradient(circle at 86% 14%, rgba(255, 255, 255, 0.28), transparent 32%);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      right: -86px;
+      bottom: -110px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .version {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 11px;
+      border: 1px solid rgba(255,255,255,.24);
+      border-radius: 999px;
+      background: rgba(255,255,255,.14);
+      font-size: 12px;
+      letter-spacing: .02em;
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+      margin: 15px 0 8px;
+      font-size: clamp(26px, 7vw, 42px);
+      line-height: 1.08;
+      letter-spacing: -.02em;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero p {
+      margin: 0;
+      color: rgba(255,255,255,.86);
+      line-height: 1.7;
+      position: relative;
+      z-index: 1;
+    }
+
+    .shop-mini {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-top: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .shop-mini span {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: rgba(255,255,255,.9);
+      font-size: 13px;
+    }
+
+    .progress {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin: 16px 0;
+    }
+
+    .progress-item {
+      padding: 10px 8px;
+      text-align: center;
+      border-radius: 999px;
+      background: rgba(255,255,255,.72);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .progress-item.active {
+      background: var(--main2);
+      color: #fff;
+      border-color: var(--main2);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .card {
+      background: rgba(255,255,255,.92);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      overflow: hidden;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 19px;
+    }
+
+    .section-title p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      min-width: 62px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: var(--accent2);
+      color: var(--main2);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .option {
+      width: 100%;
+      text-align: left;
+      padding: 14px;
+      border-radius: var(--radius2);
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      transition: .16s ease;
+    }
+
+    .option:hover {
+      transform: translateY(-1px);
+      border-color: rgba(155,107,91,.42);
+    }
+
+    .option.selected {
+      border-color: var(--main);
+      background: #fff6f0;
+      box-shadow: 0 0 0 3px rgba(155,107,91,.12);
+    }
+
+    .option-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .option-name {
+      font-weight: 900;
+      line-height: 1.35;
+      font-size: 15px;
+    }
+
+    .option-price {
+      white-space: nowrap;
+      font-weight: 900;
+      color: var(--main2);
+    }
+
+    .option-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 8px;
+      background: #f7ede7;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1;
+    }
+
+    .option-desc {
+      margin-top: 9px;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 13px;
+    }
+
+    .date-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .date-input-wrap {
+      display: flex;
+      gap: 8px;
+      align-items: stretch;
+    }
+
+    input[type="date"], input[type="text"], input[type="tel"], textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 13px;
+      padding: 13px 13px;
+      color: var(--ink);
+      outline: none;
+      transition: .15s ease;
+    }
+
+    textarea {
+      min-height: 92px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    input:focus, textarea:focus {
+      border-color: var(--main);
+      box-shadow: 0 0 0 3px rgba(155,107,91,.13);
+    }
+
+    .date-pills {
+      display: flex;
+      overflow-x: auto;
+      gap: 8px;
+      padding-bottom: 3px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .date-pill {
+      min-width: 82px;
+      padding: 11px 9px;
+      border-radius: 15px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      text-align: center;
+      line-height: 1.2;
+      flex: 0 0 auto;
+    }
+
+    .date-pill small {
+      display: block;
+      color: var(--muted);
+      margin-top: 4px;
+      font-size: 11px;
+    }
+
+    .date-pill.selected {
+      color: #fff;
+      border-color: var(--main2);
+      background: var(--main2);
+    }
+
+    .slots {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .slot {
+      padding: 12px 8px;
+      border-radius: 14px;
+      background: #fff;
+      border: 1px solid var(--line);
+      color: var(--ink);
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .slot small {
+      display: block;
+      margin-top: 4px;
+      font-weight: 700;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .slot.selected {
+      background: var(--main2);
+      color: #fff;
+      border-color: var(--main2);
+    }
+
+    .slot.selected small {
+      color: rgba(255,255,255,.76);
+    }
+
+    .slot.disabled {
+      color: #b7a7a0;
+      background: #f6efeb;
+      cursor: not-allowed;
+      text-decoration: line-through;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    label.label {
+      display: block;
+      font-size: 13px;
+      font-weight: 900;
+      margin: 0 0 7px;
+      color: var(--ink);
+    }
+
+    .required {
+      color: var(--danger);
+      margin-left: 4px;
+    }
+
+    .hint {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px;
+      border-radius: 14px;
+      background: #fff8f4;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 13px;
+    }
+
+    .check-row input {
+      margin-top: 4px;
+      transform: scale(1.1);
+      accent-color: var(--main2);
+    }
+
+    .summary {
+      display: grid;
+      gap: 8px;
+    }
+
+    .summary-row {
+      display: grid;
+      grid-template-columns: 96px 1fr;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0e5df;
+    }
+
+    .summary-row:last-child { border-bottom: 0; }
+
+    .summary-key {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .summary-val {
+      font-weight: 800;
+      line-height: 1.45;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .btn {
+      width: 100%;
+      border-radius: 16px;
+      padding: 14px 16px;
+      font-weight: 900;
+      transition: .16s ease;
+    }
+
+    .btn:disabled {
+      opacity: .52;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      color: #fff;
+      background: linear-gradient(135deg, var(--main2), var(--main));
+      box-shadow: 0 12px 22px rgba(111, 71, 61, .22);
+    }
+
+    .btn-secondary {
+      color: var(--main2);
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+
+    .btn-ghost {
+      color: var(--muted);
+      background: transparent;
+      border: 1px dashed var(--line);
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    .notice {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 15px;
+      border: 1px solid var(--line);
+      background: #fffdfb;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 13px;
+    }
+
+    .notice.ok {
+      border-color: rgba(47,128,96,.2);
+      background: #f3fbf7;
+      color: #24654b;
+    }
+
+    .notice.error {
+      border-color: rgba(182,75,75,.24);
+      background: #fff4f4;
+      color: var(--danger);
+    }
+
+    .fixed-footer {
+      position: sticky;
+      bottom: 0;
+      margin: 16px -14px -42px;
+      padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
+      background: rgba(248,241,237,.9);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid var(--line);
+      z-index: 10;
+    }
+
+    .footer-inner {
+      width: min(980px, 100%);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 9px;
+    }
+
+    .mini-summary {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .loading {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid #eadbd3;
+      border-top-color: var(--main2);
+      animation: spin .7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .hidden { display: none !important; }
+
+    .complete-card {
+      text-align: center;
+      padding: 24px 16px;
+    }
+
+    .complete-mark {
+      width: 58px;
+      height: 58px;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #effaf4;
+      color: var(--ok);
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+
+    .complete-card h2 {
+      margin: 0 0 8px;
+      font-size: 23px;
+    }
+
+    .complete-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .dev-note {
+      margin-top: 14px;
+      color: #9d8b84;
+      font-size: 11px;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    @media (min-width: 720px) {
+      .page { padding: 30px 24px 54px; }
+      .hero { padding: 34px 34px; }
+      .shop-mini { grid-template-columns: repeat(3, auto); justify-content: start; }
+      .layout { grid-template-columns: 1fr 1fr; align-items: start; }
+      .card.full { grid-column: 1 / -1; }
+      .grid.two { grid-template-columns: repeat(2, 1fr); }
+      .slots { grid-template-columns: repeat(5, 1fr); }
+      .date-row { grid-template-columns: 240px 1fr; align-items: start; }
+      .form-grid { grid-template-columns: 1fr 1fr; }
+      .form-grid .wide { grid-column: 1 / -1; }
+      .actions { grid-template-columns: 1fr 1fr; }
+      .fixed-footer { margin-left: -24px; margin-right: -24px; }
+      .footer-inner { grid-template-columns: 1fr 260px; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="version">STEP ESTHE-3｜シンプル予約版 index.html</div>
+      <h1 id="shopTitle">DPRO エステリラクゼーション</h1>
+      <p id="shopLead">LINEからかんたん予約。メニュー・日時・お名前を入力するだけで予約できます。</p>
+      <div class="shop-mini">
+        <span id="shopPhone">☎ 読み込み中</span>
+        <span id="bookingRange">予約受付期間：確認中</span>
+        <span id="apiStatus">API接続：確認中</span>
+      </div>
+    </header>
+
+    <nav class="progress" aria-label="予約ステップ">
+      <div class="progress-item active" data-progress="1">1 メニュー</div>
+      <div class="progress-item" data-progress="2">2 日時</div>
+      <div class="progress-item" data-progress="3">3 入力</div>
+      <div class="progress-item" data-progress="4">4 確認</div>
+    </nav>
+
+    <main id="app">
+      <div id="globalMessage" class="notice hidden"></div>
+
+      <section id="stepSelect" class="layout">
+        <div class="card">
+          <div class="section-title">
+            <div>
+              <h2>メニューを選択</h2>
+              <p>所要時間と料金を確認して選んでください。</p>
+            </div>
+            <span class="badge">必須</span>
+          </div>
+          <div id="menuList" class="grid"></div>
+          <div id="menuLoading" class="loading"><span class="spinner"></span>メニュー読込中</div>
+        </div>
+
+        <div class="card">
+          <div class="section-title">
+            <div>
+              <h2>スタッフ指名</h2>
+              <p>指名なしでも予約できます。</p>
+            </div>
+            <span class="badge">任意</span>
+          </div>
+          <div id="staffList" class="grid"></div>
+          <div id="staffLoading" class="loading"><span class="spinner"></span>スタッフ読込中</div>
+        </div>
+
+        <div class="card full">
+          <div class="section-title">
+            <div>
+              <h2>日時を選択</h2>
+              <p>メニューとスタッフを選ぶと、予約可能時間が表示されます。</p>
+            </div>
+            <span class="badge">必須</span>
+          </div>
+
+          <div class="date-row">
+            <div class="date-input-wrap">
+              <input id="dateInput" type="date" aria-label="予約日" />
+            </div>
+            <div id="datePills" class="date-pills" aria-label="日付候補"></div>
+          </div>
+
+          <div id="slotMessage" class="notice">先にメニューを選択してください。</div>
+          <div id="slotList" class="slots"></div>
+        </div>
+      </section>
+
+      <section id="stepForm" class="card hidden">
+        <div class="section-title">
+          <div>
+            <h2>お客様情報を入力</h2>
+            <p>予約確認に必要な情報を入力してください。</p>
+          </div>
+          <span class="badge">入力</span>
+        </div>
+
+        <div class="form-grid">
+          <div>
+            <label class="label" for="customerName">お名前<span class="required">*</span></label>
+            <input id="customerName" type="text" placeholder="例：山田 花子" autocomplete="name" />
+          </div>
+          <div>
+            <label class="label" for="customerPhone">電話番号<span class="required">*</span></label>
+            <input id="customerPhone" type="tel" placeholder="例：08012345678" autocomplete="tel" inputmode="tel" />
+            <div class="hint">ハイフンあり・なし、どちらでも大丈夫です。</div>
+          </div>
+          <div class="wide">
+            <label class="label" for="requestNote">ご要望・気になること</label>
+            <textarea id="requestNote" placeholder="例：肩こりが気になります。静かに過ごしたいです。"></textarea>
+          </div>
+          <div class="wide">
+            <label class="check-row">
+              <input id="firstVisit" type="checkbox" checked />
+              <span>初めての来店です。必要に応じて、当日カウンセリングをお願いします。</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-secondary" type="button" onclick="goStep('select')">戻って選び直す</button>
+          <button class="btn btn-primary" type="button" onclick="goStep('confirm')">予約内容を確認する</button>
+        </div>
+      </section>
+
+      <section id="stepConfirm" class="card hidden">
+        <div class="section-title">
+          <div>
+            <h2>予約内容の確認</h2>
+            <p>内容に間違いがなければ、予約を送信してください。</p>
+          </div>
+          <span class="badge">確認</span>
+        </div>
+
+        <div id="confirmSummary" class="summary"></div>
+        <div id="submitMessage" class="notice hidden"></div>
+
+        <div class="actions">
+          <button id="backToFormBtn" class="btn btn-secondary" type="button" onclick="goStep('form')">入力に戻る</button>
+          <button id="submitBtn" class="btn btn-primary" type="button" onclick="submitReservation()">この内容で予約する</button>
+        </div>
+      </section>
+
+      <section id="stepComplete" class="card complete-card hidden">
+        <div class="complete-mark">✓</div>
+        <h2>予約を受付しました</h2>
+        <p id="completeText">予約内容を確認しています。</p>
+        <div id="completeSummary" class="summary" style="margin-top:18px;text-align:left;"></div>
+        <div class="actions">
+          <button class="btn btn-secondary" type="button" onclick="resetReservation()">別の予約をする</button>
+          <button class="btn btn-ghost" type="button" onclick="reloadMyReservation()">同じ電話番号で確認する</button>
+        </div>
+      </section>
+    </main>
+
+    <div class="dev-note">
+      API：<span id="apiBaseText"></span><br />
+      この画面はシンプル予約版です。カルテ・回数券・フォローは次STEP以降のブラッシュアップ版で表示します。
+    </div>
+  </div>
+
+  <footer class="fixed-footer">
+    <div class="footer-inner">
+      <div id="miniSummary" class="mini-summary">メニュー・日時を選ぶと、ここに予約内容が表示されます。</div>
+      <button id="footerNextBtn" class="btn btn-primary" type="button" onclick="footerNext()">次へ</button>
+    </div>
+  </footer>
+
+  <script>
+    // =========================================================
+    // STEP ESTHE-3
+    // DPRO エステ・リラクゼーション LINE
+    // シンプル予約版 index.html 完全版
+    // Version: ESTHE-3-SIMPLE-RESERVATION-INDEX-20260710
+    // =========================================================
+
+    const VERSION = 'ESTHE-3-SIMPLE-RESERVATION-INDEX-20260710';
+    const API_BASE = 'https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev';
+    const SHOP_CODE = 'esthe_demo_default';
+    const JST_TIMEZONE = 'Asia/Tokyo';
+
+    const state = {
+      settings: null,
+      shop: null,
+      menus: [],
+      staff: [],
+      slots: [],
+      selectedMenu: null,
+      selectedStaff: null,
+      selectedDate: '',
+      selectedSlot: null,
+      currentStep: 'select',
+      lineUser: {
+        line_user_id: '',
+        line_display_name: ''
+      },
+      lastReservation: null
+    };
+
+    const el = (id) => document.getElementById(id);
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      el('apiBaseText').textContent = API_BASE;
+      hydrateFromUrlParams();
+      await initLiffIfAvailable();
+      await loadInitialData();
+      updateFooter();
+    });
+
+    function apiUrl(path, params = {}) {
+      const url = new URL(API_BASE + path);
+      url.searchParams.set('shop_code', SHOP_CODE);
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') url.searchParams.set(key, value);
+      });
+      return url.toString();
+    }
+
+    async function fetchJson(url, options = {}) {
+      const res = await fetch(url, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(options.headers || {})
+        }
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || data.ok === false) {
+        throw new Error(data.message || data.error || 'API通信に失敗しました。');
+      }
+      return data;
+    }
+
+    function hydrateFromUrlParams() {
+      const p = new URLSearchParams(location.search);
+      const name = p.get('name') || p.get('customer_name') || '';
+      const phone = p.get('phone') || p.get('tel') || '';
+      const lineUserId = p.get('line_user_id') || '';
+      const displayName = p.get('line_display_name') || p.get('display_name') || '';
+
+      state.lineUser.line_user_id = lineUserId;
+      state.lineUser.line_display_name = displayName;
+
+      if (name) el('customerName').value = name;
+      if (phone) el('customerPhone').value = phone;
+    }
+
+    async function initLiffIfAvailable() {
+      // LIFF IDは本番導入時に設定します。未設定時はブラウザデモとして動作します。
+      const LIFF_ID = '';
+      if (!LIFF_ID || !window.liff) return;
+
+      try {
+        await liff.init({ liffId: LIFF_ID });
+        if (liff.isLoggedIn()) {
+          const profile = await liff.getProfile();
+          state.lineUser.line_user_id = profile.userId || '';
+          state.lineUser.line_display_name = profile.displayName || '';
+          if (!el('customerName').value && profile.displayName) {
+            el('customerName').value = profile.displayName;
+          }
+        }
+      } catch (error) {
+        console.warn('LIFF初期化はスキップしました', error);
+      }
+    }
+
+    async function loadInitialData() {
+      showGlobalMessage('店舗情報を読み込んでいます。', '');
+      try {
+        const data = await fetchJson(apiUrl('/api/public/settings'));
+        state.settings = data;
+        state.shop = data.shop;
+        state.menus = data.menus || [];
+        state.staff = data.staff || [];
+
+        applyShopInfo(data);
+        renderMenus();
+        renderStaff();
+        setupDate(data.booking_range);
+        hideGlobalMessage();
+        el('apiStatus').textContent = 'API接続：OK';
+      } catch (error) {
+        showGlobalMessage('読み込みに失敗しました：' + error.message, 'error');
+        el('apiStatus').textContent = 'API接続：エラー';
+      } finally {
+        el('menuLoading').classList.add('hidden');
+        el('staffLoading').classList.add('hidden');
+      }
+    }
+
+    function applyShopInfo(data) {
+      const shop = data.shop || {};
+      const title = shop.display_name || shop.shop_name || 'DPRO エステリラクゼーション';
+      el('shopTitle').textContent = title;
+      el('shopLead').textContent = shop.description || 'LINEからかんたん予約。メニュー・日時・お名前を入力するだけで予約できます。';
+      el('shopPhone').textContent = shop.phone ? '☎ ' + shop.phone : '☎ 電話番号未設定';
+
+      if (data.booking_range) {
+        el('bookingRange').textContent = `予約受付期間：${formatDateShort(data.booking_range.from)}〜${formatDateShort(data.booking_range.to)}`;
+      }
+    }
+
+    function renderMenus() {
+      const box = el('menuList');
+      box.innerHTML = '';
+      if (!state.menus.length) {
+        box.innerHTML = '<div class="notice error">有効なメニューがありません。</div>';
+        return;
+      }
+
+      state.menus.forEach((menu) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'option';
+        btn.dataset.menuId = menu.id;
+        btn.innerHTML = `
+          <div class="option-top">
+            <div class="option-name">${escapeHtml(menu.menu_name)}</div>
+            <div class="option-price">${formatYen(menu.price_yen)}</div>
+          </div>
+          <div class="option-meta">
+            <span class="chip">${Number(menu.duration_minutes || 60)}分</span>
+            ${menu.is_first_visit ? '<span class="chip">初回おすすめ</span>' : ''}
+            ${menu.is_ticket_target ? '<span class="chip">回数券対象</span>' : ''}
+          </div>
+          ${menu.description ? `<div class="option-desc">${escapeHtml(menu.description)}</div>` : ''}
+        `;
+        btn.onclick = () => selectMenu(menu.id);
+        box.appendChild(btn);
+      });
+
+      selectMenu(state.menus[0].id, true);
+    }
+
+    function renderStaff() {
+      const box = el('staffList');
+      box.innerHTML = '';
+      if (!state.staff.length) {
+        box.innerHTML = '<div class="notice">スタッフ情報が未設定です。指名なしで予約します。</div>';
+        return;
+      }
+
+      state.staff.forEach((staff) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'option';
+        btn.dataset.staffId = staff.id;
+        btn.innerHTML = `
+          <div class="option-top">
+            <div class="option-name">${escapeHtml(staff.staff_name || '指名なし')}</div>
+            <div class="option-price">${Number(staff.nomination_fee_yen || 0) ? formatYen(staff.nomination_fee_yen) : '指名料なし'}</div>
+          </div>
+          <div class="option-meta">
+            <span class="chip">${staff.staff_code === 'omakase' ? 'おすすめ自動割当' : 'スタッフ指名'}</span>
+          </div>
+          ${staff.profile ? `<div class="option-desc">${escapeHtml(staff.profile)}</div>` : ''}
+        `;
+        btn.onclick = () => selectStaff(staff.id);
+        box.appendChild(btn);
+      });
+
+      const omakase = state.staff.find((s) => s.staff_code === 'omakase') || state.staff[0];
+      if (omakase) selectStaff(omakase.id, true);
+    }
+
+    function setupDate(range) {
+      const today = toJstDateString(new Date());
+      const from = range?.from || today;
+      const to = range?.to || addDays(from, 60);
+      const initial = from;
+
+      el('dateInput').min = from;
+      el('dateInput').max = to;
+      el('dateInput').value = initial;
+      state.selectedDate = initial;
+      el('dateInput').addEventListener('change', () => {
+        state.selectedDate = el('dateInput').value;
+        state.selectedSlot = null;
+        renderDatePills();
+        loadSlots();
+        updateFooter();
+      });
+
+      renderDatePills();
+      loadSlots();
+    }
+
+    function renderDatePills() {
+      const box = el('datePills');
+      box.innerHTML = '';
+      const start = el('dateInput').min || toJstDateString(new Date());
+      for (let i = 0; i < 14; i++) {
+        const date = addDays(start, i);
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'date-pill' + (date === state.selectedDate ? ' selected' : '');
+        btn.innerHTML = `${formatDateShort(date)}<small>${weekdayLabel(date)}</small>`;
+        btn.onclick = () => {
+          state.selectedDate = date;
+          state.selectedSlot = null;
+          el('dateInput').value = date;
+          renderDatePills();
+          loadSlots();
+          updateFooter();
+        };
+        box.appendChild(btn);
+      }
+    }
+
+    function selectMenu(menuId, silent = false) {
+      state.selectedMenu = state.menus.find((m) => m.id === menuId) || null;
+      document.querySelectorAll('[data-menu-id]').forEach((node) => {
+        node.classList.toggle('selected', node.dataset.menuId === menuId);
+      });
+      state.selectedSlot = null;
+      if (!silent) loadSlots();
+      updateFooter();
+    }
+
+    function selectStaff(staffId, silent = false) {
+      state.selectedStaff = state.staff.find((s) => s.id === staffId) || null;
+      document.querySelectorAll('[data-staff-id]').forEach((node) => {
+        node.classList.toggle('selected', node.dataset.staffId === staffId);
+      });
+      state.selectedSlot = null;
+      if (!silent) loadSlots();
+      updateFooter();
+    }
+
+    async function loadSlots() {
+      const message = el('slotMessage');
+      const list = el('slotList');
+      list.innerHTML = '';
+
+      if (!state.selectedMenu || !state.selectedDate) {
+        message.className = 'notice';
+        message.textContent = '先にメニューと日付を選択してください。';
+        return;
+      }
+
+      message.className = 'notice';
+      message.innerHTML = '<span class="loading"><span class="spinner"></span>空き時間を確認しています</span>';
+
+      try {
+        const data = await fetchJson(apiUrl('/api/public/slots', {
+          date: state.selectedDate,
+          menu_id: state.selectedMenu.id,
+          staff_id: state.selectedStaff?.id || ''
+        }));
+        state.slots = data.slots || [];
+
+        if (data.closed) {
+          message.className = 'notice error';
+          message.textContent = data.reason || 'この日は予約できません。';
+          updateFooter();
+          return;
+        }
+
+        const availableCount = state.slots.filter((s) => s.available).length;
+        message.className = availableCount ? 'notice ok' : 'notice error';
+        message.textContent = availableCount
+          ? `${formatDateLong(state.selectedDate)} は ${availableCount} 枠予約できます。`
+          : 'この日は予約できる空き枠がありません。別の日を選択してください。';
+
+        renderSlots();
+      } catch (error) {
+        message.className = 'notice error';
+        message.textContent = '空き時間の取得に失敗しました：' + error.message;
+      }
+      updateFooter();
+    }
+
+    function renderSlots() {
+      const list = el('slotList');
+      list.innerHTML = '';
+
+      state.slots.forEach((slot) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'slot' + (!slot.available ? ' disabled' : '') + (state.selectedSlot?.time === slot.time ? ' selected' : '');
+        btn.disabled = !slot.available;
+        btn.innerHTML = `${slot.time}<small>${slot.available ? slot.label : (slot.reasons?.[0] || slot.label || '不可')}</small>`;
+        btn.onclick = () => selectSlot(slot.time);
+        list.appendChild(btn);
+      });
+    }
+
+    function selectSlot(time) {
+      state.selectedSlot = state.slots.find((s) => s.time === time) || null;
+      renderSlots();
+      updateFooter();
+    }
+
+    function footerNext() {
+      if (state.currentStep === 'select') {
+        if (!validateSelection()) return;
+        goStep('form');
+        return;
+      }
+      if (state.currentStep === 'form') {
+        goStep('confirm');
+        return;
+      }
+      if (state.currentStep === 'confirm') {
+        submitReservation();
+      }
+    }
+
+    function goStep(step) {
+      if (step === 'form' && !validateSelection()) return;
+      if (step === 'confirm') {
+        if (!validateSelection() || !validateCustomerForm()) return;
+        renderConfirm();
+      }
+
+      state.currentStep = step;
+      el('stepSelect').classList.toggle('hidden', step !== 'select');
+      el('stepForm').classList.toggle('hidden', step !== 'form');
+      el('stepConfirm').classList.toggle('hidden', step !== 'confirm');
+      el('stepComplete').classList.toggle('hidden', step !== 'complete');
+      updateProgress(step);
+      updateFooter();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateProgress(step) {
+      const map = { select: 1, form: 3, confirm: 4, complete: 4 };
+      const active = map[step] || 1;
+      document.querySelectorAll('[data-progress]').forEach((node) => {
+        node.classList.toggle('active', Number(node.dataset.progress) <= active);
+      });
+    }
+
+    function validateSelection() {
+      if (!state.selectedMenu) {
+        showGlobalMessage('メニューを選択してください。', 'error');
+        return false;
+      }
+      if (!state.selectedDate) {
+        showGlobalMessage('日付を選択してください。', 'error');
+        return false;
+      }
+      if (!state.selectedSlot) {
+        showGlobalMessage('予約時間を選択してください。', 'error');
+        return false;
+      }
+      hideGlobalMessage();
+      return true;
+    }
+
+    function validateCustomerForm() {
+      const name = el('customerName').value.trim();
+      const phone = el('customerPhone').value.trim();
+      if (!name) {
+        showGlobalMessage('お名前を入力してください。', 'error');
+        return false;
+      }
+      if (!phone) {
+        showGlobalMessage('電話番号を入力してください。', 'error');
+        return false;
+      }
+      if (normalizePhone(phone).length < 10) {
+        showGlobalMessage('電話番号を確認してください。', 'error');
+        return false;
+      }
+      hideGlobalMessage();
+      return true;
+    }
+
+    function renderConfirm() {
+      const rows = buildSummaryRows();
+      el('confirmSummary').innerHTML = rows.map(([key, val]) => `
+        <div class="summary-row">
+          <div class="summary-key">${escapeHtml(key)}</div>
+          <div class="summary-val">${escapeHtml(val || '—')}</div>
+        </div>
+      `).join('');
+    }
+
+    function buildSummaryRows() {
+      return [
+        ['店舗', state.shop?.display_name || state.shop?.shop_name || 'DPRO エステリラクゼーション'],
+        ['メニュー', `${state.selectedMenu?.menu_name || ''}（${formatYen(state.selectedMenu?.price_yen)} / ${Number(state.selectedMenu?.duration_minutes || 60)}分）`],
+        ['スタッフ', state.selectedStaff?.staff_name || '指名なし'],
+        ['日時', `${formatDateLong(state.selectedDate)} ${state.selectedSlot?.time || ''}`],
+        ['お名前', el('customerName').value.trim()],
+        ['電話番号', el('customerPhone').value.trim()],
+        ['ご要望', el('requestNote').value.trim()],
+        ['初回来店', el('firstVisit').checked ? 'はい' : 'いいえ']
+      ];
+    }
+
+    async function submitReservation() {
+      if (!validateSelection() || !validateCustomerForm()) return;
+
+      const submitBtn = el('submitBtn');
+      const backBtn = el('backToFormBtn');
+      const msg = el('submitMessage');
+      submitBtn.disabled = true;
+      backBtn.disabled = true;
+      submitBtn.textContent = '予約送信中...';
+      msg.className = 'notice';
+      msg.textContent = '予約を送信しています。画面を閉じずにお待ちください。';
+
+      const body = {
+        shop_code: SHOP_CODE,
+        customer_name: el('customerName').value.trim(),
+        customer_phone: normalizePhone(el('customerPhone').value.trim()),
+        line_user_id: state.lineUser.line_user_id,
+        line_display_name: state.lineUser.line_display_name,
+        menu_id: state.selectedMenu.id,
+        staff_id: state.selectedStaff?.id || undefined,
+        date: state.selectedDate,
+        time: state.selectedSlot.time,
+        request_note: el('requestNote').value.trim(),
+        is_first_visit: el('firstVisit').checked,
+        source: 'simple_index',
+        created_by: 'STEP_ESTHE_3_index_html'
+      };
+
+      try {
+        const data = await fetchJson(apiUrl('/api/public/reservations'), {
+          method: 'POST',
+          body: JSON.stringify(body)
+        });
+        state.lastReservation = data.reservation;
+        renderComplete(data);
+        goStep('complete');
+      } catch (error) {
+        msg.className = 'notice error';
+        msg.textContent = '予約できませんでした：' + error.message;
+      } finally {
+        submitBtn.disabled = false;
+        backBtn.disabled = false;
+        submitBtn.textContent = 'この内容で予約する';
+      }
+    }
+
+    function renderComplete(data) {
+      const reservation = data.reservation || {};
+      const customer = data.customer || {};
+      el('completeText').textContent = data.completion_message || 'ご予約ありがとうございます。変更やキャンセルがある場合は、お早めにお知らせください。';
+
+      const rows = [
+        ['予約番号', reservation.reservation_code || reservation.id || '—'],
+        ['メニュー', reservation.menu_name || state.selectedMenu?.menu_name || '—'],
+        ['スタッフ', reservation.staff_name || state.selectedStaff?.staff_name || '指名なし'],
+        ['日時', reservation.start_at ? formatDateTimeJst(reservation.start_at) : `${formatDateLong(state.selectedDate)} ${state.selectedSlot?.time || ''}`],
+        ['お名前', customer.customer_name || el('customerName').value.trim()],
+        ['電話番号', customer.phone || el('customerPhone').value.trim()]
+      ];
+
+      el('completeSummary').innerHTML = rows.map(([key, val]) => `
+        <div class="summary-row">
+          <div class="summary-key">${escapeHtml(key)}</div>
+          <div class="summary-val">${escapeHtml(String(val || '—'))}</div>
+        </div>
+      `).join('');
+    }
+
+    async function reloadMyReservation() {
+      const phone = normalizePhone(el('customerPhone').value.trim());
+      if (!phone) {
+        showGlobalMessage('電話番号が入力されていないため確認できません。', 'error');
+        return;
+      }
+      try {
+        const data = await fetchJson(apiUrl('/api/public/my-page', { phone }));
+        if (!data.found) {
+          showGlobalMessage('予約情報が見つかりませんでした。', 'error');
+          return;
+        }
+        const next = data.next_reservations?.[0];
+        if (next) {
+          showGlobalMessage(`次回予約：${next.menu_name} / ${formatDateTimeJst(next.start_at)}`, 'ok');
+        } else {
+          showGlobalMessage('現在、次回予約はありません。', '');
+        }
+      } catch (error) {
+        showGlobalMessage('確認に失敗しました：' + error.message, 'error');
+      }
+    }
+
+    function resetReservation() {
+      state.selectedSlot = null;
+      state.lastReservation = null;
+      el('requestNote').value = '';
+      goStep('select');
+      loadSlots();
+    }
+
+    function updateFooter() {
+      const mini = [];
+      if (state.selectedMenu) mini.push(state.selectedMenu.menu_name);
+      if (state.selectedDate) mini.push(formatDateShort(state.selectedDate));
+      if (state.selectedSlot) mini.push(state.selectedSlot.time);
+      if (state.selectedStaff) mini.push(state.selectedStaff.staff_name);
+      el('miniSummary').textContent = mini.length ? mini.join(' / ') : 'メニュー・日時を選ぶと、ここに予約内容が表示されます。';
+
+      const btn = el('footerNextBtn');
+      if (state.currentStep === 'select') {
+        btn.textContent = 'お客様情報へ進む';
+        btn.disabled = !(state.selectedMenu && state.selectedDate && state.selectedSlot);
+      } else if (state.currentStep === 'form') {
+        btn.textContent = '予約内容を確認する';
+        btn.disabled = false;
+      } else if (state.currentStep === 'confirm') {
+        btn.textContent = 'この内容で予約する';
+        btn.disabled = false;
+      } else {
+        btn.textContent = '別の予約をする';
+        btn.disabled = false;
+        btn.onclick = resetReservation;
+        return;
+      }
+      btn.onclick = footerNext;
+    }
+
+    function showGlobalMessage(text, type) {
+      const box = el('globalMessage');
+      box.className = 'notice' + (type ? ' ' + type : '');
+      box.textContent = text;
+      box.classList.remove('hidden');
+    }
+
+    function hideGlobalMessage() {
+      el('globalMessage').classList.add('hidden');
+    }
+
+    function normalizePhone(value) {
+      return String(value || '').replace(/[ー−‐―\s]/g, '').replace(/[^0-9+]/g, '');
+    }
+
+    function formatYen(value) {
+      const n = Number(value || 0);
+      return n ? n.toLocaleString('ja-JP') + '円' : '無料';
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function toJstDateString(date) {
+      const parts = new Intl.DateTimeFormat('ja-JP', {
+        timeZone: JST_TIMEZONE,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }).formatToParts(date);
+      const y = parts.find((p) => p.type === 'year').value;
+      const m = parts.find((p) => p.type === 'month').value;
+      const d = parts.find((p) => p.type === 'day').value;
+      return `${y}-${m}-${d}`;
+    }
+
+    function addDays(yyyyMmDd, days) {
+      const [y, m, d] = yyyyMmDd.split('-').map(Number);
+      const base = new Date(Date.UTC(y, m - 1, d));
+      base.setUTCDate(base.getUTCDate() + days);
+      return base.toISOString().slice(0, 10);
+    }
+
+    function formatDateShort(date) {
+      const [, m, d] = date.split('-');
+      return `${Number(m)}/${Number(d)}`;
+    }
+
+    function formatDateLong(date) {
+      const [y, m, d] = date.split('-');
+      return `${Number(y)}年${Number(m)}月${Number(d)}日（${weekdayLabel(date)}）`;
+    }
+
+    function weekdayLabel(date) {
+      const [y, m, d] = date.split('-').map(Number);
+      const day = new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+      return ['日', '月', '火', '水', '木', '金', '土'][day];
+    }
+
+    function formatDateTimeJst(iso) {
+      return new Intl.DateTimeFormat('ja-JP', {
+        timeZone: JST_TIMEZONE,
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        weekday: 'short',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      }).format(new Date(iso));
+    }
+  </script>
+</body>
+</html>
