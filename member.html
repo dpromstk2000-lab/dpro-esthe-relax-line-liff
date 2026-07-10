@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DPRO Esthe Relaxation｜STEP ESTHE-10｜member.html</title>
+  <title>DPRO Esthe Relaxation｜STEP ESTHE-12C｜member.html</title>
   <style>
     :root{
       --bg:#fffaf7;
@@ -158,13 +158,14 @@
 <body>
   <main class="wrap">
     <section class="hero">
-      <div class="badge">STEP ESTHE-10-R3｜日時変更前後確認版 member.html</div>
-      <h1>DPRO Esthe Relaxation</h1>
-      <p>次回予約・予約変更・キャンセル・回数券残数・来店履歴をLINE上で確認できる、お客様用マイページです。</p>
+      <div class="badge">STEP ESTHE-12C｜店舗設定反映確認版 member.html</div>
+      <h1 id="shopTitle">DPRO Esthe Relaxation</h1>
+      <p id="shopLead">次回予約・予約変更・キャンセル・回数券残数・来店履歴をLINE上で確認できる、お客様用マイページです。</p>
       <div class="hero-meta">
         <span>API接続：<span id="apiStatus">確認中</span></span>
         <span>管理コード：1234</span>
         <span>店舗：<span id="shopName">DPRO Esthe Relaxation</span></span>
+        <span>電話：<span id="shopPhone">確認中</span></span>
         <span>画面：member.html</span>
       </div>
     </section>
@@ -327,7 +328,9 @@
       changeDate: "",
       changeTime: "",
       slots: [],
-      pendingAction: null
+      pendingAction: null,
+      settings: null,
+      shop: null
     };
 
     const $ = (id) => document.getElementById(id);
@@ -507,7 +510,7 @@
     function renderCustomer(){
       const c = state.customer || {};
       $("apiStatus").textContent = "OK";
-      $("shopName").textContent = "DPRO Esthe Relaxation";
+      applyShopInfo();
       $("customerBox").className = "member-card";
       $("customerBox").innerHTML = `
         <div class="member-name">${escapeHtml(c.customer_name || "お客様")}</div>
@@ -826,11 +829,30 @@
       if(typeof state.pendingAction === "function") await state.pendingAction();
     });
 
+    function applyShopInfo(){
+      const shop = state.shop || {};
+      const displayName = shop.display_name || shop.shop_name || "DPRO Esthe Relaxation";
+      $("shopTitle").textContent = displayName;
+      $("shopName").textContent = displayName;
+      $("shopLead").textContent = shop.description || "次回予約・予約変更・キャンセル・回数券残数・来店履歴をLINE上で確認できる、お客様用マイページです。";
+      $("shopPhone").textContent = shop.phone || "未設定";
+    }
+
     async function init(){
       try{
         const h = await api("/api/health");
         $("apiStatus").textContent = h.ok ? "OK" : "NG";
-        $("shopName").textContent = h.shop_name || "DPRO Esthe Relaxation";
+
+        try{
+          const settings = await api(`/api/public/settings?shop_code=${encodeURIComponent(SHOP_CODE)}`);
+          state.settings = settings;
+          state.shop = settings.shop || {};
+          applyShopInfo();
+        }catch(settingsError){
+          state.shop = { shop_name: h.shop_name || "DPRO Esthe Relaxation" };
+          applyShopInfo();
+        }
+
         setMessage("ok", "API接続OKです。電話番号を入力してマイページを表示できます。");
       }catch(e){
         $("apiStatus").textContent = "NG";
