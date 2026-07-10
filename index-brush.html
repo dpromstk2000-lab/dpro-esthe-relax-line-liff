@@ -435,7 +435,7 @@
 <body>
   <main class="wrap">
     <section class="hero">
-      <div class="badge">STEP ESTHE-9｜ブラッシュアップ版予約 index-brush.html</div>
+      <div class="badge">STEP ESTHE-9-R1｜会員確認表示修正版 index-brush.html</div>
       <h1>DPRO Esthe Relaxation</h1>
       <p>初回カウンセリング・回数券状況・次回予約導線までつながる、エステ・リラクゼーション向けのブラッシュアップ版予約画面です。</p>
       <div class="hero-meta">
@@ -726,7 +726,7 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    const VERSION = "ESTHE-9-INDEX-BRUSH-CONSULTATION-20260710";
+    const VERSION = "ESTHE-9-R1-MEMBER-LOOKUP-DISPLAY-FIX-20260710";
     const API_BASE = "https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev";
     const SHOP_CODE = "esthe_demo_default";
 
@@ -1002,17 +1002,31 @@
         const data = await api(`/api/public/my-page?shop_code=${SHOP_CODE}&phone=${encodeURIComponent(phone)}`);
         state.member = data;
         if(data.found){
-          const c = data.customer;
-          state.customerName = name || c.customer_name || "";
+          const c = data.customer || {};
+          // STEP ESTHE-9-R1:
+          // 入力欄に前回の名前が残っていても、電話番号検索で見つかった顧客名を優先する。
+          // これにより「08000003002を検索したのに選択中が山田花子のまま」になる表示ズレを防ぐ。
+          state.customerName = c.customer_name || name || "";
+          state.customerPhone = c.phone || phone || "";
           $("customerName").value = state.customerName;
+          $("customerPhone").value = state.customerPhone;
           $("lookupName").value = state.customerName;
+          $("lookupPhone").value = state.customerPhone;
           $("memberResult").className = "notice ok";
           $("memberResult").textContent = `${state.customerName} 様の情報が見つかりました。次回予約・回数券情報を右側に表示しています。`;
         }else{
+          state.customerName = name || "";
+          state.customerPhone = phone || "";
+          $("customerName").value = state.customerName;
+          $("customerPhone").value = state.customerPhone;
+          $("lookupName").value = state.customerName;
+          $("lookupPhone").value = state.customerPhone;
           $("memberResult").className = "notice warn";
           $("memberResult").textContent = "登録済みのお客様情報はありません。初回来店として予約できます。";
         }
         renderCustomerSide();
+        renderSideSummary();
+        updateBottom();
         setMessage("ok","会員確認が完了しました。");
       }catch(e){
         $("memberResult").className = "notice ng";
