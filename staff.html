@@ -42,12 +42,59 @@
     .empty{padding:22px;background:#fff8f4;border:1px dashed var(--line);border-radius:18px;color:var(--muted);font-weight:900;text-align:center}.sideList{display:flex;flex-direction:column;gap:10px;margin-top:14px}.todo{border-bottom:1px solid var(--line);padding:0 0 10px}.todo:last-child{border-bottom:0}.todo b{display:block;font-size:14px}.todo span{display:block;color:var(--muted);font-weight:800;font-size:12px;margin-top:3px}.notice{border-radius:16px;padding:14px 15px;font-weight:850;line-height:1.6;margin:12px 0}.notice.ok{background:var(--okBg);color:#0f6c53;border:1px solid #bde6d8}.notice.bad{background:var(--badBg);color:#a2323a;border:1px solid #f2cbd0}.notice.info{background:#fff8f4;color:var(--muted);border:1px solid var(--line)}
     .footer{margin:22px 0 0;text-align:center;color:var(--muted);font-size:12px;font-weight:800}.bottomBar{position:fixed;left:0;right:0;bottom:0;background:rgba(255,247,243,.94);border-top:1px solid var(--line);backdrop-filter:blur(10px);z-index:20}.bottomInner{width:min(1050px,94vw);margin:0 auto;display:flex;justify-content:space-between;gap:12px;align-items:center;padding:14px 0}.bottomText{color:var(--muted);font-weight:900;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.toast{position:fixed;right:22px;bottom:88px;z-index:50;min-width:min(380px,90vw);background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow);font-weight:900}.toast.ok{border-color:#bde6d8;color:#0f6c53}.toast.bad{border-color:#f2cbd0;color:#a2323a}.toast.hidden{display:none}.modalLayer{position:fixed;inset:0;background:rgba(44,25,20,.42);display:none;align-items:center;justify-content:center;z-index:80;padding:20px}.modal{width:min(560px,94vw);background:#fff;border-radius:24px;border:1px solid var(--line);box-shadow:0 30px 80px rgba(35,18,14,.28);padding:22px}.modal h3{margin:0 0 8px;font-size:22px}.modal p{margin:0 0 14px;color:var(--muted);font-weight:800;line-height:1.7}.confirmRows{border:1px solid var(--line);border-radius:16px;overflow:hidden;margin:12px 0}.confirmRow{display:grid;grid-template-columns:120px 1fr;border-bottom:1px solid var(--line)}.confirmRow:last-child{border-bottom:0}.confirmRow span{padding:12px;font-size:13px}.confirmRow span:first-child{background:#fff8f4;color:var(--muted);font-weight:950}.confirmRow span:last-child{font-weight:950}.modalActions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
     @media(max-width:850px){.wrap{width:min(640px,94vw);margin-top:14px}.hero{padding:24px 22px}h1{font-size:30px}.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.filters{grid-template-columns:1fr}.bottomInner{padding:10px 0}.bottomText{font-size:11px}.bottomInner .btn{padding:10px 13px;font-size:12px}.confirmRow{grid-template-columns:96px 1fr}.modalActions{grid-template-columns:1fr}}
+  
+/* STEP ESTHE-7: Windows/Chromeのdate入力で曜日が空欄表示になる対策 */
+.dateFieldV7{
+  position:relative;
+  width:100%;
+}
+.dateFieldV7 > input[type="date"]{
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  opacity:0.01 !important;
+  z-index:2 !important;
+  cursor:pointer !important;
+}
+.dateFieldV7 > .dateDisplayV7{
+  width:100% !important;
+  min-height:48px !important;
+  border:1px solid var(--line) !important;
+  background:#fff !important;
+  color:var(--text, var(--ink, #2d2522)) !important;
+  border-radius:14px !important;
+  padding:12px 42px 12px 13px !important;
+  text-align:left !important;
+  font:inherit !important;
+  font-weight:900 !important;
+  box-shadow:none !important;
+  cursor:pointer !important;
+  justify-content:flex-start !important;
+}
+.dateFieldV7 > .dateDisplayV7:focus{
+  outline:none !important;
+  border-color:var(--main) !important;
+  box-shadow:0 0 0 4px rgba(123,75,62,.10) !important;
+}
+.dateFieldV7::after{
+  content:"📅";
+  position:absolute;
+  right:13px;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:1;
+  pointer-events:none;
+  opacity:.72;
+  font-size:15px;
+}
+
   </style>
 </head>
 <body>
   <div class="wrap">
     <section class="hero">
-      <span class="badge">STEP ESTHE-5｜シンプルスタッフ画面 staff.html</span>
+      <span class="badge">STEP ESTHE-7｜シンプルスタッフ画面ブラッシュアップ staff.html</span>
       <h1>DPRO Esthe Relaxation</h1>
       <p>スタッフが本日の担当予約・お客様メモ・進行状況を確認するための画面です。</p>
       <div class="meta">
@@ -61,6 +108,7 @@
       <button id="refreshBtn">最新に更新</button>
       <a class="btn btnSoft" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/admin.html">管理画面を開く</a>
       <a class="btn btnSub" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/">予約画面を開く</a>
+      <a class="btn btnSub" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/system-check.html">system-check</a>
       <button class="btnSub" id="copyTodayBtn">本日の担当メモをコピー</button>
     </div>
 
@@ -153,7 +201,7 @@
 
 <script>
 (() => {
-  const VERSION = 'ESTHE-5-STAFF-SIMPLE-TODAY-20260710';
+  const VERSION = 'ESTHE-7-SIMPLE-STAFF-DATE-NAV-BRUSHUP-20260710';
   const API_BASE = 'https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev';
   const SHOP_CODE = 'esthe_demo_default';
   const ADMIN_KEY = '1234';
@@ -429,6 +477,72 @@
   function formatDateLong(d){ return d.toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'short'}); }
   function escapeHtml(v){ return String(v ?? '').replace(/[&<>'"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
 })();
+
+
+/* STEP ESTHE-7: date入力の曜日表示ブラッシュアップ */
+(function(){
+  function weekdayLabelV7(yyyyMmDd){
+    const parts = String(yyyyMmDd || "").split("-").map(Number);
+    if(parts.length !== 3 || parts.some(Number.isNaN)) return "";
+    const day = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2])).getUTCDay();
+    return ["日","月","火","水","木","金","土"][day] || "";
+  }
+
+  function dateDisplayTextV7(value){
+    if(!value) return "日付を選択";
+    const parts = String(value).split("-");
+    if(parts.length !== 3) return value;
+    const y = Number(parts[0]);
+    const m = Number(parts[1]);
+    const d = Number(parts[2]);
+    const w = weekdayLabelV7(value);
+    return `${y}年${m}月${d}日（${w}）`;
+  }
+
+  function updateDateDisplaysV7(){
+    document.querySelectorAll(".dateFieldV7").forEach((wrap) => {
+      const input = wrap.querySelector('input[type="date"]');
+      const display = wrap.querySelector(".dateDisplayV7");
+      if(input && display) display.textContent = dateDisplayTextV7(input.value);
+    });
+  }
+
+  function enhanceDateInputsV7(){
+    document.querySelectorAll('input[type="date"]:not([data-esthe-v7-date])').forEach((input) => {
+      input.setAttribute("data-esthe-v7-date", "1");
+      const wrap = document.createElement("div");
+      wrap.className = "dateFieldV7";
+      input.parentNode.insertBefore(wrap, input);
+      wrap.appendChild(input);
+
+      const display = document.createElement("button");
+      display.type = "button";
+      display.className = "dateDisplayV7";
+      wrap.insertBefore(display, input);
+
+      display.addEventListener("click", () => {
+        if(typeof input.showPicker === "function"){
+          input.showPicker();
+        }else{
+          input.focus();
+          input.click();
+        }
+      });
+
+      input.addEventListener("change", updateDateDisplaysV7);
+      updateDateDisplaysV7();
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(enhanceDateInputsV7, 80);
+    setTimeout(updateDateDisplaysV7, 160);
+  });
+  document.addEventListener("click", () => setTimeout(updateDateDisplaysV7, 60), true);
+  document.addEventListener("change", () => setTimeout(updateDateDisplaysV7, 30), true);
+  window.dproEstheUpdateDateDisplaysV7 = updateDateDisplaysV7;
+})();
+
 </script>
 </body>
 </html>
