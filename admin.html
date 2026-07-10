@@ -107,6 +107,21 @@
     .small{font-size:12px;color:var(--muted);font-weight:800}.hidden{display:none!important}
     .footer{margin-top:22px;text-align:center;color:var(--muted);font-size:12px;font-weight:800}
     .loading{opacity:.7;pointer-events:none}
+
+    .actionGuide{display:flex;gap:8px;align-items:flex-start;background:#fff7f2;border:1px dashed var(--line);border-radius:16px;padding:12px;margin:10px 0 14px;color:var(--main);font-weight:900;font-size:13px}
+    .actionGuide .num{flex:0 0 auto;width:24px;height:24px;border-radius:999px;background:var(--main);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px}
+    .selectedSummary{border:1px solid #d9b6a6;background:#fffaf7;border-radius:16px;padding:12px;margin-top:10px;font-weight:900;color:var(--text)}
+    .selectedSummary .small{display:block;margin-top:3px;color:var(--muted)}
+    .cardActionTitle{font-size:12px;color:var(--muted);font-weight:1000;margin-top:12px}
+    .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:80;background:#2f211d;color:#fff;border-radius:999px;padding:13px 18px;box-shadow:0 16px 40px rgba(47,33,29,.24);font-weight:900;max-width:min(92vw,720px);text-align:center}
+    .toast.ok{background:#0f6f50}.toast.bad{background:#a33737}.toast.warn{background:#8a5600}
+    .modalLayer{position:fixed;inset:0;background:rgba(47,33,29,.38);z-index:90;display:flex;align-items:center;justify-content:center;padding:18px}
+    .modal{width:min(560px,100%);background:#fff;border:1px solid var(--line);border-radius:24px;box-shadow:0 30px 80px rgba(47,33,29,.28);padding:20px}
+    .modal h2{margin:0 0 4px;font-size:22px;letter-spacing:-.03em}.modal p{margin:0 0 12px;color:var(--muted);font-weight:800}
+    .confirmDetails{background:#fff8f4;border:1px solid var(--line);border-radius:16px;padding:12px;margin:12px 0}
+    .confirmDetails .row{grid-template-columns:110px 1fr;padding:8px 0}
+    .modalActions{display:grid;grid-template-columns:1fr 1.2fr;gap:10px;margin-top:14px}
+    .btnDangerMain{background:#b84b4b;color:#fff}
     @media (max-width:900px){
       .wrap{width:min(100% - 20px,760px);margin-top:12px}.grid{grid-template-columns:1fr}.grid3,.statusBar{grid-template-columns:repeat(2,1fr)}.formGrid{grid-template-columns:1fr}.slots{grid-template-columns:repeat(3,1fr)}h1{font-size:28px}.hero{padding:22px}.row{grid-template-columns:110px 1fr}
     }
@@ -116,7 +131,7 @@
 <body>
   <div class="wrap" id="app">
     <section class="hero">
-      <div class="badge">STEP ESTHE-4｜シンプル管理画面 admin.html</div>
+      <div class="badge">STEP ESTHE-4-R1｜確認画面・アクション改善 admin.html</div>
       <h1>DPRO Esthe Relaxation</h1>
       <p>シンプル予約版の店舗管理画面です。本日の予約・予約一覧・電話予約登録を確認できます。</p>
       <div class="meta">
@@ -187,6 +202,7 @@
           <div class="card">
             <h2>電話予約登録</h2>
             <p class="sub">LINE以外で受けた予約を店舗側から登録します。</p>
+            <div class="actionGuide"><span class="num">1</span><div>メニュー・スタッフ・日付・時間を選び、お客様情報を入力します。最後に確認画面が出てから登録されます。</div></div>
             <div class="formGrid">
               <div>
                 <label for="phoneMenu">メニュー</label>
@@ -224,7 +240,10 @@
                 <span class="small">営業デモ中はチェックONでOKです。</span>
               </div>
               <div class="full">
-                <button class="btnMain" type="button" id="createPhoneBtn" style="width:100%">電話予約を登録する</button>
+                <div id="phoneSelectedSummary" class="selectedSummary hidden"></div>
+              </div>
+              <div class="full">
+                <button class="btnMain" type="button" id="createPhoneBtn" style="width:100%">確認画面へ進む</button>
               </div>
             </div>
           </div>
@@ -267,8 +286,22 @@
     </div>
   </div>
 
+  <div id="toast" class="toast hidden"></div>
+
+  <div class="modalLayer hidden" id="confirmModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+      <h2 id="confirmTitle">確認</h2>
+      <p id="confirmMessage">内容を確認してください。</p>
+      <div id="confirmDetails" class="confirmDetails"></div>
+      <div class="modalActions">
+        <button class="btnSub" type="button" id="confirmCancel">戻る</button>
+        <button class="btnMain" type="button" id="confirmOk">実行する</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    const VERSION = 'ESTHE-4-ADMIN-SIMPLE-COMPLETE-20260710';
+    const VERSION = 'ESTHE-4-R1-ADMIN-CONFIRM-ACTION-FEEDBACK-20260710';
     const API_BASE = 'https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev';
     const SHOP_CODE = 'esthe_demo_default';
     const ADMIN_KEY = '1234';
@@ -281,6 +314,7 @@
       todayData: null,
       listData: null,
       selectedSlot: '',
+      pendingConfirm: null,
     };
 
     const $ = (id) => document.getElementById(id);
@@ -312,6 +346,12 @@
       $('phoneStaff').addEventListener('change', loadPhoneSlots);
       $('phoneDate').addEventListener('change', loadPhoneSlots);
       $('createPhoneBtn').addEventListener('click', createPhoneReservation);
+      $('phoneName').addEventListener('input', updatePhoneSummary);
+      $('phoneTel').addEventListener('input', updatePhoneSummary);
+      $('phoneNote').addEventListener('input', updatePhoneSummary);
+      $('confirmCancel').addEventListener('click', closeConfirm);
+      $('confirmOk').addEventListener('click', runPendingConfirm);
+      $('confirmModal').addEventListener('click', (e)=>{ if(e.target.id === 'confirmModal') closeConfirm(); });
     }
 
     function switchTab(name){
@@ -411,8 +451,9 @@
       const d = parseApiDate(r.start_at);
       const status = statusInfo(r.status);
       const cancelled = ['cancelled','no_show'].includes(r.status);
+      const detail = reservationDetail(r);
       return `
-        <div class="resCard" data-id="${escapeHtml(r.id)}">
+        <div class="resCard" data-id="${escapeHtml(r.id)}" data-detail="${escapeHtml(JSON.stringify(detail))}">
           <div class="resHead">
             <div>
               <div class="time">${formatTime(d)} <span class="small">${formatDateShort(d)}</span></div>
@@ -426,13 +467,14 @@
             予約番号：${escapeHtml(r.reservation_code || '-')}<br>
             ${r.request_note ? `要望：${escapeHtml(r.request_note)}` : '要望：-'}
           </div>
+          <div class="cardActionTitle">ステータス変更</div>
           <div class="actions">
-            <button class="btnSoft btnTiny" data-status="checked_in" ${cancelled?'disabled':''}>来店済み</button>
-            <button class="btnSoft btnTiny" data-status="in_treatment" ${cancelled?'disabled':''}>施術中</button>
-            <button class="btnSoft btnTiny" data-status="waiting_payment" ${cancelled?'disabled':''}>会計待ち</button>
-            <button class="btnOk btnTiny" data-status="completed" ${cancelled?'disabled':''}>完了</button>
-            <button class="btnBad btnTiny" data-status="cancelled" ${cancelled?'disabled':''}>キャンセル</button>
-            <button class="btnSub btnTiny" data-copy="true">文面コピー</button>
+            <button class="btnSoft btnTiny" data-status="checked_in" ${cancelled?'disabled':''}>来店済みにする</button>
+            <button class="btnSoft btnTiny" data-status="in_treatment" ${cancelled?'disabled':''}>施術中にする</button>
+            <button class="btnSoft btnTiny" data-status="waiting_payment" ${cancelled?'disabled':''}>会計待ちにする</button>
+            <button class="btnOk btnTiny" data-status="completed" ${cancelled?'disabled':''}>完了にする</button>
+            <button class="btnBad btnTiny" data-status="cancelled" ${cancelled?'disabled':''}>キャンセルにする</button>
+            <button class="btnSub btnTiny" data-copy="true">予約確認文をコピー</button>
           </div>
         </div>
       `;
@@ -444,7 +486,7 @@
           const card = btn.closest('.resCard');
           const id = card.dataset.id;
           const status = btn.dataset.status;
-          await updateStatus(id, status);
+          await updateStatusWithConfirm(id, status, card);
         });
       });
       root.querySelectorAll('[data-copy]').forEach(btn=>{
@@ -452,9 +494,29 @@
       });
     }
 
-    async function updateStatus(id, status){
+    async function updateStatusWithConfirm(id, status, card){
       const label = statusInfo(status).label;
-      if(status === 'cancelled' && !confirm('この予約をキャンセルにしますか？')) return;
+      const detail = getCardDetail(card);
+      const dangerous = ['cancelled','no_show'].includes(status);
+      openConfirm({
+        title: dangerous ? '予約をキャンセルしますか？' : `ステータスを「${label}」に変更しますか？`,
+        message: '押し間違い防止のため、内容を確認してから実行します。',
+        details: [
+          ['お客様', detail.customer_name || '-'],
+          ['日時', `${detail.date || '-'} ${detail.time || ''}`],
+          ['メニュー', detail.menu_name || '-'],
+          ['現在', detail.status_label || '-'],
+          ['変更後', label]
+        ],
+        confirmLabel: dangerous ? 'キャンセルにする' : `${label}に変更する`,
+        danger: dangerous,
+        onConfirm: async ()=>{
+          await updateStatus(id, status, label);
+        }
+      });
+    }
+
+    async function updateStatus(id, status, label){
       setLoading(true);
       try{
         await api('/api/admin/reservations/status', {
@@ -470,7 +532,7 @@
     }
 
     function copyReservationMessage(card){
-      const text = card.innerText.replace(/来店済み|施術中|会計待ち|完了|キャンセル|文面コピー/g,'').trim();
+      const text = card.innerText.replace(/来店済みにする|施術中にする|会計待ちにする|完了にする|キャンセルにする|予約確認文をコピー|ステータス変更/g,'').trim();
       const msg = `ご予約内容の確認です。\n\n${text}\n\n変更やキャンセルがある場合は、お早めにLINEでお知らせください。`;
       navigator.clipboard.writeText(msg).then(()=>showMessage('予約確認文をコピーしました。','ok')).catch(()=>showMessage('コピーに失敗しました。','bad'));
     }
@@ -521,6 +583,7 @@
     async function loadPhoneSlots(){
       if(!state.menus.length) return;
       state.selectedSlot = '';
+      updatePhoneSummary();
       const menuId = $('phoneMenu').value;
       const staffId = $('phoneStaff').value;
       const date = $('phoneDate').value || addDays(todayLocal(),1);
@@ -538,6 +601,7 @@
             box.querySelectorAll('.slot').forEach(b=>b.classList.remove('active'));
             btn.classList.add('active');
             state.selectedSlot = btn.dataset.time;
+            updatePhoneSummary();
           });
         });
       }catch(e){
@@ -545,7 +609,40 @@
       }
     }
 
+    function updatePhoneSummary(){
+      const box = $('phoneSelectedSummary');
+      if(!box) return;
+      const menu = selectedOptionText('phoneMenu');
+      const staff = selectedOptionText('phoneStaff');
+      const date = $('phoneDate').value;
+      const time = state.selectedSlot;
+      const name = $('phoneName').value.trim();
+      const tel = normalizePhone($('phoneTel').value);
+      if(!menu && !date && !time && !name && !tel){ box.classList.add('hidden'); box.innerHTML=''; return; }
+      box.classList.remove('hidden');
+      box.innerHTML = `選択中：${escapeHtml(menu || 'メニュー未選択')} / ${escapeHtml(staff || 'スタッフ未選択')} / ${escapeHtml(date ? formatDateJa(date) : '日付未選択')} ${escapeHtml(time || '時間未選択')}<span class="small">${escapeHtml(name || 'お客様名未入力')}　${escapeHtml(tel || '電話番号未入力')}</span>`;
+    }
+
     async function createPhoneReservation(){
+      const payload = buildPhoneReservationPayload();
+      if(!payload) return;
+      openConfirm({
+        title:'電話予約を登録しますか？',
+        message:'内容を確認してから登録します。まだDBには保存されていません。',
+        details:[
+          ['お客様', payload.customer_name],
+          ['電話番号', payload.customer_phone],
+          ['日時', `${formatDateJa(payload.date)} ${payload.time}`],
+          ['メニュー', selectedOptionText('phoneMenu')],
+          ['スタッフ', selectedOptionText('phoneStaff')],
+          ['メモ', payload.request_note || '-']
+        ],
+        confirmLabel:'この内容で電話予約を登録する',
+        onConfirm: async ()=>submitPhoneReservation(payload)
+      });
+    }
+
+    function buildPhoneReservationPayload(){
       const menuId = $('phoneMenu').value;
       const staffId = $('phoneStaff').value;
       const date = $('phoneDate').value;
@@ -553,33 +650,38 @@
       const customerName = $('phoneName').value.trim();
       const customerPhone = normalizePhone($('phoneTel').value);
       const note = $('phoneNote').value.trim();
-      if(!menuId) return showMessage('メニューを選択してください。','bad');
-      if(!date) return showMessage('日付を選択してください。','bad');
-      if(!time) return showMessage('空き時間を選択してください。','bad');
-      if(!customerName) return showMessage('お客様名を入力してください。','bad');
-      if(!customerPhone) return showMessage('電話番号を入力してください。','bad');
+      if(!menuId){ showMessage('メニューを選択してください。','bad'); switchTab('phone'); return null; }
+      if(!date){ showMessage('日付を選択してください。','bad'); switchTab('phone'); return null; }
+      if(!time){ showMessage('空き時間を選択してください。','bad'); switchTab('phone'); return null; }
+      if(!customerName){ showMessage('お客様名を入力してください。','bad'); $('phoneName').focus(); return null; }
+      if(!customerPhone){ showMessage('電話番号を入力してください。','bad'); $('phoneTel').focus(); return null; }
+      return {
+        shop_code:SHOP_CODE,
+        menu_id:menuId,
+        staff_id:staffId,
+        date,
+        time,
+        customer_name:customerName,
+        customer_phone:customerPhone,
+        request_note:note,
+        source:'phone',
+        created_by:'admin.html',
+        is_demo:$('phoneDemo').checked,
+        is_first_visit:true
+      };
+    }
+
+    async function submitPhoneReservation(payload){
       setLoading(true);
       try{
         const data = await api('/api/admin/reservations', {
           admin:true,
           method:'POST',
-          body:{
-            shop_code:SHOP_CODE,
-            menu_id:menuId,
-            staff_id:staffId,
-            date,
-            time,
-            customer_name:customerName,
-            customer_phone:customerPhone,
-            request_note:note,
-            source:'phone',
-            created_by:'admin.html',
-            is_demo:$('phoneDemo').checked,
-            is_first_visit:true
-          }
+          body:payload
         });
-        showMessage(`電話予約を登録しました。予約番号：${data.reservation?.reservation_code || ''}`,'ok');
-        $('phoneName').value=''; $('phoneTel').value=''; $('phoneNote').value=''; state.selectedSlot='';
+        const code = data.reservation?.reservation_code || '';
+        showMessage(`電話予約を登録しました。予約番号：${code}`,'ok');
+        $('phoneName').value=''; $('phoneTel').value=''; $('phoneNote').value=''; state.selectedSlot=''; updatePhoneSummary();
         await Promise.all([loadDay(), loadReservations(false), loadPhoneSlots()]);
       }catch(e){
         showMessage(e.message || '電話予約登録に失敗しました。','bad');
@@ -606,7 +708,48 @@
 
     function showMessage(text, type='ok'){
       $('message').innerHTML = `<div class="notice ${type}">${escapeHtml(text)}</div>`;
+      showToast(text, type);
       if(type==='ok') setTimeout(()=>{ if($('message').innerText === text) $('message').innerHTML=''; }, 4500);
+    }
+
+    function showToast(text, type='ok'){
+      const t = $('toast');
+      t.textContent = text;
+      t.className = `toast ${type}`;
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(()=>t.classList.add('hidden'), 3600);
+    }
+
+    function openConfirm({title, message, details, confirmLabel, danger=false, onConfirm}){
+      $('confirmTitle').textContent = title || '確認';
+      $('confirmMessage').textContent = message || '内容を確認してください。';
+      $('confirmDetails').innerHTML = (details || []).map(([k,v])=>`<div class="row"><div class="key">${escapeHtml(k)}</div><div class="val">${escapeHtml(v)}</div></div>`).join('');
+      $('confirmOk').textContent = confirmLabel || '実行する';
+      $('confirmOk').className = danger ? 'btnDangerMain' : 'btnMain';
+      state.pendingConfirm = onConfirm;
+      $('confirmModal').classList.remove('hidden');
+      $('confirmModal').setAttribute('aria-hidden','false');
+    }
+
+    function closeConfirm(){
+      $('confirmModal').classList.add('hidden');
+      $('confirmModal').setAttribute('aria-hidden','true');
+      state.pendingConfirm = null;
+    }
+
+    async function runPendingConfirm(){
+      const fn = state.pendingConfirm;
+      if(!fn) return closeConfirm();
+      $('confirmOk').disabled = true;
+      const original = $('confirmOk').textContent;
+      $('confirmOk').textContent = '処理中...';
+      try{
+        closeConfirm();
+        await fn();
+      }finally{
+        $('confirmOk').disabled = false;
+        $('confirmOk').textContent = original;
+      }
     }
 
     function setLoading(flag){ $('app').classList.toggle('loading', flag); }
@@ -620,6 +763,10 @@
     function formatYen(v){ return Number(v||0) === 0 ? '無料' : `${Number(v||0).toLocaleString('ja-JP')}円`; }
     function normalizePhone(v){ return String(v||'').replace(/[ー−―‐\s-]/g,'').trim(); }
     function weekdayName(n){ return ['日','月','火','水','木','金','土'][Number(n)] || n; }
+    function selectedOptionText(id){ const el=$(id); return el?.selectedOptions?.[0]?.textContent?.trim() || ''; }
+    function getCardDetail(card){ try{return JSON.parse(card.dataset.detail || '{}');}catch(e){return {};} }
+    function reservationDetail(r){ const d=parseApiDate(r.start_at); return {customer_name:r.customer_name || '', customer_phone:r.customer_phone || '', reservation_code:r.reservation_code || '', menu_name:r.menu_name || '', staff_name:r.staff_name || '指名なし', date:formatDateJa(formatDateInputTokyo(d)), time:formatTime(d), status_label:statusInfo(r.status).label}; }
+    function formatDateInputTokyo(d){ return new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(d); }
     function statusInfo(status){
       const map={
         reserved:['予約済み',''], checked_in:['来店済み','ok'], in_treatment:['施術中','warn'], waiting_payment:['会計待ち','warn'], completed:['完了','ok'], cancelled:['キャンセル','bad'], no_show:['無断キャンセル','bad']
