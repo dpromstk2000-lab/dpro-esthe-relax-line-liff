@@ -1,0 +1,1497 @@
+# DPRO エステ LINE
+# STEP名: ESTHE-NEXT-5-R2
+#
+# 目的:
+# - エステ向けの「見積・確認・承認」を、施術内容・料金・注意事項・同意確認として実装
+# - 予約時の同意、店舗での施術前確認、顧客カルテを予約単位で結び付ける
+# - LINEへの自動送信は行わず、個別確認文のコピーを基本にする
+#
+# 対象ファイル:
+# - owner.html
+# - member.html
+# - index-brush.html
+# - .dpro-next/esthe-step-state.yml
+# - .dpro-next/esthe-current-baseline.yml
+#
+# 実施する変更:
+# - オーナー受付・施術詳細へ「施術内容・料金・同意確認」を追加
+# - 予約時の施術前同意状況を表示
+# - メニュー標準料金・所要時間・回数券候補を表示
+# - 店舗確認4項目を確認後、既存カルテ保存APIで確認記録を永続保存
+# - 保存記録は予約番号・予約IDと関連付け
+# - 確認記録がない状態で施術開始を押した場合は、確認画面を開いて安全停止
+# - お客様へ送る確認文は個別コピーのみ
+# - LINE会員ページへ料金目安・所要時間・施術前案内を表示
+# - 予約確認画面へ料金・所要時間・同意済み表示を強化
+#
+# 変更前バックアップタグ:
+# - backup-esthe-before-next5-YYYYMMDD
+#
+# 前STEP完了確認:
+# - current_step: ESTHE-NEXT-4-COMPLETE
+# - next_step: ESTHE-NEXT-5
+#
+# 自動検査:
+# - HTML / JavaScript / YML構文
+# - HTML ID重複
+# - 既存機能維持
+# - 予約ID・予約番号と確認記録の関連付け
+# - 同意確認表示
+# - 施術開始ガード
+# - 既存カルテ保存API再利用
+# - 個別文面コピー
+# - 一括自動LINE配信が追加されていないこと
+# - 初期API追加なし
+# - Worker既存API疎通
+# - ファイル容量
+# - GitHub Pages公開反映
+#
+# Worker変更: なし
+# Supabase変更: なし
+# API変更: なし
+#
+# 次のSTEP:
+# - ESTHE-NEXT-6
+#
+# R2修正内容:
+# - 初版はAPI・同意基準・バックアップ作成まで成功
+# - 初版はmember.htmlの複数行置換文字列の字下げ不一致で安全停止
+# - R2はYMLのブロックスカラーと埋め込みPython文字列の字下げを分離
+# - member.htmlの実ファイル書式に一致する置換文字列を維持
+# - 初版は本体ファイルと完成台帳をCommitしていないためNEXT-4正常版から再実行
+#
+# 成功後:
+# - 完成台帳更新
+# - 自動Commit / Push
+# - このYML自身を削除
+
+name: "DPRO ESTHE NEXT-5-R2 - Treatment Confirmation and Consent"
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/ESTHE-NEXT-5-R2.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: "dpro-esthe-next"
+  cancel-in-progress: false
+
+env:
+  STEP_NAME: "ESTHE-NEXT-5"
+  SYSTEM_NAME: "DPRO エステ LINE"
+  WORKFLOW_FILE: ".github/workflows/ESTHE-NEXT-5-R2.yml"
+  EXPECTED_PREVIOUS_STEP: "ESTHE-NEXT-4-COMPLETE"
+  EXPECTED_CURRENT_NEXT: "ESTHE-NEXT-5"
+  CURRENT_STEP_AFTER_SUCCESS: "ESTHE-NEXT-5-COMPLETE"
+  NEXT_STEP_AFTER_SUCCESS: "ESTHE-NEXT-6"
+  BACKUP_TAG_PREFIX: "backup-esthe-before-next5-r2"
+  API_BASE: "https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev"
+  PAGES_BASE: "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff"
+  SHOP_CODE: "esthe_demo_default"
+  WORKER_CHANGED: "false"
+  SUPABASE_CHANGED: "false"
+  API_CHANGED: "false"
+
+jobs:
+  esthe-next-5:
+    name: "Apply ESTHE NEXT-5 safely"
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: "Checkout repository with history"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: "Configure Git identity"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name "DPRO NEXT Actions"
+          git config user.email "actions@users.noreply.github.com"
+
+      - name: "Confirm ESTHE-NEXT-4 completion"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          STATE_FILE=".dpro-next/esthe-step-state.yml"
+          test -f "$STATE_FILE"
+
+          CURRENT_STEP="$(awk -F': *' '/^current_step:/{gsub(/["'"'"']/, "", $2); print $2; exit}' "$STATE_FILE")"
+          NEXT_STEP="$(awk -F': *' '/^next_step:/{gsub(/["'"'"']/, "", $2); print $2; exit}' "$STATE_FILE")"
+
+          if [[ "$CURRENT_STEP" != "$EXPECTED_PREVIOUS_STEP" ]]; then
+            echo "::error::前STEP未完了です。current_step=$CURRENT_STEP / expected=$EXPECTED_PREVIOUS_STEP"
+            exit 1
+          fi
+
+          if [[ "$NEXT_STEP" != "$EXPECTED_CURRENT_NEXT" ]]; then
+            echo "::error::実行対象STEPが一致しません。next_step=$NEXT_STEP / expected=$EXPECTED_CURRENT_NEXT"
+            exit 1
+          fi
+
+          echo "### 前STEP完了確認" >> "$GITHUB_STEP_SUMMARY"
+          echo "- current_step: \`$CURRENT_STEP\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- next_step: \`$NEXT_STEP\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- 判定: **OK**" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: "Confirm existing APIs and consent baseline"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          JST_DATE="$(TZ=Asia/Tokyo date +%F)"
+
+          HEALTH_CODE="$(curl -L -sS --retry 3 --connect-timeout 10 --max-time 40 \
+            -o /tmp/esthe-next5-health.json \
+            -w "%{http_code}" \
+            "${API_BASE}/api/health")"
+
+          SETTINGS_CODE="$(curl -L -sS --retry 3 --connect-timeout 10 --max-time 40 \
+            -o /tmp/esthe-next5-settings.json \
+            -w "%{http_code}" \
+            "${API_BASE}/api/public/settings?shop_code=${SHOP_CODE}")"
+
+          DAY_CODE="$(curl -L -sS --retry 3 --connect-timeout 10 --max-time 45 \
+            -H "Accept: application/json" \
+            -H "x-admin-secret: 1234" \
+            -o /tmp/esthe-next5-day.json \
+            -w "%{http_code}" \
+            "${API_BASE}/api/admin/day?shop_code=${SHOP_CODE}&date=${JST_DATE}")"
+
+          for pair in "health:$HEALTH_CODE" "settings:$SETTINGS_CODE" "day:$DAY_CODE"; do
+            label="${pair%%:*}"
+            code="${pair#*:}"
+            if [[ ! "$code" =~ ^2 ]]; then
+              echo "::error::$label API確認失敗 HTTP $code"
+              exit 1
+            fi
+          done
+
+          python3 <<'PY'
+          import json
+          from pathlib import Path
+
+          health = json.loads(Path("/tmp/esthe-next5-health.json").read_text(encoding="utf-8"))
+          settings = json.loads(Path("/tmp/esthe-next5-settings.json").read_text(encoding="utf-8"))
+          day = json.loads(Path("/tmp/esthe-next5-day.json").read_text(encoding="utf-8"))
+
+          if health.get("ok") is not True:
+              raise SystemExit("health ok=false")
+          if settings.get("ok") is False:
+              raise SystemExit("settings ok=false")
+          if day.get("ok") is not True:
+              raise SystemExit("day ok=false")
+          if not isinstance(settings.get("menus", []), list):
+              raise SystemExit("settings.menus is not a list")
+          if not isinstance(day.get("reservations", []), list):
+              raise SystemExit("day.reservations is not a list")
+
+          print("Health: OK")
+          print("Public settings: OK")
+          print("Menus:", len(settings.get("menus", [])))
+          print("Day reservations:", len(day.get("reservations", [])))
+          PY
+
+          grep -q '/api/admin/karte/save' owner.html
+          grep -q 'consent_checked: $("consent").checked' index-brush.html
+          grep -q '施術前確認事項への同意が必要です' index-brush.html
+
+          echo "### 既存機能再利用" >> "$GITHUB_STEP_SUMMARY"
+          echo "- public/settings: **OK**" >> "$GITHUB_STEP_SUMMARY"
+          echo "- admin/day: **OK**" >> "$GITHUB_STEP_SUMMARY"
+          echo "- 既存カルテ保存API: **確認済み**" >> "$GITHUB_STEP_SUMMARY"
+          echo "- 予約時同意保存: **確認済み**" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Worker・SQL変更: **不要**" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: "Create change-before backup tag"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          CHANGE_BEFORE_SHA="$GITHUB_SHA"
+          mapfile -t HEAD_FILES < <(git diff-tree --no-commit-id --name-only -r "$GITHUB_SHA")
+
+          if [[ "${#HEAD_FILES[@]}" -eq 1 && "${HEAD_FILES[0]}" == "$WORKFLOW_FILE" ]]; then
+            CHANGE_BEFORE_SHA="$(git rev-parse "${GITHUB_SHA}^")"
+          fi
+
+          JST_DATE="$(TZ=Asia/Tokyo date +%Y%m%d)"
+          BASE_TAG="${BACKUP_TAG_PREFIX}-${JST_DATE}"
+          BACKUP_TAG="$BASE_TAG"
+
+          if git ls-remote --exit-code --tags origin "refs/tags/$BACKUP_TAG" >/dev/null 2>&1; then
+            BACKUP_TAG="${BASE_TAG}-run-${GITHUB_RUN_ID}"
+          fi
+
+          git tag -a "$BACKUP_TAG" "$CHANGE_BEFORE_SHA" \
+            -m "DPRO ESTHE before NEXT-5: $CHANGE_BEFORE_SHA"
+          git push origin "refs/tags/$BACKUP_TAG"
+
+          {
+            echo "CHANGE_BEFORE_SHA=$CHANGE_BEFORE_SHA"
+            echo "BACKUP_TAG=$BACKUP_TAG"
+          } >> "$GITHUB_ENV"
+
+          echo "### 変更前バックアップ" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Commit: \`$CHANGE_BEFORE_SHA\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Tag: \`$BACKUP_TAG\`" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: "Apply treatment confirmation and customer linkage"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          python3 <<'PY'
+          from __future__ import annotations
+
+          import datetime as dt
+          import json
+          from pathlib import Path
+
+          ROOT = Path(".")
+
+          def read(path: str) -> str:
+              target = ROOT / path
+              if not target.exists():
+                  raise RuntimeError(f"対象ファイルがありません: {path}")
+              return target.read_text(encoding="utf-8")
+
+          def write(path: str, text: str) -> None:
+              (ROOT / path).write_text(text.rstrip() + "\n", encoding="utf-8")
+
+          def replace_once(source: str, old: str, new: str, label: str) -> str:
+              count = source.count(old)
+              if count != 1:
+                  raise RuntimeError(f"{label}: 置換対象が1件ではありません count={count}")
+              return source.replace(old, new, 1)
+
+          def insert_before_once(source: str, anchor: str, addition: str, label: str) -> str:
+              count = source.count(anchor)
+              if count != 1:
+                  raise RuntimeError(f"{label}: 挿入位置が1件ではありません count={count}")
+              return source.replace(anchor, addition + "\n" + anchor, 1)
+
+          # ============================================================
+          # owner.html
+          # ============================================================
+          owner = read("owner.html")
+
+          if "<!-- STEP ESTHE-NEXT-4 -->" not in owner:
+              raise RuntimeError("owner.html: NEXT-4基準マーカーがありません")
+          if "ESTHE-NEXT-4-TREATMENT-PROGRESS-BOARD-20260723" not in owner:
+              raise RuntimeError("owner.html: NEXT-4 VERSIONがありません")
+          if 'id="preTreatmentConfirmSection"' in owner:
+              raise RuntimeError("owner.html: NEXT-5確認セクションが既に存在します")
+
+          owner = replace_once(
+              owner,
+              "<!-- STEP ESTHE-NEXT-4 -->",
+              "<!-- STEP ESTHE-NEXT-5 -->",
+              "owner STEPマーカー",
+          )
+          owner = replace_once(
+              owner,
+              "<title>DPRO Esthe Relaxation｜STEP ESTHE-NEXT-4｜owner.html</title>",
+              "<title>DPRO Esthe Relaxation｜STEP ESTHE-NEXT-5｜owner.html</title>",
+              "owner title",
+          )
+          owner = replace_once(
+              owner,
+              '<div class="badge">STEP ESTHE-NEXT-4｜施術進捗・ステータス見える化</div>',
+              '<div class="badge">STEP ESTHE-NEXT-5｜施術内容・料金・同意確認</div>',
+              "owner badge",
+          )
+          owner = replace_once(
+              owner,
+              'const VERSION = "ESTHE-NEXT-4-TREATMENT-PROGRESS-BOARD-20260723";',
+              'const VERSION = "ESTHE-NEXT-5-TREATMENT-CONFIRMATION-20260723";',
+              "owner VERSION",
+          )
+          owner = replace_once(
+              owner,
+              '''  integratedVisit: null,
+            integratedVisitCache: {}
+          };''',
+              '''  integratedVisit: null,
+            integratedVisitCache: {},
+            menuCatalog: []
+          };''',
+              "owner state",
+          )
+
+          owner_css = r"""
+                    /* DPRO NEXT-5: 施術内容・料金・同意確認 */
+                    .preconfirm-status-grid{
+                      display:grid;
+                      grid-template-columns:repeat(2,1fr);
+                      gap:9px;
+                      margin-bottom:12px;
+                    }
+                    .preconfirm-status{
+                      border:1px solid var(--line);
+                      border-radius:15px;
+                      background:var(--soft);
+                      padding:12px;
+                    }
+                    .preconfirm-status strong{
+                      display:block;
+                      color:var(--main);
+                      font-size:15px;
+                      line-height:1.35;
+                    }
+                    .preconfirm-status span{
+                      display:block;
+                      margin-top:5px;
+                      color:var(--muted);
+                      font-size:11px;
+                      font-weight:850;
+                      line-height:1.55;
+                    }
+                    .preconfirm-status.ok{
+                      background:#eaf8f2;
+                      border-color:#bce9d8;
+                    }
+                    .preconfirm-status.ok strong{color:#087a59}
+                    .preconfirm-status.warn{
+                      background:#fff8e8;
+                      border-color:#f0d6a4;
+                    }
+                    .preconfirm-status.warn strong{color:#8b5c0b}
+                    .preconfirm-checks{
+                      display:grid;
+                      grid-template-columns:1fr 1fr;
+                      gap:8px;
+                      margin-top:12px;
+                    }
+                    .preconfirm-check{
+                      display:flex;
+                      gap:9px;
+                      align-items:flex-start;
+                      min-height:52px;
+                      padding:10px;
+                      border:1px solid var(--line);
+                      border-radius:14px;
+                      background:#fff;
+                      color:var(--text);
+                      font-size:12px;
+                      font-weight:900;
+                      line-height:1.55;
+                    }
+                    .preconfirm-check input{
+                      width:auto;
+                      margin-top:3px;
+                      accent-color:var(--main);
+                    }
+                    .preconfirm-note{
+                      width:100%;
+                      min-height:74px;
+                      margin-top:10px;
+                      padding:11px 12px;
+                      border:1px solid var(--line);
+                      border-radius:14px;
+                      background:#fff;
+                      color:var(--text);
+                      font:inherit;
+                      font-size:13px;
+                      font-weight:800;
+                      line-height:1.6;
+                      resize:vertical;
+                    }
+                    .preconfirm-saved{
+                      margin-top:10px;
+                      padding:11px 12px;
+                      border:1px solid #bce9d8;
+                      border-radius:14px;
+                      background:#eaf8f2;
+                      color:#087a59;
+                      font-size:12px;
+                      font-weight:900;
+                      line-height:1.6;
+                    }
+                    @media(max-width:680px){
+                      .preconfirm-status-grid,
+                      .preconfirm-checks{grid-template-columns:1fr}
+                    }
+                    """
+          owner = insert_before_once(
+              owner,
+              "</style>",
+              owner_css,
+              "owner NEXT-5 CSS",
+          )
+
+          owner_functions = r"""
+                    function yenText(value){
+                      const amount = Number(value);
+                      return Number.isFinite(amount) ? `${amount.toLocaleString("ja-JP")}円` : "当日確認";
+                    }
+
+                    function menuForReservation(r){
+                      const menus = state.menuCatalog || [];
+                      const menuId = String(r?.menu_id || r?.menu?.id || "");
+                      const menuName = String(r?.menu_name || r?.menu?.menu_name || "");
+                      return menus.find(menu =>
+                        (menuId && String(menu.id || "") === menuId) ||
+                        (menuName && String(menu.menu_name || "") === menuName)
+                      ) || r?.menu || null;
+                    }
+
+                    function reservationPriceInfo(r){
+                      const menu = menuForReservation(r) || {};
+                      const price = r?.price_yen ?? r?.menu_price_yen ?? menu.price_yen;
+                      const duration = r?.duration_minutes ?? r?.menu_duration_minutes ?? menu.duration_minutes;
+                      return {
+                        price,
+                        duration,
+                        priceText: Number.isFinite(Number(price)) ? yenText(price) : "当日確認",
+                        durationText: Number.isFinite(Number(duration)) ? `${Number(duration)}分` : "当日確認"
+                      };
+                    }
+
+                    function latestConsultation(detail){
+                      return (detail?.consultations || [])
+                        .slice()
+                        .sort((a,b) =>
+                          new Date(b.answered_at || b.created_at || 0) -
+                          new Date(a.answered_at || a.created_at || 0)
+                        )[0] || null;
+                    }
+
+                    function reservationConsentChecked(detail){
+                      const consultation = latestConsultation(detail);
+                      if(!consultation) return false;
+                      const answers = parseConsultationAnswers(consultation);
+                      const raw = consultation.consent_checked ??
+                        consultation.consent ??
+                        answers.consent_checked ??
+                        answers.consent;
+                      return raw === true || raw === 1 || raw === "1" || raw === "true";
+                    }
+
+                    function preTreatmentConfirmationTitle(r){
+                      const key = r?.reservation_code || r?.id || "予約";
+                      return `施術前確認｜${key}`;
+                    }
+
+                    function findPreTreatmentConfirmation(detail, r){
+                      const title = preTreatmentConfirmationTitle(r);
+                      const relationKey = String(r?.reservation_code || r?.id || "");
+                      return (detail?.notes || []).find(note => {
+                        if(String(note.note_title || "") === title) return true;
+                        const typeMatch = String(note.note_type || "") === "pre_treatment_confirmation";
+                        const bodyMatch = relationKey && String(note.note_body || "").includes(relationKey);
+                        return typeMatch && bodyMatch;
+                      }) || null;
+                    }
+
+                    async function loadMenuCatalogIfNeeded(){
+                      if((state.menuCatalog || []).length) return;
+                      const existing = state.settings?.menus;
+                      if(Array.isArray(existing) && existing.length){
+                        state.menuCatalog = existing;
+                        return;
+                      }
+                      try{
+                        const settings = await api("/api/public/settings");
+                        state.menuCatalog = settings.menus || [];
+                      }catch(error){
+                        state.menuCatalog = [];
+                      }
+                    }
+
+                    function preTreatmentCustomerText(r){
+                      const p = isoParts(r.start_at);
+                      const info = reservationPriceInfo(r);
+                      return [
+                        `${r.customer_name || "お客様"}様`,
+                        "",
+                        "施術内容のご確認です。",
+                        `日時：${p.date ? dateText(p.date) : "-"} ${p.time || ""}`,
+                        `メニュー：${r.menu_name || "-"}`,
+                        `料金目安：${info.priceText}`,
+                        `所要時間目安：${info.durationText}`,
+                        `担当：${r.staff_name || "指名なし"}`,
+                        `予約番号：${r.reservation_code || "-"}`,
+                        "",
+                        "当日の体調・肌状態により、メニュー変更や施術を控える場合があります。",
+                        "回数券・追加内容・当日の変更がある場合は、最終金額を店頭で確認します。",
+                        "内容を確認してから施術を開始します。"
+                      ].join("\n");
+                    }
+
+                    function copyPreTreatmentCustomerText(){
+                      const r = state.integratedVisit?.reservation;
+                      if(!r) return;
+                      const text = preTreatmentCustomerText(r);
+                      navigator.clipboard?.writeText(text)
+                        .then(() => showToast("お客様確認文をコピーしました。"))
+                        .catch(() => showToast("確認文をコピーできませんでした。"));
+                    }
+
+                    async function savePreTreatmentConfirmation(){
+                      const hub = state.integratedVisit;
+                      const r = hub?.reservation;
+                      const detail = hub?.detail || {};
+                      const customer = detail.customer || {};
+                      if(!r || !customer.id){
+                        showToast("顧客詳細を確認してから保存してください。");
+                        return;
+                      }
+
+                      const requiredIds = [
+                        "preconfirmMenu",
+                        "preconfirmPrice",
+                        "preconfirmSafety",
+                        "preconfirmCustomer"
+                      ];
+                      const missing = requiredIds.filter(id => !$(id)?.checked);
+                      if(missing.length){
+                        showToast("4つの確認項目をすべて確認してください。");
+                        return;
+                      }
+
+                      const p = isoParts(r.start_at);
+                      const info = reservationPriceInfo(r);
+                      const bookingConsent = reservationConsentChecked(detail);
+                      const note = $("preconfirmNote")?.value.trim() || "";
+                      const title = preTreatmentConfirmationTitle(r);
+                      const body = [
+                        "[DPRO_PRE_TREATMENT_CONFIRMATION]",
+                        `予約番号：${r.reservation_code || "-"}`,
+                        `予約ID：${r.id || "-"}`,
+                        `日時：${p.date ? dateText(p.date) : "-"} ${p.time || ""}`,
+                        `メニュー：${r.menu_name || "-"}`,
+                        `標準料金：${info.priceText}`,
+                        `所要時間：${info.durationText}`,
+                        `予約時同意：${bookingConsent ? "同意済み" : "当日確認"}`,
+                        "店舗確認：メニュー説明済み／料金説明済み／注意事項確認済み／お客様本人確認済み",
+                        `補足：${note || "-"}`,
+                        `記録画面：${VERSION}`
+                      ].join("\n");
+
+                      try{
+                        await api("/api/admin/karte/save", {
+                          method:"POST",
+                          body:{
+                            customer_id:customer.id,
+                            note_title:title,
+                            note_body:body,
+                            note_type:"pre_treatment_confirmation",
+                            created_by:"owner",
+                            is_demo:true
+                          }
+                        });
+
+                        const query = r.customer_id
+                          ? `customer_id=${encodeURIComponent(r.customer_id)}`
+                          : `phone=${encodeURIComponent(normalizePhone(r.customer_phone || r.phone || customer.phone || ""))}`;
+                        const refreshed = await api(`/api/admin/customers/detail?${query}`);
+                        hub.detail = refreshed;
+                        const cacheKey = String(r.customer_id || normalizePhone(r.customer_phone || r.phone || customer.phone || ""));
+                        if(cacheKey) state.integratedVisitCache[cacheKey] = refreshed;
+                        showToast("施術前確認を顧客カルテへ保存しました。");
+                        renderIntegratedVisit();
+                      }catch(error){
+                        showToast("施術前確認の保存に失敗しました。");
+                        setMessage("ng", "施術前確認の保存に失敗しました：" + error.message);
+                      }
+                    }
+
+                    async function requestTreatmentStart(source, index){
+                      await openIntegratedVisit(source, index);
+                      const hub = state.integratedVisit;
+                      if(!hub?.reservation) return;
+
+                      const saved = findPreTreatmentConfirmation(hub.detail, hub.reservation);
+                      if(saved){
+                        closeIntegratedVisit();
+                        await updateStatus(source, index, "in_treatment", true);
+                        return;
+                      }
+
+                      showToast("施術前確認を保存してから施術を開始してください。");
+                      setTimeout(() => {
+                        document.getElementById("preTreatmentConfirmSection")
+                          ?.scrollIntoView({behavior:"smooth", block:"start"});
+                      }, 80);
+                    }
+
+                    """
+          owner = replace_once(
+              owner,
+              "function renderIntegratedVisit(){",
+              owner_functions + "\nfunction renderIntegratedVisit(){",
+              "owner NEXT-5 functions",
+          )
+
+          owner = replace_once(
+              owner,
+              '''  const detailError = hub.detailError
+              ? `<div class="notice warn">顧客詳細の取得に失敗しました：${escapeHtml(hub.detailError)}</div>`
+              : "";
+
+            $("visitHubTitle").textContent''',
+              '''  const detailError = hub.detailError
+              ? `<div class="notice warn">顧客詳細の取得に失敗しました：${escapeHtml(hub.detailError)}</div>`
+              : "";
+            const priceInfo = reservationPriceInfo(r);
+            const bookingConsent = reservationConsentChecked(detail);
+            const confirmationNote = findPreTreatmentConfirmation(detail, r);
+            const confirmationSaved = Boolean(confirmationNote);
+
+            $("visitHubTitle").textContent''',
+              "owner render variables",
+          )
+
+          confirmation_section = r"""
+              <section class="visit-hub-section" id="preTreatmentConfirmSection">
+                <h3>施術内容・料金・同意確認</h3>
+                <div class="preconfirm-status-grid">
+                  <div class="preconfirm-status ${bookingConsent ? "ok" : "warn"}">
+                    <strong>${bookingConsent ? "予約時同意あり" : "予約時同意は当日確認"}</strong>
+                    <span>${bookingConsent ? "予約画面で施術前確認事項へ同意済みです。" : "電話・店頭予約等は、お客様本人へ当日確認してください。"}</span>
+                  </div>
+                  <div class="preconfirm-status ${confirmationSaved ? "ok" : "warn"}">
+                    <strong>${confirmationSaved ? "店舗確認を保存済み" : "店舗確認は未保存"}</strong>
+                    <span>${confirmationSaved ? escapeHtml(confirmationNote.note_title || "施術前確認記録") : "4項目を確認し、顧客カルテへ記録してください。"}</span>
+                  </div>
+                </div>
+                <div class="visit-hub-grid">
+                  <div>施術内容</div><div>${escapeHtml(r.menu_name || "-")}</div>
+                  <div>標準料金</div><div>${escapeHtml(priceInfo.priceText)}</div>
+                  <div>所要時間</div><div>${escapeHtml(priceInfo.durationText)}</div>
+                  <div>支払確認</div><div>${activeTickets.length ? "回数券利用候補あり／会計時に最終確認" : "店頭会計時に最終確認"}</div>
+                </div>
+                <div class="notice warn">
+                  標準料金を表示しています。回数券、追加内容、当日のメニュー変更がある場合は、施術前または会計時に最終金額を確認してください。
+                </div>
+                <div class="preconfirm-checks">
+                  <label class="preconfirm-check"><input id="preconfirmMenu" type="checkbox" ${confirmationSaved ? "checked" : ""}>施術メニューと内容を説明しました</label>
+                  <label class="preconfirm-check"><input id="preconfirmPrice" type="checkbox" ${confirmationSaved ? "checked" : ""}>料金・回数券利用を確認しました</label>
+                  <label class="preconfirm-check"><input id="preconfirmSafety" type="checkbox" ${confirmationSaved ? "checked" : ""}>体調・肌状態・注意事項を確認しました</label>
+                  <label class="preconfirm-check"><input id="preconfirmCustomer" type="checkbox" ${confirmationSaved ? "checked" : ""}>お客様本人の同意を確認しました</label>
+                </div>
+                <textarea class="preconfirm-note" id="preconfirmNote" placeholder="当日の変更点や補足がある場合だけ入力してください。"></textarea>
+                ${confirmationSaved ? `<div class="preconfirm-saved">保存済み：${escapeHtml(confirmationNote.created_at || confirmationNote.updated_at || "日時記録あり")}</div>` : ""}
+                <div class="visit-hub-actions">
+                  <button class="mini" type="button" data-preconfirm-copy="1">お客様確認文をコピー</button>
+                  <button class="mini primary" type="button" data-preconfirm-save="1">${confirmationSaved ? "再確認を保存" : "確認記録を保存"}</button>
+                </div>
+              </section>
+
+                    """
+          owner = replace_once(
+              owner,
+              '''    <section class="visit-hub-section">
+                <h3>顧客情報のつながり</h3>''',
+              confirmation_section + '''    <section class="visit-hub-section">
+                <h3>顧客情報のつながり</h3>''',
+              "owner confirmation section",
+          )
+
+          owner = replace_once(
+              owner,
+              '''  $("visitHubBody").innerHTML = `<div class="visit-hub-loading">予約・顧客情報を読み込み中です。</div>`;
+
+            const cacheKey''',
+              '''  $("visitHubBody").innerHTML = `<div class="visit-hub-loading">予約・顧客情報を読み込み中です。</div>`;
+
+            await loadMenuCatalogIfNeeded();
+
+            const cacheKey''',
+              "owner menu catalog lazy load",
+          )
+
+          owner = replace_once(
+              owner,
+              '''async function updateStatus(source, idx, status){
+            const list = source === "day" ? (state.day?.reservations || []) : state.reservations;
+            const r = list[idx];
+            if(!r) return;
+            const p = isoParts(r.start_at);''',
+              '''async function updateStatus(source, idx, status, preTreatmentConfirmed=false){
+            const list = source === "day" ? (state.day?.reservations || []) : state.reservations;
+            const r = list[idx];
+            if(!r) return;
+            if(status === "in_treatment" && !preTreatmentConfirmed){
+              await requestTreatmentStart(source, idx);
+              return;
+            }
+            const p = isoParts(r.start_at);''',
+              "owner treatment start guard",
+          )
+
+          owner = replace_once(
+              owner,
+              '''  const integratedStatus = e.target.closest("[data-integrated-status]");''',
+              '''  const preconfirmCopy = e.target.closest("[data-preconfirm-copy]");
+            if(preconfirmCopy){
+              copyPreTreatmentCustomerText();
+              return;
+            }
+
+            const preconfirmSave = e.target.closest("[data-preconfirm-save]");
+            if(preconfirmSave){
+              await savePreTreatmentConfirmation();
+              return;
+            }
+
+            const integratedStatus = e.target.closest("[data-integrated-status]");''',
+              "owner confirmation events",
+          )
+
+          owner = replace_once(
+              owner,
+              '''  const answeredAt = a?.answered_at || a?.created_at || "-";
+
+            return `''',
+              '''  const answeredAt = a?.answered_at || a?.created_at || "-";
+            const consentRaw = a?.consent_checked ?? a?.consent ?? ans.consent_checked ?? ans.consent;
+            const consentChecked = consentRaw === true || consentRaw === 1 || consentRaw === "1" || consentRaw === "true";
+
+            return `''',
+              "owner consultation consent variable",
+          )
+          owner = replace_once(
+              owner,
+              '''      <div>ご要望</div><div>${escapeHtml(request)}</div>
+                <div>入力画面</div><div>${escapeHtml(version)}</div>''',
+              '''      <div>ご要望</div><div>${escapeHtml(request)}</div>
+                <div>施術前同意</div><div>${consentChecked ? "同意済み" : "当日確認"}</div>
+                <div>入力画面</div><div>${escapeHtml(version)}</div>''',
+              "owner consultation consent row",
+          )
+
+          write("owner.html", owner)
+
+          # ============================================================
+          # member.html
+          # ============================================================
+          member = read("member.html")
+
+          if "<!-- STEP ESTHE-NEXT-2 -->" not in member:
+              raise RuntimeError("member.html: NEXT-2基準マーカーがありません")
+
+          member = replace_once(
+              member,
+              "<!-- STEP ESTHE-NEXT-2 -->",
+              "<!-- STEP ESTHE-NEXT-5 -->",
+              "member STEPマーカー",
+          )
+          member = replace_once(
+              member,
+              "<title>DPRO Esthe Relaxation｜STEP ESTHE-16｜member.html</title>",
+              "<title>DPRO Esthe Relaxation｜STEP ESTHE-NEXT-5｜member.html</title>",
+              "member title",
+          )
+          member = replace_once(
+              member,
+              '<div class="badge">LINE会員ページ</div>',
+              '<div class="badge">STEP ESTHE-NEXT-5｜予約内容・料金確認</div>',
+              "member badge",
+          )
+          member = replace_once(
+              member,
+              'const VERSION = "ESTHE-NEXT-2-MEMBER-20260723";',
+              'const VERSION = "ESTHE-NEXT-5-MEMBER-CONFIRMATION-20260723";',
+              "member VERSION",
+          )
+          member = replace_once(
+              member,
+              '''      settings: null,
+                shop: null
+              };''',
+              '''      settings: null,
+                shop: null,
+                menus: []
+              };''',
+              "member state menus",
+          )
+
+          member_helpers = r"""
+              function yenText(value){
+                const amount = Number(value);
+                return Number.isFinite(amount) ? `${amount.toLocaleString("ja-JP")}円` : "当日確認";
+              }
+
+              function memberMenuForReservation(r){
+                const menuId = String(r?.menu_id || r?.menu?.id || "");
+                const menuName = String(r?.menu_name || r?.menu?.menu_name || "");
+                return (state.menus || []).find(menu =>
+                  (menuId && String(menu.id || "") === menuId) ||
+                  (menuName && String(menu.menu_name || "") === menuName)
+                ) || r?.menu || null;
+              }
+
+              function memberReservationPriceInfo(r){
+                const menu = memberMenuForReservation(r) || {};
+                const price = r?.price_yen ?? r?.menu_price_yen ?? menu.price_yen;
+                const duration = r?.duration_minutes ?? r?.menu_duration_minutes ?? menu.duration_minutes;
+                return {
+                  priceText:Number.isFinite(Number(price)) ? yenText(price) : "当日確認",
+                  durationText:Number.isFinite(Number(duration)) ? `${Number(duration)}分` : "当日確認"
+                };
+              }
+
+                    """
+          member = replace_once(
+              member,
+              '''    function escapeHtml(v){''',
+              member_helpers + '''    function escapeHtml(v){''',
+              "member price helpers",
+          )
+
+          member = replace_once(
+              member,
+              '''        const dt = reservationDateTime(r);
+                  return `
+                    <div class="reservation-card next">''',
+              '''        const dt = reservationDateTime(r);
+                  const priceInfo = memberReservationPriceInfo(r);
+                  return `
+                    <div class="reservation-card next">''',
+              "member reservation price variable",
+          )
+          member = replace_once(
+              member,
+              '''            <div class="small">予約番号：${escapeHtml(r.reservation_code || "-")}</div>
+                      <div class="small">ご要望：${escapeHtml(r.request_note || r.note || "-")}</div>''',
+              '''            <div class="small">予約番号：${escapeHtml(r.reservation_code || "-")}</div>
+                      <div class="small">料金目安：${escapeHtml(priceInfo.priceText)} / 所要時間目安：${escapeHtml(priceInfo.durationText)}</div>
+                      <div class="small">ご要望：${escapeHtml(r.request_note || r.note || "-")}</div>
+                      <div class="notice warn">体調・肌状態、回数券、追加内容、当日の変更により、内容や最終金額が変わる場合があります。</div>''',
+              "member reservation confirmation display",
+          )
+          member = replace_once(
+              member,
+              '''      const dt = reservationDateTime(r);
+                const c = state.customer || {};
+                const text = [''',
+              '''      const dt = reservationDateTime(r);
+                const c = state.customer || {};
+                const priceInfo = memberReservationPriceInfo(r);
+                const text = [''',
+              "member copy price variable",
+          )
+          member = replace_once(
+              member,
+              '''        `メニュー：${r.menu_name || "-"}`,
+                  `スタッフ：${r.staff_name || "指名なし"}`,
+                  `予約番号：${r.reservation_code || "-"}`,
+                  "",
+                  "変更やキャンセルがある場合は、LINEでお早めにご連絡ください。"''',
+              '''        `メニュー：${r.menu_name || "-"}`,
+                  `料金目安：${priceInfo.priceText}`,
+                  `所要時間目安：${priceInfo.durationText}`,
+                  `スタッフ：${r.staff_name || "指名なし"}`,
+                  `予約番号：${r.reservation_code || "-"}`,
+                  "",
+                  "当日の体調・肌状態や回数券利用、追加内容により、内容や最終金額が変わる場合があります。",
+                  "変更やキャンセルがある場合は、LINEでお早めにご連絡ください。"''',
+              "member copy confirmation text",
+          )
+          member = replace_once(
+              member,
+              '''          state.settings = settings;
+                    state.shop = settings.shop || {};
+                    applyShopInfo();''',
+              '''          state.settings = settings;
+                    state.shop = settings.shop || {};
+                    state.menus = settings.menus || [];
+                    applyShopInfo();''',
+              "member settings menus",
+          )
+
+          write("member.html", member)
+
+          # ============================================================
+          # index-brush.html
+          # ============================================================
+          brush = read("index-brush.html")
+
+          if "<!-- STEP ESTHE-NEXT-2 -->" not in brush:
+              raise RuntimeError("index-brush.html: NEXT-2基準マーカーがありません")
+
+          brush = replace_once(
+              brush,
+              "<!-- STEP ESTHE-NEXT-2 -->",
+              "<!-- STEP ESTHE-NEXT-5 -->",
+              "brush STEPマーカー",
+          )
+          brush = replace_once(
+              brush,
+              "<title>DPRO Esthe Relaxation｜STEP ESTHE-16｜index-brush</title>",
+              "<title>DPRO Esthe Relaxation｜STEP ESTHE-NEXT-5｜index-brush</title>",
+              "brush title",
+          )
+          brush = replace_once(
+              brush,
+              '<div class="badge">LINE予約・会員確認</div>',
+              '<div class="badge">STEP ESTHE-NEXT-5｜料金・同意確認付き予約</div>',
+              "brush badge",
+          )
+          brush = replace_once(
+              brush,
+              'const VERSION = "ESTHE-NEXT-2-PUBLIC-BRUSH-20260723";',
+              'const VERSION = "ESTHE-NEXT-5-PUBLIC-CONFIRMATION-20260723";',
+              "brush VERSION",
+          )
+          brush = replace_once(
+              brush,
+              '''        ["注意事項", $("allergies").value.trim() || "-"],
+                  ["ご要望", $("requestNote").value.trim() || "-"],''',
+              '''        ["注意事項", $("allergies").value.trim() || "-"],
+                  ["施術前確認", $("consent").checked ? "同意済み" : "未確認"],
+                  ["ご要望", $("requestNote").value.trim() || "-"],''',
+              "brush confirm consent row",
+          )
+          brush = replace_once(
+              brush,
+              '''        `メニュー：${r.menu_name || state.selectedMenu?.menu_name}`,
+                  `スタッフ：${r.staff_name || state.selectedStaff?.staff_name || "指名なし"}`,
+                  `予約番号：${r.reservation_code || "-"}`,
+                  "",
+                  "変更やキャンセルがある場合は、LINEでお早めにご連絡ください。"''',
+              '''        `メニュー：${r.menu_name || state.selectedMenu?.menu_name}`,
+                  `料金目安：${yen(state.selectedMenu?.price_yen || 0)}`,
+                  `所要時間目安：${state.selectedMenu?.duration_minutes || 60}分`,
+                  `スタッフ：${r.staff_name || state.selectedStaff?.staff_name || "指名なし"}`,
+                  `予約番号：${r.reservation_code || "-"}`,
+                  "施術前確認：同意済み",
+                  "",
+                  "当日の体調・肌状態や回数券利用、追加内容により、内容や最終金額が変わる場合があります。",
+                  "変更やキャンセルがある場合は、LINEでお早めにご連絡ください。"''',
+              "brush completion confirmation text",
+          )
+
+          write("index-brush.html", brush)
+
+          now = dt.datetime.now(dt.timezone(dt.timedelta(hours=9))).replace(microsecond=0)
+          change_record = {
+              "schema_version": 1,
+              "system": "DPRO エステ LINE",
+              "step": "ESTHE-NEXT-5",
+              "completed_at_jst": now.isoformat(),
+              "target_files": [
+                  "owner.html",
+                  "member.html",
+                  "index-brush.html",
+              ],
+              "features": {
+                  "booking_consent_visible": True,
+                  "treatment_price_duration_confirmation": True,
+                  "pre_treatment_checklist": True,
+                  "persistent_confirmation_via_existing_karte_api": True,
+                  "reservation_relation_by_code_and_id": True,
+                  "treatment_start_guard": True,
+                  "individual_customer_message_copy": True,
+                  "bulk_auto_line_delivery": False,
+                  "member_price_duration_display": True,
+                  "additional_initial_api_requests": 0,
+                  "lazy_public_settings_in_owner": True,
+              },
+              "changes": {
+                  "worker": False,
+                  "supabase": False,
+                  "api": False,
+              },
+              "rollback": {
+                  "tag": __import__("os").environ.get("BACKUP_TAG", ""),
+                  "method": "バックアップタグからowner.html・member.html・index-brush.htmlと台帳を復元する",
+              },
+          }
+          Path(".dpro-next/esthe-next5-change-record.json").write_text(
+              json.dumps(change_record, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: "Run syntax, ID, feature and business validation"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p .next5_tmp
+
+          python3 <<'PY'
+          from __future__ import annotations
+
+          import json
+          import re
+          import subprocess
+          import sys
+          from collections import Counter
+          from html.parser import HTMLParser
+          from pathlib import Path
+
+          files = ["owner.html", "member.html", "index-brush.html"]
+          texts = {path:Path(path).read_text(encoding="utf-8") for path in files}
+          errors = []
+          warnings = []
+          ok = []
+
+          class Parser(HTMLParser):
+              def __init__(self):
+                  super().__init__(convert_charrefs=True)
+                  self.ids = []
+              def handle_starttag(self, tag, attrs):
+                  for key, value in attrs:
+                      if key.lower() == "id" and value:
+                          self.ids.append(value)
+              def handle_startendtag(self, tag, attrs):
+                  self.handle_starttag(tag, attrs)
+
+          for path, text in texts.items():
+              parser = Parser()
+              try:
+                  parser.feed(text)
+                  parser.close()
+                  ok.append(f"HTML解析: {path}")
+              except Exception as exc:
+                  errors.append(f"HTML解析NG: {path}: {exc}")
+                  continue
+
+              duplicates = sorted(key for key, count in Counter(parser.ids).items() if count > 1)
+              if duplicates:
+                  errors.append(f"HTML ID重複: {path}: {', '.join(duplicates)}")
+              else:
+                  ok.append(f"HTML ID重複なし: {path}")
+
+              scripts = re.findall(
+                  r'<script\b(?![^>]*\bsrc=)[^>]*>(.*?)</script\s*>',
+                  text,
+                  flags=re.DOTALL | re.IGNORECASE,
+              )
+              for number, script in enumerate(scripts, 1):
+                  temp = Path(".next5_tmp") / f"{path}-{number}.js"
+                  temp.write_text(script, encoding="utf-8")
+                  proc = subprocess.run(
+                      ["node", "--check", str(temp)],
+                      text=True,
+                      stdout=subprocess.PIPE,
+                      stderr=subprocess.PIPE,
+                      check=False,
+                  )
+                  if proc.returncode:
+                      detail = (proc.stderr or proc.stdout).replace("\n", " ")[:800]
+                      errors.append(f"JavaScript構文NG: {path} script#{number}: {detail}")
+                  else:
+                      ok.append(f"JavaScript構文: {path} script#{number}")
+
+          owner = texts["owner.html"]
+          member = texts["member.html"]
+          brush = texts["index-brush.html"]
+
+          owner_required = [
+              "<!-- STEP ESTHE-NEXT-5 -->",
+              "ESTHE-NEXT-5-TREATMENT-CONFIRMATION-20260723",
+              'id="preTreatmentConfirmSection"',
+              'id="preconfirmMenu"',
+              'id="preconfirmPrice"',
+              'id="preconfirmSafety"',
+              'id="preconfirmCustomer"',
+              "function reservationConsentChecked(",
+              "function findPreTreatmentConfirmation(",
+              "function savePreTreatmentConfirmation(",
+              "function requestTreatmentStart(",
+              'note_type:"pre_treatment_confirmation"',
+              'note_title:title',
+              'reservation_code || r?.id',
+              "copyPreTreatmentCustomerText",
+              "data-preconfirm-copy",
+              "data-preconfirm-save",
+              'status === "in_treatment" && !preTreatmentConfirmed',
+              "/api/admin/karte/save",
+          ]
+          missing = [token for token in owner_required if token not in owner]
+          if missing:
+              errors.append("owner NEXT-5機能不足: " + ", ".join(missing))
+          else:
+              ok.append("owner施術前確認・保存・開始ガード")
+
+          member_required = [
+              "<!-- STEP ESTHE-NEXT-5 -->",
+              "ESTHE-NEXT-5-MEMBER-CONFIRMATION-20260723",
+              "memberReservationPriceInfo",
+              "料金目安：",
+              "所要時間目安：",
+              "state.menus = settings.menus || []",
+          ]
+          missing = [token for token in member_required if token not in member]
+          if missing:
+              errors.append("member NEXT-5機能不足: " + ", ".join(missing))
+          else:
+              ok.append("member料金・所要時間・注意表示")
+
+          brush_required = [
+              "<!-- STEP ESTHE-NEXT-5 -->",
+              "ESTHE-NEXT-5-PUBLIC-CONFIRMATION-20260723",
+              '["施術前確認", $("consent").checked ? "同意済み" : "未確認"]',
+              "施術前確認：同意済み",
+              "料金目安：",
+              "所要時間目安：",
+              'consent_checked: $("consent").checked',
+          ]
+          missing = [token for token in brush_required if token not in brush]
+          if missing:
+              errors.append("予約画面NEXT-5機能不足: " + ", ".join(missing))
+          else:
+              ok.append("予約画面料金・同意確認")
+
+          existing_owner = [
+              "progressBoard",
+              "visitHubLayer",
+              "openIntegratedVisit",
+              "renderProgressBoard",
+              "todayList",
+              "todoSummary",
+              "reservationList",
+              "customerDetail",
+              "ticketList",
+              "followupList",
+              "settingsBox",
+              "dproAdminClear",
+              "x-admin-secret",
+          ]
+          missing = [token for token in existing_owner if token not in owner]
+          if missing:
+              errors.append("owner既存機能維持NG: " + ", ".join(missing))
+          else:
+              ok.append("owner既存主要機能維持")
+
+          existing_member = [
+              "reservationList",
+              "ticketList",
+              "historyList",
+              "data-change-reservation",
+              "data-cancel-reservation",
+              "/api/public/reservation/change",
+              "/api/public/reservation/cancel",
+          ]
+          missing = [token for token in existing_member if token not in member]
+          if missing:
+              errors.append("member既存機能維持NG: " + ", ".join(missing))
+          else:
+              ok.append("member既存主要機能維持")
+
+          existing_brush = [
+              "viewMember",
+              "viewMenu",
+              "viewStaff",
+              "viewDate",
+              "viewConsultation",
+              "viewConfirm",
+              "viewSuccess",
+              "isPastSlot",
+              "normalizePhone",
+              "/api/public/reservations",
+          ]
+          missing = [token for token in existing_brush if token not in brush]
+          if missing:
+              errors.append("予約画面既存機能維持NG: " + ", ".join(missing))
+          else:
+              ok.append("予約画面既存主要機能維持")
+
+          if re.search(
+              r"""(?:broadcast|bulk[_-]?send|multicast|pushMessage|一括自動配信)""",
+              owner + "\n" + member + "\n" + brush,
+              flags=re.IGNORECASE,
+          ):
+              errors.append("一括自動LINE配信に該当する実装文字列があります")
+          else:
+              ok.append("一括自動LINE配信なし")
+
+          init_match = re.search(
+              r"""async\s+function\s+init\(\)\s*\{(?P<body>.*?)\n\}""",
+              owner,
+              flags=re.DOTALL,
+          )
+          if init_match and (
+              "loadMenuCatalogIfNeeded" in init_match.group("body") or
+              "/api/public/settings" in init_match.group("body")
+          ):
+              errors.append("owner初期表示にメニュー取得が追加されています")
+          else:
+              ok.append("ownerメニュー情報は遅延取得")
+
+          if owner.count("/api/admin/karte/save") < 2:
+              warnings.append("カルテ保存APIの出現数が想定より少ないため目視確認")
+          else:
+              ok.append("既存カルテ保存API再利用")
+
+          diff = subprocess.run(
+              ["git", "diff", "--name-only"],
+              text=True,
+              stdout=subprocess.PIPE,
+              check=True,
+          ).stdout.splitlines()
+          allowed = {
+              "owner.html",
+              "member.html",
+              "index-brush.html",
+              ".dpro-next/esthe-next5-change-record.json",
+              ".dpro-next/esthe-step-state.yml",
+              ".dpro-next/esthe-current-baseline.yml",
+              ".dpro-next/esthe-next5-report.txt",
+          }
+          unexpected = sorted(item for item in diff if item not in allowed)
+          if unexpected:
+              errors.append("想定外変更ファイル: " + ", ".join(unexpected))
+          else:
+              ok.append("変更範囲正常")
+
+          for path in files:
+              size = Path(path).stat().st_size
+              if size > 1_000_000:
+                  errors.append(f"ファイル容量過大: {path}: {size} bytes")
+              elif size > 600_000:
+                  warnings.append(f"ファイル容量注意: {path}: {size} bytes")
+              else:
+                  ok.append(f"ファイル容量: {path}: {size} bytes")
+
+          report = {
+              "step": "ESTHE-NEXT-5",
+              "ok": len(ok),
+              "attention": len(warnings),
+              "ng": len(errors),
+              "ok_items": ok,
+              "attention_items": warnings,
+              "ng_items": errors,
+          }
+          Path(".next5_tmp/validation.json").write_text(
+              json.dumps(report, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+
+          summary = Path(__import__("os").environ["GITHUB_STEP_SUMMARY"])
+          with summary.open("a", encoding="utf-8") as file:
+              file.write("\n### NEXT-5 自動検査\n")
+              file.write(f"- OK: {len(ok)}\n")
+              file.write(f"- 注意: {len(warnings)}\n")
+              file.write(f"- NG: {len(errors)}\n")
+              if warnings:
+                  file.write("\n#### 注意\n")
+                  for item in warnings:
+                      file.write(f"- {item}\n")
+              if errors:
+                  file.write("\n#### NG\n")
+                  for item in errors:
+                      file.write(f"- {item}\n")
+
+          print(json.dumps(report, ensure_ascii=False, indent=2))
+          if errors:
+              sys.exit(1)
+          PY
+
+          ruby -e 'require "yaml"; YAML.parse_file(ARGV[0]); puts "YML syntax OK"' "$WORKFLOW_FILE"
+
+      - name: "Update NEXT completion ledger"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          python3 <<'PY'
+          import datetime as dt
+          import json
+          import os
+          from pathlib import Path
+
+          now = dt.datetime.now(dt.timezone(dt.timedelta(hours=9))).replace(microsecond=0)
+          result = json.loads(Path(".next5_tmp/validation.json").read_text(encoding="utf-8"))
+
+          def q(value):
+              return json.dumps(str(value), ensure_ascii=False)
+
+          state_lines = [
+              "schema_version: 1",
+              f"system: {q('DPRO エステ LINE')}",
+              f"current_step: {q(os.environ['CURRENT_STEP_AFTER_SUCCESS'])}",
+              f"next_step: {q(os.environ['NEXT_STEP_AFTER_SUCCESS'])}",
+              f"updated_at_jst: {q(now.isoformat())}",
+              f"source_commit: {q(os.environ['CHANGE_BEFORE_SHA'])}",
+              f"backup_tag: {q(os.environ['BACKUP_TAG'])}",
+              f"result: {q('ATTENTION' if result['attention'] else 'OK')}",
+              "changes:",
+              "  worker: false",
+              "  supabase: false",
+              "  api: false",
+              "  treatment_confirmation: true",
+              "  booking_consent_visible: true",
+              "  persistent_confirmation_via_karte: true",
+              "  reservation_relation: true",
+              "  treatment_start_guard: true",
+              "  individual_customer_message_copy: true",
+              "  bulk_auto_line_delivery: false",
+              "  additional_initial_api_requests: 0",
+          ]
+          Path(".dpro-next/esthe-step-state.yml").write_text(
+              "\n".join(state_lines) + "\n",
+              encoding="utf-8",
+          )
+
+          report_lines = [
+              "DPRO エステ LINE / ESTHE-NEXT-5 実行結果",
+              f"完了日時JST: {now.isoformat()}",
+              f"変更前Commit: {os.environ['CHANGE_BEFORE_SHA']}",
+              f"バックアップタグ: {os.environ['BACKUP_TAG']}",
+              f"OK: {result['ok']}",
+              f"注意: {result['attention']}",
+              f"NG: {result['ng']}",
+              "",
+              "実施内容:",
+              "- 予約時の施術前同意状況をオーナー画面へ表示",
+              "- メニュー標準料金・所要時間・回数券候補を表示",
+              "- 店舗確認4項目を顧客カルテへ永続保存",
+              "- 予約番号・予約IDを確認記録へ保存",
+              "- 確認記録がない場合は施術開始を安全停止",
+              "- お客様確認文は個別コピーのみ",
+              "- LINE会員ページへ料金目安・所要時間・注意事項を表示",
+              "- 予約確認画面へ同意済み表示を追加",
+              "- 初期API取得数は増加なし",
+              "",
+              "変更記録:",
+              "- Worker: 変更なし",
+              "- Supabase: 変更なし",
+              "- API: 変更なし",
+              "",
+              "次STEP: ESTHE-NEXT-6",
+          ]
+          if result["attention_items"]:
+              report_lines.extend(["", "注意:"])
+              report_lines.extend(f"- {item}" for item in result["attention_items"])
+
+          Path(".dpro-next/esthe-next5-report.txt").write_text(
+              "\n".join(report_lines) + "\n",
+              encoding="utf-8",
+          )
+
+          baseline = Path(".dpro-next/esthe-current-baseline.yml")
+          if baseline.exists():
+              with baseline.open("a", encoding="utf-8") as file:
+                  file.write("\nnext5_completion:\n")
+                  file.write(f"  completed_at_jst: {q(now.isoformat())}\n")
+                  file.write(f"  backup_tag: {q(os.environ['BACKUP_TAG'])}\n")
+                  file.write("  treatment_confirmation: true\n")
+                  file.write("  booking_consent_visible: true\n")
+                  file.write("  persistent_confirmation_via_karte: true\n")
+                  file.write("  reservation_relation: true\n")
+                  file.write("  treatment_start_guard: true\n")
+                  file.write("  individual_customer_message_copy: true\n")
+                  file.write("  bulk_auto_line_delivery: false\n")
+                  file.write("  additional_initial_api_requests: 0\n")
+                  file.write("  worker_changed: false\n")
+                  file.write("  supabase_changed: false\n")
+                  file.write("  api_changed: false\n")
+          PY
+
+      - name: "Final completion validation"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          grep -q 'current_step: "ESTHE-NEXT-5-COMPLETE"' .dpro-next/esthe-step-state.yml
+          grep -q 'next_step: "ESTHE-NEXT-6"' .dpro-next/esthe-step-state.yml
+          grep -q '<!-- STEP ESTHE-NEXT-5 -->' owner.html
+          grep -q '<!-- STEP ESTHE-NEXT-5 -->' member.html
+          grep -q '<!-- STEP ESTHE-NEXT-5 -->' index-brush.html
+          grep -q 'id="preTreatmentConfirmSection"' owner.html
+          grep -q 'function savePreTreatmentConfirmation' owner.html
+          grep -q 'function requestTreatmentStart' owner.html
+          grep -q 'pre_treatment_confirmation' owner.html
+          grep -q '料金目安：' member.html
+          grep -q '施術前確認：同意済み' index-brush.html
+          grep -q 'bulk_auto_line_delivery: false' .dpro-next/esthe-step-state.yml
+          grep -q 'additional_initial_api_requests: 0' .dpro-next/esthe-step-state.yml
+
+      - name: "Upload NEXT-5 validation artifact"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "ESTHE-NEXT-5-R2-validation-${{ github.run_id }}"
+          path: |
+            .next5_tmp/validation.json
+            .dpro-next/esthe-next5-report.txt
+            .dpro-next/esthe-next5-change-record.json
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: "Commit changes, delete workflow and push"
+        if: success()
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          git add \
+            owner.html \
+            member.html \
+            index-brush.html \
+            .dpro-next/esthe-step-state.yml \
+            .dpro-next/esthe-current-baseline.yml \
+            .dpro-next/esthe-next5-report.txt \
+            .dpro-next/esthe-next5-change-record.json
+
+          git rm --ignore-unmatch \
+            "$WORKFLOW_FILE" \
+            ".github/workflows/ESTHE-NEXT-5.yml"
+
+          if git diff --cached --quiet; then
+            echo "::error::Commit対象がありません。"
+            exit 1
+          fi
+
+          git commit -m "DPRO ESTHE NEXT-5-R2 complete: treatment confirmation and consent"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+          echo "### 自動Commit・Push" >> "$GITHUB_STEP_SUMMARY"
+          echo "- 完了Commit: \`$(git rev-parse HEAD)\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- YML自身: 削除済み" >> "$GITHUB_STEP_SUMMARY"
+          echo "- current_step: \`$CURRENT_STEP_AFTER_SUCCESS\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- next_step: \`$NEXT_STEP_AFTER_SUCCESS\`" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: "Confirm GitHub Pages publication"
+        if: success()
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          PUBLISHED="false"
+          for attempt in $(seq 1 24); do
+            OWNER_BODY="$(curl -L -sS --retry 2 --connect-timeout 8 --max-time 25 \
+              -H "Cache-Control: no-cache" \
+              "${PAGES_BASE}/owner.html?next5_check=${GITHUB_RUN_ID}_${attempt}" || true)"
+            MEMBER_BODY="$(curl -L -sS --retry 2 --connect-timeout 8 --max-time 25 \
+              -H "Cache-Control: no-cache" \
+              "${PAGES_BASE}/member.html?next5_check=${GITHUB_RUN_ID}_${attempt}" || true)"
+            BRUSH_BODY="$(curl -L -sS --retry 2 --connect-timeout 8 --max-time 25 \
+              -H "Cache-Control: no-cache" \
+              "${PAGES_BASE}/index-brush.html?next5_check=${GITHUB_RUN_ID}_${attempt}" || true)"
+
+            if [[ "$OWNER_BODY" == *"STEP ESTHE-NEXT-5"* \
+              && "$OWNER_BODY" == *'id="preTreatmentConfirmSection"'* \
+              && "$MEMBER_BODY" == *"STEP ESTHE-NEXT-5"* \
+              && "$BRUSH_BODY" == *"STEP ESTHE-NEXT-5"* ]]; then
+              PUBLISHED="true"
+              break
+            fi
+            sleep 10
+          done
+
+          echo "### GitHub Pages公開確認" >> "$GITHUB_STEP_SUMMARY"
+          if [[ "$PUBLISHED" == "true" ]]; then
+            echo "- 判定: **OK**" >> "$GITHUB_STEP_SUMMARY"
+            echo "- owner / member / index-brush: NEXT-5確認" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "- 判定: **注意**" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Pages反映待ちの可能性があります。ソースCommitは完了しています。" >> "$GITHUB_STEP_SUMMARY"
+          fi
