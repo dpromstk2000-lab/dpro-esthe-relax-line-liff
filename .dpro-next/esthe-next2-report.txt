@@ -1,0 +1,23 @@
+DPRO エステ LINE / ESTHE-NEXT-2 実行結果
+完了日時JST: 2026-07-23T20:03:31+09:00
+変更前Commit: 1d7fe8726635fab1aa3528305afd476888ea66d9
+バックアップタグ: backup-esthe-before-next2-r6-20260723
+OK: 40
+注意: 0
+NG: 0
+
+実施内容:
+- 公開画面から管理コード表示・管理画面リンクを分離
+- 管理コードをsessionStorageへ一時保存
+- 管理コード削除ボタンをowner/admin/staff/system-checkへ設置
+- admin_keyのURL付与を廃止
+- x-admin-secretヘッダーへ統一
+- owner.htmlの今日やることを優先度順へ変更
+- 新しい初期API全件取得は追加していない
+
+変更記録:
+- Worker: 変更なし
+- Supabase: 変更なし
+- API: 変更なし
+
+次STEP: ESTHE-NEXT-3

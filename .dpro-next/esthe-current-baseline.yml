@@ -53,3 +53,12 @@ known_risks:
 next_action:
   step: "ESTHE-NEXT-2"
   purpose: "公開画面の管理情報分離とPCオーナー画面の今日やること整理"
+
+next2_completion:
+  completed_at_jst: "2026-07-23T20:03:31+09:00"
+  backup_tag: "backup-esthe-before-next2-r6-20260723"
+  worker_changed: false
+  supabase_changed: false
+  api_changed: false
+  public_admin_information_separated: true
+  owner_today_priority: true

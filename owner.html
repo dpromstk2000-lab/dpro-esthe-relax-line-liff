@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- STEP ESTHE-NEXT-2 -->
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
@@ -185,17 +186,162 @@
       .bottom-inner{flex-direction:column;align-items:stretch}
       .bottom-inner .btn{width:100%}
     }
-  </style>
+  
+/* DPRO NEXT-2: 管理コード入力・削除 */
+.dpro-admin-access{
+  margin:0 0 18px;
+  padding:16px 18px;
+  border:1px solid var(--line);
+  border-radius:20px;
+  background:rgba(255,255,255,.96);
+  box-shadow:0 10px 28px rgba(88,55,46,.07);
+}
+.dpro-admin-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.dpro-admin-title{font-size:16px;font-weight:1000;color:var(--main)}
+.dpro-admin-status{
+  display:inline-flex;
+  align-items:center;
+  min-height:30px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:#fff6df;
+  border:1px solid #efd49e;
+  color:#8d600d;
+  font-size:12px;
+  font-weight:950;
+}
+.dpro-admin-status.ok{
+  background:#e8f8f1;
+  border-color:#bce9d8;
+  color:#087a59;
+}
+.dpro-admin-controls{
+  display:grid;
+  grid-template-columns:minmax(180px,1fr) auto auto;
+  gap:9px;
+  margin-top:12px;
+}
+.dpro-admin-controls input{
+  width:100%;
+  min-height:46px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#fff;
+  color:var(--text,var(--ink,#2d211f));
+  padding:11px 13px;
+  font-size:16px;
+  font-weight:900;
+}
+.dpro-admin-button{
+  min-height:46px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:10px 15px;
+  background:var(--main);
+  color:#fff;
+  font-weight:950;
+  cursor:pointer;
+}
+.dpro-admin-button.clear{
+  background:#fff;
+  color:var(--danger,var(--bad,#b33a3a));
+}
+.dpro-admin-help{
+  margin:9px 0 0;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.65;
+  font-weight:750;
+}
+@media(max-width:680px){
+  .dpro-admin-controls{grid-template-columns:1fr}
+  .dpro-admin-button{width:100%}
+}
+
+
+/* DPRO NEXT-2: 今日やること優先表示 */
+.todo-summary{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin:0 0 12px;
+}
+.todo-summary-item{
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:var(--soft);
+  padding:10px;
+  text-align:center;
+}
+.todo-summary-item strong{
+  display:block;
+  color:var(--main);
+  font-size:22px;
+  line-height:1;
+}
+.todo-summary-item span{
+  display:block;
+  margin-top:5px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:900;
+}
+.todo-priority{
+  border:1px solid var(--line);
+  border-left:6px solid var(--main);
+  border-radius:17px;
+  background:#fff;
+  padding:13px 14px;
+}
+.todo-priority.p1{border-left-color:var(--danger);background:#fff5f5}
+.todo-priority.p2{border-left-color:var(--warn);background:#fff9ec}
+.todo-priority.p3{border-left-color:var(--accent);background:#f2fbf7}
+.todo-priority.p4{border-left-color:var(--main2);background:#fff}
+.todo-priority-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+}
+.todo-priority-title{font-weight:1000;line-height:1.4}
+.todo-priority-meta{
+  margin-top:5px;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+  line-height:1.6;
+}
+.todo-priority-label{
+  flex:0 0 auto;
+  border-radius:999px;
+  padding:5px 8px;
+  background:#fff;
+  border:1px solid var(--line);
+  color:var(--main);
+  font-size:11px;
+  font-weight:950;
+}
+.todo-priority-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+@media(max-width:640px){
+  .todo-summary{grid-template-columns:1fr 1fr 1fr}
+}
+
+</style>
 </head>
 <body>
   <main class="wrap">
     <section class="hero">
-      <div class="badge">STEP ESTHE-16｜電話番号正規化・検索強化版 owner.html</div>
+      <div class="badge">STEP ESTHE-NEXT-2｜PCオーナー管理</div>
       <h1>DPRO Esthe Relaxation</h1>
       <p>本日の予約、予約一覧、顧客カルテ、回数券、未対応フォロー、文面テンプレートをまとめて確認できるPC用の本格管理画面です。</p>
       <div class="hero-meta">
         <span>API接続：<span id="apiStatus">確認中</span></span>
-        <span>管理コード：1234</span>
         <span>本日：<span id="todayLabel">-</span></span>
         <span>画面：owner.html</span>
       </div>
@@ -209,6 +355,23 @@
       <a class="btn" href="staff.html" target="_blank" rel="noopener">スタッフ画面</a>
       <a class="btn" href="system-check.html" target="_blank" rel="noopener">system-check</a>
     </div>
+
+<section class="dpro-admin-access" id="dproAdminAccess" aria-label="管理コード">
+  <div class="dpro-admin-head">
+    <div class="dpro-admin-title">管理画面の接続</div>
+    <span class="dpro-admin-status" id="dproAdminStatus">管理コード未入力</span>
+  </div>
+  <div class="dpro-admin-controls">
+    <input id="dproAdminCode" type="password" inputmode="numeric"
+      autocomplete="current-password" placeholder="管理コードを入力">
+    <button class="dpro-admin-button" id="dproAdminSave" type="button">管理コードを設定</button>
+    <button class="dpro-admin-button clear" id="dproAdminClear" type="button">管理コードを削除</button>
+  </div>
+  <p class="dpro-admin-help">
+    管理コードはこのタブの一時領域だけに保存します。共有端末では操作後に「管理コードを削除」を押してください。
+  </p>
+</section>
+
 
     <div class="tabs">
       <button class="tab on" data-tab="today">今日の予約</button>
@@ -259,17 +422,19 @@
         </div>
         <aside>
           <div class="panel">
-            <h2>今日やること</h2>
-            <p class="sub">本日の予約と未対応フォローを軽く表示します。</p>
-            <div id="todoList" class="list"></div>
-          </div>
+      <h2>今日やること</h2>
+      <p class="sub">緊急度と進行状況の順に表示します。最初にここを確認してください。</p>
+      <div id="todoSummary" class="todo-summary"></div>
+      <div id="todoList" class="list"></div>
+    </div>
           <div class="panel">
-            <h2>確認URL</h2>
-            <div class="list">
-              <div class="mini-card"><b>owner.html</b><div class="card-meta">https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner.html</div></div>
-              <div class="mini-card"><b>API</b><div class="card-meta">https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/health</div></div>
-            </div>
-          </div>
+      <h2>今日の基本操作</h2>
+      <div class="list">
+        <div class="mini-card"><b>1．対象のお客様を確認</b><div class="card-meta">今日やることから予約へ移動します。</div></div>
+        <div class="mini-card"><b>2．進捗を変更</b><div class="card-meta">来店済み・施術中・会計待ち・完了を選びます。</div></div>
+        <div class="mini-card"><b>3．必要な時だけ詳細</b><div class="card-meta">カルテ、回数券、フォローは必要な時だけ開きます。</div></div>
+      </div>
+    </div>
         </aside>
       </div>
     </section>
@@ -423,10 +588,12 @@
   <div class="toast" id="toast"></div>
 
 <script>
-const VERSION = "ESTHE-16-OWNER-PHONE-NORMALIZE-SEARCH-20260711";
+const VERSION = "ESTHE-NEXT-2-OWNER-TODAY-20260723";
 const API_BASE = "https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev";
 const SHOP_CODE = "esthe_demo_default";
-const ADMIN_KEY = "1234";
+const ADMIN_STORAGE_KEY = "dpro_esthe_admin_secret";
+const DEMO_ADMIN_CODE = "1234";
+let ADMIN_KEY = sessionStorage.getItem(ADMIN_STORAGE_KEY) || "";
 
 const state = {
   tab: "today",
@@ -445,6 +612,74 @@ const state = {
 };
 
 const $ = (id) => document.getElementById(id);
+
+
+function dproAdminStatusMessage(message, ok=false){
+  const status = document.getElementById("dproAdminStatus");
+  if(!status) return;
+  status.textContent = message;
+  status.classList.toggle("ok", ok);
+}
+
+function dproRequireAdminCode(){
+  if(!ADMIN_KEY){
+    throw new Error("管理コードを入力し、「管理コードを設定」を押してください。");
+  }
+}
+
+function dproInitAdminAccess(){
+  const input = document.getElementById("dproAdminCode");
+  const save = document.getElementById("dproAdminSave");
+  const clear = document.getElementById("dproAdminClear");
+  if(!input || !save || !clear) return;
+
+  if(ADMIN_KEY && ADMIN_KEY !== DEMO_ADMIN_CODE){
+    sessionStorage.removeItem(ADMIN_STORAGE_KEY);
+    ADMIN_KEY = "";
+  }
+
+  if(ADMIN_KEY){
+    input.value = "";
+    input.placeholder = "管理コード設定済み";
+    dproAdminStatusMessage("管理コード設定済み", true);
+  }else{
+    dproAdminStatusMessage("管理コード未入力", false);
+  }
+
+  save.addEventListener("click", () => {
+    const value = String(input.value || "").trim();
+    if(!value){
+      dproAdminStatusMessage("管理コードを入力してください", false);
+      input.focus();
+      return;
+    }
+    if(value !== DEMO_ADMIN_CODE){
+      dproAdminStatusMessage("管理コードが違います", false);
+      input.select();
+      return;
+    }
+    sessionStorage.setItem(ADMIN_STORAGE_KEY, value);
+    ADMIN_KEY = value;
+    dproAdminStatusMessage("管理コード設定済み", true);
+    window.location.reload();
+  });
+
+  clear.addEventListener("click", () => {
+    sessionStorage.removeItem(ADMIN_STORAGE_KEY);
+    ADMIN_KEY = "";
+    input.value = "";
+    input.placeholder = "管理コードを入力";
+    dproAdminStatusMessage("管理コードを削除しました", false);
+    window.location.reload();
+  });
+
+  input.addEventListener("keydown", (event) => {
+    if(event.key === "Enter") save.click();
+  });
+}
+
+document.addEventListener("DOMContentLoaded", dproInitAdminAccess);
+
 
 function escapeHtml(v){
   return String(v ?? "")
@@ -537,14 +772,14 @@ function statusClass(s){
 async function api(path, options = {}){
   const url = new URL(path.startsWith("http") ? path : `${API_BASE}${path}`);
   if(url.pathname.startsWith("/api/admin/")){
-    url.searchParams.set("admin_key", ADMIN_KEY);
-  }
+      dproRequireAdminCode();
+    }
   if(!url.searchParams.get("shop_code")){
     url.searchParams.set("shop_code", SHOP_CODE);
   }
   const res = await fetch(url.toString(), {
     method: options.method || "GET",
-    headers: {"Accept":"application/json","Content-Type":"application/json",...(options.headers || {})},
+    headers: {"Accept":"application/json","Content-Type":"application/json","x-admin-secret":ADMIN_KEY,...(options.headers || {})},
     body: options.body ? JSON.stringify(options.body) : undefined
   });
   const text = await res.text();
@@ -614,7 +849,7 @@ function renderReservationCard(r, idx, source){
   const p = isoParts(r.start_at);
   const phone = r.customer_phone || r.phone || "";
   return `
-    <div class="reservation-card ${r.status !== "cancelled" ? "next" : ""}">
+    <div id="${source}-reservation-${idx}" class="reservation-card ${r.status !== "cancelled" ? "next" : ""}">
       <div class="card-head">
         <div>
           <div class="card-title">${escapeHtml(p.time || "-")} ${escapeHtml(r.customer_name || "お客様")}</div>
@@ -638,19 +873,126 @@ function renderReservationCard(r, idx, source){
   `;
 }
 
+
 function renderToday(){
   const rows = state.day?.reservations || [];
-  $("todayList").innerHTML = rows.length ? rows.map((r,i)=>renderReservationCard(r,i,"day")).join("") : `<div class="notice">この日の予約はありません。</div>`;
+  $("todayList").innerHTML = rows.length
+    ? rows.map((r,i)=>renderReservationCard(r,i,"day")).join("")
+    : `<div class="notice">この日の予約はありません。</div>`;
 
-  const todo = [];
-  rows.filter(r => !["completed","cancelled","no_show"].includes(r.status)).slice(0,6).forEach(r => {
+  const followups = (state.day?.followups || []).filter(f => f.status !== "done");
+  const nowParts = new Intl.DateTimeFormat("ja-JP", {
+    timeZone:"Asia/Tokyo",
+    hour:"2-digit",
+    minute:"2-digit",
+    hour12:false
+  }).formatToParts(new Date()).reduce((a,p)=>{a[p.type]=p.value;return a;},{});
+  const nowMinutes = Number(nowParts.hour || 0) * 60 + Number(nowParts.minute || 0);
+  const actualToday = state.today === jstDate();
+  const tasks = [];
+
+  rows.forEach((r, index) => {
+    if(["completed","cancelled","no_show"].includes(r.status)) return;
     const p = isoParts(r.start_at);
-    todo.push(`<div class="mini-card"><b>${escapeHtml(p.time)} ${escapeHtml(r.customer_name)}</b><div class="card-meta">${escapeHtml(r.menu_name)} / ${escapeHtml(statusLabel(r.status))}</div></div>`);
+    const [hour, minute] = String(p.time || "00:00").split(":").map(Number);
+    const startMinutes = (Number(hour) || 0) * 60 + (Number(minute) || 0);
+    const untilStart = startMinutes - nowMinutes;
+
+    let priority = 4;
+    let label = "本日の予約";
+
+    if(r.status === "waiting_payment"){
+      priority = 1;
+      label = "会計待ち";
+    }else if(r.status === "checked_in"){
+      priority = 1;
+      label = "来店済み・施術待ち";
+    }else if(r.status === "in_treatment"){
+      priority = 2;
+      label = "施術中";
+    }else if(r.status === "reserved" && actualToday && untilStart <= 60 && untilStart >= -30){
+      priority = 2;
+      label = untilStart >= 0 ? "まもなく来店" : "来店確認";
+    }
+
+    tasks.push({
+      priority,
+      sortTime:startMinutes,
+      html:`
+        <div class="todo-priority p${priority}">
+          <div class="todo-priority-head">
+            <div>
+              <div class="todo-priority-title">${escapeHtml(p.time || "-")} ${escapeHtml(r.customer_name || "お客様")}</div>
+              <div class="todo-priority-meta">${escapeHtml(r.menu_name || "-")} / ${escapeHtml(r.staff_name || "指名なし")} / ${escapeHtml(statusLabel(r.status))}</div>
+            </div>
+            <span class="todo-priority-label">${escapeHtml(label)}</span>
+          </div>
+          <div class="todo-priority-actions">
+            <button class="mini primary" type="button" data-todo-reservation="${index}">予約を確認</button>
+          </div>
+        </div>
+      `
+    });
   });
-  (state.day?.followups || []).slice(0,8).forEach(f => {
-    todo.push(`<div class="mini-card"><b>${escapeHtml(f.title || "フォロー")}</b><div class="card-meta">期限 ${escapeHtml(f.due_date || "-")} / ${escapeHtml(f.status || "-")}</div></div>`);
+
+  followups.forEach((f) => {
+    const due = String(f.due_date || "");
+    const dueTodayOrPast = !due || due <= state.today;
+    tasks.push({
+      priority:dueTodayOrPast ? 3 : 4,
+      sortTime:1440,
+      html:`
+        <div class="todo-priority p${dueTodayOrPast ? 3 : 4}">
+          <div class="todo-priority-head">
+            <div>
+              <div class="todo-priority-title">${escapeHtml(f.customer_name || "お客様")}｜${escapeHtml(f.title || f.followup_type || "フォロー")}</div>
+              <div class="todo-priority-meta">期限 ${escapeHtml(due || "-")} / ${escapeHtml(f.status || "未対応")}</div>
+            </div>
+            <span class="todo-priority-label">${dueTodayOrPast ? "期限フォロー" : "予定フォロー"}</span>
+          </div>
+          <div class="todo-priority-actions">
+            <button class="mini" type="button" data-open-followups="1">フォローを開く</button>
+          </div>
+        </div>
+      `
+    });
   });
-  $("todoList").innerHTML = todo.length ? todo.join("") : `<div class="notice">今日やることはありません。</div>`;
+
+  tasks.sort((a,b) => a.priority - b.priority || a.sortTime - b.sortTime);
+
+  const urgentCount = tasks.filter(t => t.priority === 1).length;
+  const progressCount = rows.filter(r => ["checked_in","in_treatment","waiting_payment"].includes(r.status)).length;
+  const followCount = followups.length;
+
+  $("todoSummary").innerHTML = `
+    <div class="todo-summary-item"><strong>${urgentCount}</strong><span>優先対応</span></div>
+    <div class="todo-summary-item"><strong>${progressCount}</strong><span>進行中</span></div>
+    <div class="todo-summary-item"><strong>${followCount}</strong><span>フォロー</span></div>
+  `;
+
+  const visibleTasks = tasks.slice(0, 10);
+  const remaining = Math.max(0, tasks.length - visibleTasks.length);
+  $("todoList").innerHTML = visibleTasks.length
+    ? visibleTasks.map(t => t.html).join("") +
+      (remaining ? `<div class="notice">${remaining}件は各一覧画面で確認できます。</div>` : "")
+    : `<div class="notice ok">今日の優先対応はありません。</div>`;
+
+  $("todoList").querySelectorAll("[data-todo-reservation]").forEach(button => {
+    button.addEventListener("click", () => {
+      const target = document.getElementById(`day-reservation-${button.dataset.todoReservation}`);
+      if(target){
+        target.scrollIntoView({behavior:"smooth", block:"center"});
+        target.focus?.({preventScroll:true});
+      }
+    });
+  });
+
+  $("todoList").querySelectorAll("[data-open-followups]").forEach(button => {
+    button.addEventListener("click", async () => {
+      setTab("followups");
+      await loadFollowups();
+    });
+  });
 }
 
 async function loadDay(){
@@ -1472,7 +1814,7 @@ async function runPrepare(){
   openModal(
     "営業前デモ準備を実行しますか？",
     "本日基準でデモ予約・顧客・フォロー・回数券を作り直します。",
-    `<div class="summary-row"><div>API</div><div>${API_BASE}/api/admin/demo/prepare?admin_key=1234</div><div>管理コード</div><div>1234</div></div>`,
+    `<div class="summary-row"><div>API</div><div>${API_BASE}/api/admin/demo/prepare</div><div>管理コード</div><div>1234</div></div>`,
     "営業前デモ準備を実行",
     async () => {
       closeModal();

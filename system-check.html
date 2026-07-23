@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- STEP ESTHE-NEXT-2 -->
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
@@ -673,17 +674,94 @@
   font-size:15px;
 }
 
-  </style>
+  
+/* DPRO NEXT-2: 管理コード入力・削除 */
+.dpro-admin-access{
+  margin:0 0 18px;
+  padding:16px 18px;
+  border:1px solid var(--line);
+  border-radius:20px;
+  background:rgba(255,255,255,.96);
+  box-shadow:0 10px 28px rgba(88,55,46,.07);
+}
+.dpro-admin-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.dpro-admin-title{font-size:16px;font-weight:1000;color:var(--main)}
+.dpro-admin-status{
+  display:inline-flex;
+  align-items:center;
+  min-height:30px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:#fff6df;
+  border:1px solid #efd49e;
+  color:#8d600d;
+  font-size:12px;
+  font-weight:950;
+}
+.dpro-admin-status.ok{
+  background:#e8f8f1;
+  border-color:#bce9d8;
+  color:#087a59;
+}
+.dpro-admin-controls{
+  display:grid;
+  grid-template-columns:minmax(180px,1fr) auto auto;
+  gap:9px;
+  margin-top:12px;
+}
+.dpro-admin-controls input{
+  width:100%;
+  min-height:46px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#fff;
+  color:var(--text,var(--ink,#2d211f));
+  padding:11px 13px;
+  font-size:16px;
+  font-weight:900;
+}
+.dpro-admin-button{
+  min-height:46px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:10px 15px;
+  background:var(--main);
+  color:#fff;
+  font-weight:950;
+  cursor:pointer;
+}
+.dpro-admin-button.clear{
+  background:#fff;
+  color:var(--danger,var(--bad,#b33a3a));
+}
+.dpro-admin-help{
+  margin:9px 0 0;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.65;
+  font-weight:750;
+}
+@media(max-width:680px){
+  .dpro-admin-controls{grid-template-columns:1fr}
+  .dpro-admin-button{width:100%}
+}
+
+</style>
 </head>
 <body>
   <main class="wrap">
     <section class="hero">
-      <div class="badge">STEP ESTHE-16｜電話番号正規化確認 system-check.html</div>
+      <div class="badge">STEP ESTHE-NEXT-2｜安全確認</div>
       <h1>DPRO Esthe Relaxation</h1>
       <p>エステ・リラクゼーションLINEの最終確認画面です。API・DB・最新採用ファイル・店舗設定反映・営業前デモ準備をまとめて確認できます。</p>
       <div class="hero-meta">
         <span>API接続：<span id="heroApi">確認中</span></span>
-        <span>管理コード：1234</span>
         <span>本日：<span id="heroToday">-</span></span>
         <span>Worker：dpro-esthe-relax-line-api</span><span>採用：STEP ESTHE-16</span>
       </div>
@@ -698,6 +776,23 @@
       <a class="btn ghost" href="staff.html" target="_blank" rel="noopener">スタッフ画面</a>
       <a class="btn ghost" href="member.html" target="_blank" rel="noopener">お客様マイページ</a>
     </div>
+
+<section class="dpro-admin-access" id="dproAdminAccess" aria-label="管理コード">
+  <div class="dpro-admin-head">
+    <div class="dpro-admin-title">管理画面の接続</div>
+    <span class="dpro-admin-status" id="dproAdminStatus">管理コード未入力</span>
+  </div>
+  <div class="dpro-admin-controls">
+    <input id="dproAdminCode" type="password" inputmode="numeric"
+      autocomplete="current-password" placeholder="管理コードを入力">
+    <button class="dpro-admin-button" id="dproAdminSave" type="button">管理コードを設定</button>
+    <button class="dpro-admin-button clear" id="dproAdminClear" type="button">管理コードを削除</button>
+  </div>
+  <p class="dpro-admin-help">
+    管理コードはこのタブの一時領域だけに保存します。共有端末では操作後に「管理コードを削除」を押してください。
+  </p>
+</section>
+
 
     <div id="notice" class="notice">確認中です。</div>
 
@@ -883,26 +978,26 @@
             </div>
             <div class="url-card">
               <b>Worker system-check API</b>
-              <code>https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/system-check?admin_key=1234</code>
+              <code>https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/system-check</code>
               <div class="url-actions">
-                <button class="mini" data-copy="https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/system-check?admin_key=1234">コピー</button>
-                <a class="mini primary" href="https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/system-check?admin_key=1234" target="_blank" rel="noopener">開く</a>
+                <button class="mini" data-copy="https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/system-check">コピー</button>
+                <span class="mini">画面内で確認</span>
               </div>
             </div>
             <div class="url-card">
               <b>電話番号正規化チェックAPI</b>
-              <code>https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/phone-normalize-check?admin_key=1234</code>
+              <code>https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/phone-normalize-check</code>
               <div class="url-actions">
-                <button class="mini" data-copy="https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/phone-normalize-check?admin_key=1234">コピー</button>
-                <a class="mini primary" href="https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/phone-normalize-check?admin_key=1234" target="_blank" rel="noopener">開く</a>
+                <button class="mini" data-copy="https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/phone-normalize-check">コピー</button>
+                <span class="mini">画面内で確認</span>
               </div>
             </div>
             <div class="url-card">
               <b>営業前デモ準備API</b>
-              <code>https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/demo/prepare?admin_key=1234</code>
+              <code>https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/demo/prepare</code>
               <div class="url-actions">
-                <button class="mini" data-copy="https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/demo/prepare?admin_key=1234">コピー</button>
-                <a class="mini primary" href="https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/demo/prepare?admin_key=1234" target="_blank" rel="noopener">開く</a>
+                <button class="mini" data-copy="https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/demo/prepare">コピー</button>
+                <span class="mini">画面内で確認</span>
               </div>
             </div>
           </div>          </div>
@@ -923,8 +1018,7 @@
       <h3>営業前デモ準備を実行しますか？</h3>
       <p>本日基準でデモ顧客・予約・回数券・フォローを作り直します。営業前に実行すると、当日のデモに使いやすい状態になります。</p>
       <div class="status-row">
-        <div>実行API</div><div>https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/demo/prepare?admin_key=1234</div>
-        <div>管理コード</div><div>1234</div>
+        <div>実行方法</div><div>画面内から安全に実行します。</div><div>管理コード</div><div>入力済みの場合のみ実行できます。</div>
       </div>
       <div class="modal-actions">
         <button class="btn ghost" id="modalCancel">戻る</button>
@@ -936,29 +1030,31 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    const STEP = "STEP ESTHE-16";
-    const VERSION = "ESTHE-16-PHONE-NORMALIZE-SYSTEM-CHECK-20260711";
+    const STEP = "STEP ESTHE-NEXT-2";
+    const VERSION = "ESTHE-NEXT-2-SYSTEM-CHECK-20260723";
     const API_BASE = "https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev";
-    const ADMIN_KEY = "1234";
+    const ADMIN_STORAGE_KEY = "dpro_esthe_admin_secret";
+const DEMO_ADMIN_CODE = "1234";
+let ADMIN_KEY = sessionStorage.getItem(ADMIN_STORAGE_KEY) || "";
     const FRONT_BASE = "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff";
 
     const ENDPOINTS = {
       health: `${API_BASE}/api/health`,
-      systemCheck: `${API_BASE}/api/admin/system-check?admin_key=${encodeURIComponent(ADMIN_KEY)}`,
-      demoPrepare: `${API_BASE}/api/admin/demo/prepare?admin_key=${encodeURIComponent(ADMIN_KEY)}`,
-      adminSettings: `${API_BASE}/api/admin/settings?admin_key=${encodeURIComponent(ADMIN_KEY)}`,
-      phoneNormalizeCheck: `${API_BASE}/api/admin/phone-normalize-check?admin_key=${encodeURIComponent(ADMIN_KEY)}`,
+      systemCheck: `${API_BASE}/api/admin/system-check`,
+      demoPrepare: `${API_BASE}/api/admin/demo/prepare`,
+      adminSettings: `${API_BASE}/api/admin/settings`,
+      phoneNormalizeCheck: `${API_BASE}/api/admin/phone-normalize-check`,
     };
 
     const EXPECTED_WORKER_VERSION = "ESTHE-16-PHONE-NORMALIZE-SEARCH-20260711";
 
     const ADOPTED_FILES = [
-      { label: "ブラッシュアップ予約", file: "index-brush.html", expect: "STEP ESTHE-16" },
-      { label: "シンプル予約", file: "index.html", expect: "STEP ESTHE-16" },
-      { label: "お客様マイページ", file: "member.html", expect: "STEP ESTHE-16" },
-      { label: "スタッフ画面", file: "staff.html", expect: "STEP ESTHE-16" },
-      { label: "PC本格管理画面", file: "owner.html", expect: "STEP ESTHE-16" },
-      { label: "営業前確認画面", file: "system-check.html", expect: "STEP ESTHE-16" },
+      { label: "ブラッシュアップ予約", file: "index-brush.html", expect: "STEP ESTHE-NEXT-2" },
+      { label: "シンプル予約", file: "index.html", expect: "STEP ESTHE-NEXT-2" },
+      { label: "お客様マイページ", file: "member.html", expect: "STEP ESTHE-NEXT-2" },
+      { label: "スタッフ画面", file: "staff.html", expect: "STEP ESTHE-NEXT-2" },
+      { label: "PC本格管理画面", file: "owner.html", expect: "STEP ESTHE-NEXT-2" },
+      { label: "営業前確認画面", file: "system-check.html", expect: "STEP ESTHE-NEXT-2" },
     ];
 
     const CHECK_LABELS = [
@@ -979,6 +1075,74 @@
     let loading = false;
 
     const $ = (id) => document.getElementById(id);
+
+
+function dproAdminStatusMessage(message, ok=false){
+  const status = document.getElementById("dproAdminStatus");
+  if(!status) return;
+  status.textContent = message;
+  status.classList.toggle("ok", ok);
+}
+
+function dproRequireAdminCode(){
+  if(!ADMIN_KEY){
+    throw new Error("管理コードを入力し、「管理コードを設定」を押してください。");
+  }
+}
+
+function dproInitAdminAccess(){
+  const input = document.getElementById("dproAdminCode");
+  const save = document.getElementById("dproAdminSave");
+  const clear = document.getElementById("dproAdminClear");
+  if(!input || !save || !clear) return;
+
+  if(ADMIN_KEY && ADMIN_KEY !== DEMO_ADMIN_CODE){
+    sessionStorage.removeItem(ADMIN_STORAGE_KEY);
+    ADMIN_KEY = "";
+  }
+
+  if(ADMIN_KEY){
+    input.value = "";
+    input.placeholder = "管理コード設定済み";
+    dproAdminStatusMessage("管理コード設定済み", true);
+  }else{
+    dproAdminStatusMessage("管理コード未入力", false);
+  }
+
+  save.addEventListener("click", () => {
+    const value = String(input.value || "").trim();
+    if(!value){
+      dproAdminStatusMessage("管理コードを入力してください", false);
+      input.focus();
+      return;
+    }
+    if(value !== DEMO_ADMIN_CODE){
+      dproAdminStatusMessage("管理コードが違います", false);
+      input.select();
+      return;
+    }
+    sessionStorage.setItem(ADMIN_STORAGE_KEY, value);
+    ADMIN_KEY = value;
+    dproAdminStatusMessage("管理コード設定済み", true);
+    window.location.reload();
+  });
+
+  clear.addEventListener("click", () => {
+    sessionStorage.removeItem(ADMIN_STORAGE_KEY);
+    ADMIN_KEY = "";
+    input.value = "";
+    input.placeholder = "管理コードを入力";
+    dproAdminStatusMessage("管理コードを削除しました", false);
+    window.location.reload();
+  });
+
+  input.addEventListener("keydown", (event) => {
+    if(event.key === "Enter") save.click();
+  });
+}
+
+document.addEventListener("DOMContentLoaded", dproInitAdminAccess);
+
 
     function nowText() {
       const d = new Date();
@@ -1033,10 +1197,14 @@
     }
 
     async function apiGet(url, options = {}) {
-      const res = await fetch(url, {
+      const requestUrl = new URL(url, window.location.href);
+      const isAdmin = requestUrl.pathname.startsWith("/api/admin/");
+      if(isAdmin) dproRequireAdminCode();
+      const res = await fetch(requestUrl.toString(), {
         method: options.method || "GET",
         headers: {
           "Accept": "application/json",
+          ...(isAdmin ? {"x-admin-secret": ADMIN_KEY} : {}),
           ...(options.headers || {}),
         },
         body: options.body,

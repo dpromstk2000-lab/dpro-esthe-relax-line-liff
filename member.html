@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- STEP ESTHE-NEXT-2 -->
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
@@ -158,12 +159,11 @@
 <body>
   <main class="wrap">
     <section class="hero">
-      <div class="badge">STEP ESTHE-16｜電話番号正規化対応版 member.html</div>
+      <div class="badge">LINE会員ページ</div>
       <h1 id="shopTitle">DPRO Esthe Relaxation</h1>
       <p id="shopLead">次回予約・予約変更・キャンセル・回数券残数・来店履歴をLINE上で確認できる、お客様用マイページです。</p>
       <div class="hero-meta">
         <span>API接続：<span id="apiStatus">確認中</span></span>
-        <span>管理コード：1234</span>
         <span>店舗：<span id="shopName">DPRO Esthe Relaxation</span></span>
         <span>電話：<span id="shopPhone">確認中</span></span>
         <span>画面：member.html</span>
@@ -173,9 +173,6 @@
     <div class="topnav">
       <a class="btn" href="index-brush.html">ブラッシュアップ予約へ</a>
       <a class="btn" href="index.html">シンプル予約へ</a>
-      <a class="btn" href="system-check.html">system-check</a>
-      <a class="btn" href="admin.html">管理画面</a>
-      <a class="btn" href="staff.html">スタッフ画面</a>
     </div>
 
     <div id="message" class="notice warn">電話番号を入力して、お客様マイページを表示してください。</div>
@@ -271,23 +268,10 @@
         </div>
 
         <div class="panel">
-          <h2>確認URL</h2>
-          <p class="sub">そのままコピペできるURLです。</p>
-          <div class="list">
-            <div class="ticket-card">
-              <b>お客様マイページ</b>
-              <div class="small">https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/member.html</div>
-            </div>
-            <div class="ticket-card">
-              <b>ブラッシュアップ予約</b>
-              <div class="small">https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/index-brush.html</div>
-            </div>
-            <div class="ticket-card">
-              <b>API</b>
-              <div class="small">https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/health</div>
-            </div>
-          </div>
-        </div>
+      <h2>ご利用案内</h2>
+      <p class="sub">次回予約、回数券残数、来店履歴はこのページから確認できます。</p>
+      <a class="btn primary" href="index-brush.html">新しい予約へ進む</a>
+    </div>
       </aside>
     </div>
   </main>
@@ -314,7 +298,7 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    const VERSION = "ESTHE-10-R3-MEMBER-CHANGE-BEFORE-AFTER-CONFIRM-20260710";
+    const VERSION = "ESTHE-NEXT-2-MEMBER-20260723";
     const API_BASE = "https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev";
     const SHOP_CODE = "esthe_demo_default";
 

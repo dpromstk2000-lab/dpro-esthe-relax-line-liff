@@ -1,12 +1,16 @@
 schema_version: 1
 system: "DPRO エステ LINE"
-current_step: "ESTHE-NEXT-1-COMPLETE"
-next_step: "ESTHE-NEXT-2"
-updated_at_jst: "2026-07-23T16:46:20+09:00"
-source_commit: "05b6f12116849ebad51ab6df097459b31714acb3"
-backup_tag: "backup-esthe-before-next-20260723"
-result: "ATTENTION"
+current_step: "ESTHE-NEXT-2-COMPLETE"
+next_step: "ESTHE-NEXT-3"
+updated_at_jst: "2026-07-23T20:03:31+09:00"
+source_commit: "1d7fe8726635fab1aa3528305afd476888ea66d9"
+backup_tag: "backup-esthe-before-next2-r6-20260723"
+result: "OK"
 changes:
   worker: false
   supabase: false
   api: false
+  public_admin_information_separated: true
+  owner_today_priority: true
+  admin_code_clear_button: true
+  admin_auth_transport: "x-admin-secret"

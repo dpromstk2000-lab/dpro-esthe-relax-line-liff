@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- STEP ESTHE-NEXT-2 -->
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
@@ -89,17 +90,94 @@
   font-size:15px;
 }
 
-  </style>
+  
+/* DPRO NEXT-2: 管理コード入力・削除 */
+.dpro-admin-access{
+  margin:0 0 18px;
+  padding:16px 18px;
+  border:1px solid var(--line);
+  border-radius:20px;
+  background:rgba(255,255,255,.96);
+  box-shadow:0 10px 28px rgba(88,55,46,.07);
+}
+.dpro-admin-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.dpro-admin-title{font-size:16px;font-weight:1000;color:var(--main)}
+.dpro-admin-status{
+  display:inline-flex;
+  align-items:center;
+  min-height:30px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:#fff6df;
+  border:1px solid #efd49e;
+  color:#8d600d;
+  font-size:12px;
+  font-weight:950;
+}
+.dpro-admin-status.ok{
+  background:#e8f8f1;
+  border-color:#bce9d8;
+  color:#087a59;
+}
+.dpro-admin-controls{
+  display:grid;
+  grid-template-columns:minmax(180px,1fr) auto auto;
+  gap:9px;
+  margin-top:12px;
+}
+.dpro-admin-controls input{
+  width:100%;
+  min-height:46px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#fff;
+  color:var(--text,var(--ink,#2d211f));
+  padding:11px 13px;
+  font-size:16px;
+  font-weight:900;
+}
+.dpro-admin-button{
+  min-height:46px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:10px 15px;
+  background:var(--main);
+  color:#fff;
+  font-weight:950;
+  cursor:pointer;
+}
+.dpro-admin-button.clear{
+  background:#fff;
+  color:var(--danger,var(--bad,#b33a3a));
+}
+.dpro-admin-help{
+  margin:9px 0 0;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.65;
+  font-weight:750;
+}
+@media(max-width:680px){
+  .dpro-admin-controls{grid-template-columns:1fr}
+  .dpro-admin-button{width:100%}
+}
+
+</style>
 </head>
 <body>
   <div class="wrap">
     <section class="hero">
-      <span class="badge">STEP ESTHE-16｜電話番号正規化対応版 staff.html</span>
+      <span class="badge">STEP ESTHE-NEXT-2｜スタッフ当日運用</span>
       <h1 id="shopTitle">DPRO Esthe Relaxation</h1>
       <p id="shopLead">スタッフが本日の担当予約・お客様メモ・進行状況を確認するための画面です。</p>
       <div class="meta">
         <span id="apiMeta">API接続：確認中</span>
-        <span>管理コード：1234</span>
         <span id="todayMeta">本日：-</span>
         <span id="shopPhoneMeta">電話：確認中</span>
       </div>
@@ -112,6 +190,23 @@
       <a class="btn btnSub" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/system-check.html">system-check</a>
       <button class="btnSub" id="copyTodayBtn">本日の担当メモをコピー</button>
     </div>
+
+<section class="dpro-admin-access" id="dproAdminAccess" aria-label="管理コード">
+  <div class="dpro-admin-head">
+    <div class="dpro-admin-title">管理画面の接続</div>
+    <span class="dpro-admin-status" id="dproAdminStatus">管理コード未入力</span>
+  </div>
+  <div class="dpro-admin-controls">
+    <input id="dproAdminCode" type="password" inputmode="numeric"
+      autocomplete="current-password" placeholder="管理コードを入力">
+    <button class="dpro-admin-button" id="dproAdminSave" type="button">管理コードを設定</button>
+    <button class="dpro-admin-button clear" id="dproAdminClear" type="button">管理コードを削除</button>
+  </div>
+  <p class="dpro-admin-help">
+    管理コードはこのタブの一時領域だけに保存します。共有端末では操作後に「管理コードを削除」を押してください。
+  </p>
+</section>
+
 
     <div id="message"></div>
 
@@ -202,11 +297,81 @@
 
 <script>
 (() => {
-  const VERSION = 'ESTHE-7-SIMPLE-STAFF-DATE-NAV-BRUSHUP-20260710';
+  const VERSION = 'ESTHE-NEXT-2-STAFF-20260723';
   const API_BASE = 'https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev';
   const SHOP_CODE = 'esthe_demo_default';
-  const ADMIN_KEY = '1234';
+  const ADMIN_STORAGE_KEY = "dpro_esthe_admin_secret";
+const DEMO_ADMIN_CODE = "1234";
+let ADMIN_KEY = sessionStorage.getItem(ADMIN_STORAGE_KEY) || "";
   const $ = (id) => document.getElementById(id);
+
+
+function dproAdminStatusMessage(message, ok=false){
+  const status = document.getElementById("dproAdminStatus");
+  if(!status) return;
+  status.textContent = message;
+  status.classList.toggle("ok", ok);
+}
+
+function dproRequireAdminCode(){
+  if(!ADMIN_KEY){
+    throw new Error("管理コードを入力し、「管理コードを設定」を押してください。");
+  }
+}
+
+function dproInitAdminAccess(){
+  const input = document.getElementById("dproAdminCode");
+  const save = document.getElementById("dproAdminSave");
+  const clear = document.getElementById("dproAdminClear");
+  if(!input || !save || !clear) return;
+
+  if(ADMIN_KEY && ADMIN_KEY !== DEMO_ADMIN_CODE){
+    sessionStorage.removeItem(ADMIN_STORAGE_KEY);
+    ADMIN_KEY = "";
+  }
+
+  if(ADMIN_KEY){
+    input.value = "";
+    input.placeholder = "管理コード設定済み";
+    dproAdminStatusMessage("管理コード設定済み", true);
+  }else{
+    dproAdminStatusMessage("管理コード未入力", false);
+  }
+
+  save.addEventListener("click", () => {
+    const value = String(input.value || "").trim();
+    if(!value){
+      dproAdminStatusMessage("管理コードを入力してください", false);
+      input.focus();
+      return;
+    }
+    if(value !== DEMO_ADMIN_CODE){
+      dproAdminStatusMessage("管理コードが違います", false);
+      input.select();
+      return;
+    }
+    sessionStorage.setItem(ADMIN_STORAGE_KEY, value);
+    ADMIN_KEY = value;
+    dproAdminStatusMessage("管理コード設定済み", true);
+    window.location.reload();
+  });
+
+  clear.addEventListener("click", () => {
+    sessionStorage.removeItem(ADMIN_STORAGE_KEY);
+    ADMIN_KEY = "";
+    input.value = "";
+    input.placeholder = "管理コードを入力";
+    dproAdminStatusMessage("管理コードを削除しました", false);
+    window.location.reload();
+  });
+
+  input.addEventListener("keydown", (event) => {
+    if(event.key === "Enter") save.click();
+  });
+}
+
+document.addEventListener("DOMContentLoaded", dproInitAdminAccess);
+
   const state = { settings:null, staff:[], reservations:[], selectedStaff:'all', date:'', filter:'active' };
 
   document.addEventListener('DOMContentLoaded', init);
@@ -230,7 +395,7 @@
     const admin = opts.admin !== false && path.startsWith('/api/admin/');
     const url = new URL(API_BASE + path);
     if(!url.searchParams.has('shop_code')) url.searchParams.set('shop_code', SHOP_CODE);
-    if(admin && !url.searchParams.has('admin_key')) url.searchParams.set('admin_key', ADMIN_KEY);
+    if(admin) dproRequireAdminCode();
     const res = await fetch(url.toString(), {
       method,
       headers:{ 'Content-Type':'application/json', 'x-admin-secret': ADMIN_KEY },

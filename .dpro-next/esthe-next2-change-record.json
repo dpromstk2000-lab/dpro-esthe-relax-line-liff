@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "system": "DPRO エステ LINE",
+  "step": "ESTHE-NEXT-2",
+  "completed_at_jst": "2026-07-23T20:03:30+09:00",
+  "target_files": [
+    "index.html",
+    "index-brush.html",
+    "member.html",
+    "owner.html",
+    "admin.html",
+    "staff.html",
+    "system-check.html"
+  ],
+  "changes": {
+    "public_admin_information_separated": true,
+    "admin_code_session_storage": true,
+    "admin_code_clear_button": true,
+    "admin_query_parameter_removed": true,
+    "admin_header_authentication": "x-admin-secret",
+    "owner_today_priority": true,
+    "additional_initial_api_requests": 0,
+    "worker_changed": false,
+    "supabase_changed": false,
+    "api_changed": false
+  },
+  "rollback": {
+    "tag": "backup-esthe-before-next2-r6-20260723",
+    "method": "GitHub backup tagから対象HTMLと台帳を復元する"
+  }
+}
