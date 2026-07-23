@@ -62,3 +62,14 @@ next2_completion:
   api_changed: false
   public_admin_information_separated: true
   owner_today_priority: true
+
+next3_completion:
+  completed_at_jst: "2026-07-23T21:04:15+09:00"
+  backup_tag: "backup-esthe-before-next3-r2-20260723"
+  business_unit: "1件の予約＝1回来店・施術案件"
+  reservation_visit_integration: true
+  lazy_customer_detail_fetch: true
+  additional_initial_api_requests: 0
+  worker_changed: false
+  supabase_changed: false
+  api_changed: false

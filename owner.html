@@ -1,10 +1,10 @@
 <!doctype html>
-<!-- STEP ESTHE-NEXT-2 -->
+<!-- STEP ESTHE-NEXT-3 -->
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DPRO Esthe Relaxation｜STEP ESTHE-16｜owner.html</title>
+  <title>DPRO Esthe Relaxation｜STEP ESTHE-NEXT-3｜owner.html</title>
   <style>
     :root{
       --bg:#fffaf7;
@@ -332,12 +332,137 @@
   .todo-summary{grid-template-columns:1fr 1fr 1fr}
 }
 
+
+*(DPRO, NEXT-3:, 予約・来店・施術統合パネル, */)
+.visit-hub-layer{
+  position:fixed;
+  inset:0;
+  z-index:82;
+  display:none;
+  justify-content:flex-end;
+  background:rgba(45,33,31,.48);
+  backdrop-filter:blur(4px);
+}
+.visit-hub-layer.show{display:flex}
+.visit-hub{
+  width:min(720px,100%);
+  height:100%;
+  overflow:auto;
+  background:#fffaf7;
+  border-left:1px solid var(--line);
+  box-shadow:-24px 0 80px rgba(45,33,31,.22);
+}
+.visit-hub-head{
+  position:sticky;
+  top:0;
+  z-index:4;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  padding:22px;
+  background:rgba(255,250,247,.96);
+  border-bottom:1px solid var(--line);
+  backdrop-filter:blur(14px);
+}
+.visit-hub-head h2{margin:0;font-size:24px;letter-spacing:-.04em}
+.visit-hub-head p{margin:6px 0 0;color:var(--muted);font-size:13px;font-weight:800;line-height:1.6}
+.visit-hub-close{
+  flex:0 0 auto;
+  width:44px;
+  height:44px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:#fff;
+  color:var(--main);
+  font-size:20px;
+  font-weight:1000;
+  cursor:pointer;
+}
+.visit-hub-body{padding:20px 22px 110px}
+.visit-hub-section{
+  margin-bottom:16px;
+  padding:17px;
+  border:1px solid var(--line);
+  border-radius:20px;
+  background:#fff;
+  box-shadow:0 10px 28px rgba(88,55,46,.06);
+}
+.visit-hub-section h3{margin:0 0 10px;font-size:17px;color:var(--main)}
+.visit-hub-progress{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:7px;
+}
+.visit-hub-step{
+  min-height:62px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:var(--soft);
+  color:var(--muted);
+  padding:8px 5px;
+  font-size:11px;
+  line-height:1.4;
+  font-weight:950;
+}
+.visit-hub-step.done{background:#e8f8f1;border-color:#bce9d8;color:#087a59}
+.visit-hub-step.current{background:var(--main);border-color:var(--main);color:#fff}
+.visit-hub-grid{
+  display:grid;
+  grid-template-columns:130px 1fr;
+  border:1px solid var(--line);
+  border-radius:16px;
+  overflow:hidden;
+}
+.visit-hub-grid div{padding:11px 12px;border-bottom:1px solid var(--line);font-size:13px;font-weight:850;line-height:1.55}
+.visit-hub-grid div:nth-child(odd){background:var(--soft);color:var(--muted)}
+.visit-hub-grid div:nth-child(even){background:#fff}
+.visit-hub-grid div:nth-last-child(-n+2){border-bottom:0}
+.visit-hub-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+.visit-hub-loading{
+  padding:28px 16px;
+  text-align:center;
+  color:var(--muted);
+  font-weight:900;
+}
+.visit-hub-counts{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+.visit-hub-count{
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:var(--soft);
+  text-align:center;
+}
+.visit-hub-count strong{display:block;font-size:22px;color:var(--main)}
+.visit-hub-count span{display:block;margin-top:4px;color:var(--muted);font-size:11px;font-weight:900}
+@media(max-width:680px){
+  .visit-hub{width:100%}
+  .visit-hub-body{padding:15px 13px 110px}
+  .visit-hub-head{padding:17px 14px}
+  .visit-hub-progress{grid-template-columns:1fr}
+  .visit-hub-step{min-height:42px}
+  .visit-hub-grid{grid-template-columns:105px 1fr}
+}
+
 </style>
 </head>
 <body>
   <main class="wrap">
     <section class="hero">
-      <div class="badge">STEP ESTHE-NEXT-2｜PCオーナー管理</div>
+      <div class="badge">STEP ESTHE-NEXT-3｜予約・来店・施術統合</div>
       <h1>DPRO Esthe Relaxation</h1>
       <p>本日の予約、予約一覧、顧客カルテ、回数券、未対応フォロー、文面テンプレートをまとめて確認できるPC用の本格管理画面です。</p>
       <div class="hero-meta">
@@ -585,10 +710,26 @@
     </div>
   </div>
 
+
+<div class="visit-hub-layer" id="visitHubLayer" aria-hidden="true">
+  <section class="visit-hub" role="dialog" aria-modal="true" aria-labelledby="visitHubTitle">
+    <header class="visit-hub-head">
+      <div>
+        <h2 id="visitHubTitle">受付・施術詳細</h2>
+        <p id="visitHubLead">予約を中心に、来店から完了までを確認します。</p>
+      </div>
+      <button class="visit-hub-close" id="visitHubClose" type="button" aria-label="閉じる">×</button>
+    </header>
+    <div class="visit-hub-body" id="visitHubBody">
+      <div class="visit-hub-loading">予約を選択してください。</div>
+    </div>
+  </section>
+</div>
+
   <div class="toast" id="toast"></div>
 
 <script>
-const VERSION = "ESTHE-NEXT-2-OWNER-TODAY-20260723";
+const VERSION = "ESTHE-NEXT-3-RESERVATION-VISIT-INTEGRATION-20260723";
 const API_BASE = "https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev";
 const SHOP_CODE = "esthe_demo_default";
 const ADMIN_STORAGE_KEY = "dpro_esthe_admin_secret";
@@ -608,7 +749,9 @@ const state = {
   settings: null,
   pendingAction: null,
   selectedCustomerId: null,
-  settingsSection: "basic"
+  settingsSection: "basic",
+  integratedVisit: null,
+  integratedVisitCache: {}
 };
 
 const $ = (id) => document.getElementById(id);
@@ -861,6 +1004,7 @@ function renderReservationCard(r, idx, source){
       <div class="card-meta">予約番号：${escapeHtml(r.reservation_code || "-")}</div>
       <div class="card-meta">要望：${escapeHtml(r.request_note || "-")}</div>
       <div class="card-actions">
+        <button class="mini primary" type="button" data-visit-hub="${source}:${idx}">受付・施術詳細</button>
         <button class="mini" data-copy="${source}:${idx}">予約確認文</button>
         <button class="mini primary" data-customer-detail="${escapeHtml(r.customer_id || "")}" data-phone="${escapeHtml(phone)}">カルテ</button>
         <button class="mini" data-status="${source}:${idx}:checked_in">来店済み</button>
@@ -871,6 +1015,218 @@ function renderReservationCard(r, idx, source){
       </div>
     </div>
   `;
+}
+
+
+
+function reservationBySource(source, index){
+  const list = source === "day" ? (state.day?.reservations || []) : state.reservations;
+  return list[Number(index)] || null;
+}
+
+function visitProgressHtml(status){
+  const steps = [
+    ["reserved","予約"],
+    ["checked_in","来店"],
+    ["in_treatment","施術"],
+    ["waiting_payment","会計"],
+    ["completed","完了"]
+  ];
+  const current = steps.findIndex(([key]) => key === status);
+  return steps.map(([key,label], index) => {
+    const className = index < current ? "done" : index === current ? "current" : "";
+    return `<div class="visit-hub-step ${className}">${escapeHtml(label)}</div>`;
+  }).join("");
+}
+
+function latestPreviousReservation(detail, currentReservationId){
+  return (detail?.reservations || [])
+    .filter(item => String(item.id || "") !== String(currentReservationId || ""))
+    .filter(item => item.status === "completed")
+    .sort((a,b) => new Date(b.start_at || 0) - new Date(a.start_at || 0))[0] || null;
+}
+
+function visitConsultationHtml(detail){
+  const item = (detail?.consultations || [])[0];
+  return item
+    ? consultationRowsHtml(item)
+    : `<div class="notice">カウンセリング記録はありません。</div>`;
+}
+
+function visitNotesHtml(detail){
+  const notes = (detail?.notes || []).slice(0,3);
+  if(!notes.length) return `<div class="notice">カルテメモはありません。</div>`;
+  return notes.map(note => `
+    <div class="mini-card">
+      <b>${escapeHtml(note.note_title || "カルテメモ")}</b>
+      <div class="card-meta">${escapeHtml(note.note_body || "-").slice(0,220)}</div>
+    </div>
+  `).join("");
+}
+
+function renderIntegratedVisit(){
+  const hub = state.integratedVisit;
+  const body = $("visitHubBody");
+  if(!hub?.reservation){
+    body.innerHTML = `<div class="visit-hub-loading">予約情報がありません。</div>`;
+    return;
+  }
+
+  const r = hub.reservation;
+  const detail = hub.detail || {};
+  const p = isoParts(r.start_at);
+  const previous = latestPreviousReservation(detail, r.id);
+  const activeTickets = (detail.tickets || []).filter(ticket =>
+    ticket.status === "active" && Number(ticket.remaining_count || 0) > 0
+  );
+  const customer = detail.customer || {};
+  const detailError = hub.detailError
+    ? `<div class="notice warn">顧客詳細の取得に失敗しました：${escapeHtml(hub.detailError)}</div>`
+    : "";
+
+  $("visitHubTitle").textContent = `${r.customer_name || "お客様"}｜受付・施術詳細`;
+  $("visitHubLead").textContent = `${p.date ? dateText(p.date) : "-"} ${p.time || ""} / ${r.menu_name || "-"}`;
+
+  body.innerHTML = `
+    ${detailError}
+    <section class="visit-hub-section">
+      <h3>現在の進捗</h3>
+      <div class="visit-hub-progress">${visitProgressHtml(r.status)}</div>
+      <div class="visit-hub-actions">
+        <button class="mini" type="button" data-integrated-status="checked_in">来店済み</button>
+        <button class="mini warn" type="button" data-integrated-status="in_treatment">施術開始</button>
+        <button class="mini" type="button" data-integrated-status="waiting_payment">会計待ち</button>
+        <button class="mini green" type="button" data-integrated-status="completed">完了</button>
+      </div>
+    </section>
+
+    <section class="visit-hub-section">
+      <h3>今回の予約・受付</h3>
+      <div class="visit-hub-grid">
+        <div>予約番号</div><div>${escapeHtml(r.reservation_code || "-")}</div>
+        <div>日時</div><div>${escapeHtml(p.date ? `${dateText(p.date)} ${p.time}` : "-")}</div>
+        <div>メニュー</div><div>${escapeHtml(r.menu_name || "-")}</div>
+        <div>担当</div><div>${escapeHtml(r.staff_name || "指名なし")}</div>
+        <div>電話</div><div>${escapeHtml(r.customer_phone || r.phone || customer.phone || "-")}</div>
+        <div>要望</div><div>${escapeHtml(r.request_note || "-")}</div>
+        <div>状態</div><div>${escapeHtml(statusLabel(r.status))}</div>
+      </div>
+    </section>
+
+    <section class="visit-hub-section">
+      <h3>顧客情報のつながり</h3>
+      <div class="visit-hub-counts">
+        <div class="visit-hub-count"><strong>${Number(customer.visit_count || 0)}</strong><span>来店回数</span></div>
+        <div class="visit-hub-count"><strong>${(detail.reservations || []).length}</strong><span>予約履歴</span></div>
+        <div class="visit-hub-count"><strong>${activeTickets.length}</strong><span>有効回数券</span></div>
+      </div>
+      <div class="visit-hub-actions">
+        <button class="mini primary" type="button" data-integrated-customer="1">顧客カルテを開く</button>
+      </div>
+    </section>
+
+    <section class="visit-hub-section">
+      <h3>最新カウンセリング</h3>
+      ${visitConsultationHtml(detail)}
+    </section>
+
+    <section class="visit-hub-section">
+      <h3>前回来店</h3>
+      ${previous ? `
+        <div class="visit-hub-grid">
+          <div>日時</div><div>${escapeHtml(dtText(previous.start_at))}</div>
+          <div>メニュー</div><div>${escapeHtml(previous.menu_name || "-")}</div>
+          <div>担当</div><div>${escapeHtml(previous.staff_name || "指名なし")}</div>
+          <div>状態</div><div>${escapeHtml(statusLabel(previous.status))}</div>
+        </div>
+      ` : `<div class="notice">完了済みの前回来店はありません。</div>`}
+    </section>
+
+    <section class="visit-hub-section">
+      <h3>回数券</h3>
+      ${activeTickets.length ? activeTickets.slice(0,3).map(ticket => `
+        <div class="mini-card">
+          <b>${escapeHtml(ticket.ticket_name || "回数券")}</b>
+          <div class="card-meta">残り ${escapeHtml(ticket.remaining_count ?? "-")}/${escapeHtml(ticket.total_count ?? "-")}回 / 有効期限 ${escapeHtml(ticket.expires_at || "-")}</div>
+        </div>
+      `).join("") : `<div class="notice">利用可能な回数券はありません。</div>`}
+    </section>
+
+    <section class="visit-hub-section">
+      <h3>直近カルテメモ</h3>
+      <div class="list">${visitNotesHtml(detail)}</div>
+    </section>
+  `;
+}
+
+async function openIntegratedVisit(source, index){
+  const r = reservationBySource(source, index);
+  if(!r) return;
+
+  state.integratedVisit = {
+    source,
+    index:Number(index),
+    reservation:r,
+    detail:null,
+    detailError:""
+  };
+
+  $("visitHubLayer").classList.add("show");
+  $("visitHubLayer").setAttribute("aria-hidden", "false");
+  $("visitHubBody").innerHTML = `<div class="visit-hub-loading">予約・顧客情報を読み込み中です。</div>`;
+
+  const cacheKey = String(r.customer_id || normalizePhone(r.customer_phone || r.phone || ""));
+  if(cacheKey && state.integratedVisitCache[cacheKey]){
+    state.integratedVisit.detail = state.integratedVisitCache[cacheKey];
+    renderIntegratedVisit();
+    return;
+  }
+
+  try{
+    const query = r.customer_id
+      ? `customer_id=${encodeURIComponent(r.customer_id)}`
+      : `phone=${encodeURIComponent(normalizePhone(r.customer_phone || r.phone || ""))}`;
+    const detail = await api(`/api/admin/customers/detail?${query}`);
+    state.integratedVisit.detail = detail;
+    if(cacheKey) state.integratedVisitCache[cacheKey] = detail;
+  }catch(error){
+    state.integratedVisit.detailError = error.message || "詳細取得エラー";
+  }
+
+  renderIntegratedVisit();
+}
+
+function closeIntegratedVisit(){
+  $("visitHubLayer").classList.remove("show");
+  $("visitHubLayer").setAttribute("aria-hidden", "true");
+}
+
+async function openIntegratedCustomer(){
+  const hub = state.integratedVisit;
+  if(!hub?.reservation) return;
+
+  const detail = hub.detail;
+  closeIntegratedVisit();
+  setTab("customers");
+
+  if(detail?.customer){
+    state.customerDetail = detail;
+    state.selectedCustomerId = detail.customer.id || hub.reservation.customer_id || null;
+    renderCustomerDetail();
+    return;
+  }
+
+  if(hub.reservation.customer_id){
+    await loadCustomerDetailByCustomer({id:hub.reservation.customer_id});
+    return;
+  }
+
+  const phone = normalizePhone(hub.reservation.customer_phone || hub.reservation.phone || "");
+  if(phone){
+    $("customerQuery").value = phone;
+    await searchCustomers();
+    if(state.customers[0]) await loadCustomerDetailByCustomer(state.customers[0]);
+  }
 }
 
 
@@ -1848,6 +2204,30 @@ document.addEventListener("click", async (e) => {
     return;
   }
 
+
+  const visitHub = e.target.closest("[data-visit-hub]");
+  if(visitHub){
+    const [source, index] = visitHub.dataset.visitHub.split(":");
+    await openIntegratedVisit(source, Number(index));
+    return;
+  }
+
+  const integratedStatus = e.target.closest("[data-integrated-status]");
+  if(integratedStatus){
+    const hub = state.integratedVisit;
+    if(!hub) return;
+    const statusValue = integratedStatus.dataset.integratedStatus;
+    closeIntegratedVisit();
+    updateStatus(hub.source, hub.index, statusValue);
+    return;
+  }
+
+  const integratedCustomer = e.target.closest("[data-integrated-customer]");
+  if(integratedCustomer){
+    await openIntegratedCustomer();
+    return;
+  }
+
   const status = e.target.closest("[data-status]");
   if(status){
     const [source, idx, st] = status.dataset.status.split(":");
@@ -1908,6 +2288,17 @@ document.addEventListener("click", async (e) => {
     const text = normalizeTemplateBody(raw);
     navigator.clipboard?.writeText(text).then(()=>showToast("文面テンプレートをコピーしました。"));
     return;
+  }
+});
+
+
+$("visitHubClose").addEventListener("click", closeIntegratedVisit);
+$("visitHubLayer").addEventListener("click", (event) => {
+  if(event.target.id === "visitHubLayer") closeIntegratedVisit();
+});
+document.addEventListener("keydown", (event) => {
+  if(event.key === "Escape" && $("visitHubLayer").classList.contains("show")){
+    closeIntegratedVisit();
   }
 });
 

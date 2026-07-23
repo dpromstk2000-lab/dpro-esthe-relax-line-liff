@@ -1,16 +1,16 @@
 schema_version: 1
 system: "DPRO エステ LINE"
-current_step: "ESTHE-NEXT-2-COMPLETE"
-next_step: "ESTHE-NEXT-3"
-updated_at_jst: "2026-07-23T20:03:31+09:00"
-source_commit: "1d7fe8726635fab1aa3528305afd476888ea66d9"
-backup_tag: "backup-esthe-before-next2-r6-20260723"
+current_step: "ESTHE-NEXT-3-COMPLETE"
+next_step: "ESTHE-NEXT-4"
+updated_at_jst: "2026-07-23T21:04:15+09:00"
+source_commit: "dc8a6773f8b5e1c072eded68800530e5b8ee3941"
+backup_tag: "backup-esthe-before-next3-r2-20260723"
 result: "OK"
 changes:
   worker: false
   supabase: false
   api: false
-  public_admin_information_separated: true
-  owner_today_priority: true
-  admin_code_clear_button: true
-  admin_auth_transport: "x-admin-secret"
+  business_unit: "1件の予約＝1回来店・施術案件"
+  reservation_visit_integration: true
+  customer_detail_lazy_fetch: true
+  additional_initial_api_requests: 0

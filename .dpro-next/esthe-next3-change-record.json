@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "system": "DPRO エステ LINE",
+  "step": "ESTHE-NEXT-3",
+  "completed_at_jst": "2026-07-23T21:04:14+09:00",
+  "business_unit": "1件の予約＝1回来店・施術案件",
+  "target_files": [
+    "owner.html"
+  ],
+  "features": {
+    "reservation_visit_integration": true,
+    "reservation_id_relation": true,
+    "customer_id_or_phone_relation": true,
+    "consultation_summary": true,
+    "previous_visit_summary": true,
+    "active_ticket_summary": true,
+    "karte_note_summary": true,
+    "lazy_customer_detail_fetch": true,
+    "detail_cache": true,
+    "additional_initial_api_requests": 0
+  },
+  "changes": {
+    "worker": false,
+    "supabase": false,
+    "api": false
+  },
+  "rollback": {
+    "tag": "backup-esthe-before-next3-r2-20260723",
+    "method": "バックアップタグからowner.htmlと台帳を復元する"
+  }
+}
