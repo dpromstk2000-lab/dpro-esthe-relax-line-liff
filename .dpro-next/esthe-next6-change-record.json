@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "system": "DPRO エステ LINE",
+  "step": "ESTHE-NEXT-6",
+  "completed_at_jst": "2026-07-23T22:36:19+09:00",
+  "target_files": [
+    "staff.html",
+    "owner-ipad.html"
+  ],
+  "roles": {
+    "owner_pc": "全機能・設定・顧客管理",
+    "owner_ipad": "店舗全体の当日進捗・施術前確認・状態更新",
+    "staff_mobile": "自分の担当・次の1操作・必要最小限の予約情報"
+  },
+  "features": {
+    "owner_ipad_created": true,
+    "owner_ipad_day_only_initial_load": true,
+    "staff_command_center": true,
+    "staff_contextual_next_action": true,
+    "staff_pre_treatment_guard": true,
+    "staff_internal_links_removed": true,
+    "staff_customer_detail_lazy_fetch": true,
+    "additional_staff_initial_api_requests": 0,
+    "owner_ipad_initial_admin_api_requests": 1
+  },
+  "changes": {
+    "worker": false,
+    "supabase": false,
+    "api": false
+  },
+  "rollback": {
+    "tag": "backup-esthe-before-next6-20260723",
+    "method": "バックアップタグからstaff.html・owner-ipad.html・台帳を復元する"
+  }
+}

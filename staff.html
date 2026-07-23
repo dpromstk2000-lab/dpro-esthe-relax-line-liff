@@ -1,10 +1,10 @@
 <!doctype html>
-<!-- STEP ESTHE-NEXT-2 -->
+<!-- STEP ESTHE-NEXT-6 -->
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>DPRO Esthe Relaxation｜スタッフ用</title>
+  <title>DPRO Esthe Relaxation｜STEP ESTHE-NEXT-6｜staff.html</title>
   <style>
     :root{
       --bg:#fbf6f2; --card:#fffdfb; --ink:#39251f; --muted:#8a6c61;
@@ -168,14 +168,81 @@
   .dpro-admin-button{width:100%}
 }
 
+
+/* DPRO NEXT-6: 現場スタッフ・タッチ操作最適化 */
+.field-command-center{
+  margin:0 0 18px;
+  padding:18px;
+  border:1px solid var(--line);
+  border-radius:22px;
+  background:linear-gradient(135deg,#fff,#fff7f1);
+  box-shadow:var(--shadow);
+}
+.field-command-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px;
+}
+.field-command-head h2{margin:0;font-size:22px;letter-spacing:-.03em}
+.field-command-head p{margin:5px 0 0;color:var(--muted);font-size:13px;font-weight:800;line-height:1.6}
+.field-quick-counts{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+.field-count{
+  display:inline-flex;align-items:center;gap:5px;min-height:34px;padding:7px 10px;
+  border:1px solid var(--line);border-radius:999px;background:#fff;
+  color:var(--main);font-size:11px;font-weight:950;white-space:nowrap;
+}
+.field-count.attention{background:var(--warnBg);border-color:#efd49e;color:#8d600d}
+.field-now-card{
+  border:1px solid var(--line);border-left:6px solid var(--main2);
+  border-radius:18px;padding:15px;background:#fff;
+}
+.field-now-card.urgent{border-left-color:var(--bad);background:#fff7f7}
+.field-now-card.active{border-left-color:var(--ok);background:#f4fbf8}
+.field-now-label{font-size:12px;font-weight:1000;color:var(--muted)}
+.field-now-title{margin-top:5px;font-size:22px;font-weight:1000;line-height:1.25}
+.field-now-meta{margin-top:6px;color:var(--muted);font-size:13px;font-weight:850;line-height:1.6}
+.field-now-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}
+.field-now-actions button,.field-now-actions a{width:100%;min-height:50px;border-radius:15px}
+.staff-primary-action{flex:1 1 190px;min-height:48px!important;border-radius:15px!important;font-size:14px!important}
+.staff-detail-action{min-height:48px!important;border-radius:15px!important}
+.staff-more{width:100%;margin-top:5px;border:1px solid var(--line);border-radius:14px;background:var(--soft)}
+.staff-more summary{cursor:pointer;padding:11px 12px;color:var(--main);font-size:12px;font-weight:950}
+.staff-more .actions{padding:0 10px 10px;margin-top:0}
+.staff-priority-item{
+  padding:10px 0;border-bottom:1px solid var(--line);
+}
+.staff-priority-item:last-child{border-bottom:0}
+.staff-priority-item b{display:block;font-size:14px;line-height:1.45}
+.staff-priority-item span{display:block;margin-top:3px;color:var(--muted);font-size:11px;font-weight:850;line-height:1.55}
+.staff-guard{display:inline-flex;margin-top:7px;padding:5px 8px;border-radius:999px;background:#fff4dc;color:#8d600d;font-size:10px;font-weight:950}
+.resCard{scroll-margin-top:12px}
+.resCard .actions button{min-height:46px}
+@media(max-width:680px){
+  .wrap{width:min(100% - 18px,640px)}
+  .hero{padding:21px 18px}
+  h1{font-size:28px}
+  .field-command-center{padding:14px}
+  .field-command-head{display:grid}
+  .field-quick-counts{justify-content:flex-start}
+  .field-now-actions{grid-template-columns:1fr}
+  .resTop{display:grid}
+  .time{font-size:27px}
+  .name{font-size:22px}
+  .toolbar{display:grid;grid-template-columns:1fr 1fr}
+  .toolbar > *{width:100%;min-height:48px}
+  .toolbar #copyTodayBtn{grid-column:1 / -1}
+}
+
 </style>
 </head>
 <body>
   <div class="wrap">
     <section class="hero">
-      <span class="badge">STEP ESTHE-NEXT-2｜スタッフ当日運用</span>
+      <span class="badge">STEP ESTHE-NEXT-6｜現場スタッフ・スマホ</span>
       <h1 id="shopTitle">DPRO Esthe Relaxation</h1>
-      <p id="shopLead">スタッフが本日の担当予約・お客様メモ・進行状況を確認するための画面です。</p>
+      <p id="shopLead">自分の担当と次の1操作を優先表示する、現場スタッフ専用画面です。</p>
       <div class="meta">
         <span id="apiMeta">API接続：確認中</span>
         <span id="todayMeta">本日：-</span>
@@ -185,9 +252,7 @@
 
     <div class="toolbar">
       <button id="refreshBtn">最新に更新</button>
-      <a class="btn btnSoft" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/admin.html">管理画面を開く</a>
-      <a class="btn btnSub" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/">予約画面を開く</a>
-      <a class="btn btnSub" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/system-check.html">system-check</a>
+      <a class="btn btnSoft" href="owner-ipad.html">店舗iPadを開く</a>
       <button class="btnSub" id="copyTodayBtn">本日の担当メモをコピー</button>
     </div>
 
@@ -209,6 +274,20 @@
 
 
     <div id="message"></div>
+
+    <section class="field-command-center" id="fieldCommandCenter">
+      <div class="field-command-head">
+        <div>
+          <h2>今やること</h2>
+          <p>選択中スタッフの現在対応と次の1操作を表示します。</p>
+        </div>
+        <div class="field-quick-counts" id="fieldQuickCounts"></div>
+      </div>
+      <div id="fieldNowMain" class="field-now-card">
+        <div class="field-now-label">読み込み中</div>
+        <div class="field-now-title">担当予約を確認しています。</div>
+      </div>
+    </section>
 
     <section class="stats">
       <div class="stat"><b id="statTotal">0</b><span>本日の予約</span></div>
@@ -254,23 +333,16 @@
           <div class="sideList" id="timelineList"></div>
         </section>
         <section class="card" style="margin-top:18px">
-          <h2>確認URL</h2>
-          <p>コピペ確認用です。</p>
-          <div class="notice info">
-            <b>スタッフ画面</b><br>
-            https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/staff.html
-          </div>
-          <div class="notice info">
-            <b>API</b><br>
-            https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/health
-          </div>
+          <h2>現場の優先順位</h2>
+          <p>来店済み、施術中、会計待ち、まもなく来店の順に表示します。</p>
+          <div class="sideList" id="staffPriorityList"></div>
         </section>
       </aside>
     </div>
 
     <div class="footer">
-      API： https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev<br>
-      この画面はシンプル版スタッフ用です。カルテ・回数券・再来店フォローの本格管理はSTEP以降のブラッシュアップ版で表示します。
+      現場スタッフ用：担当予約・次の操作・施術前確認状況を必要な時だけ確認します。<br>
+      店舗全体の進捗と施術前確認の保存は、店舗iPad画面を使用してください。
     </div>
   </div>
 
@@ -297,7 +369,7 @@
 
 <script>
 (() => {
-  const VERSION = 'ESTHE-NEXT-2-STAFF-20260723';
+  const VERSION = 'ESTHE-NEXT-6-STAFF-FIELD-20260723';
   const API_BASE = 'https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev';
   const SHOP_CODE = 'esthe_demo_default';
   const ADMIN_STORAGE_KEY = "dpro_esthe_admin_secret";
@@ -372,7 +444,7 @@ function dproInitAdminAccess(){
 
 document.addEventListener("DOMContentLoaded", dproInitAdminAccess);
 
-  const state = { settings:null, staff:[], reservations:[], selectedStaff:'all', date:'', filter:'active' };
+  const state = { settings:null, staff:[], reservations:[], selectedStaff:'all', date:'', filter:'active', detailCache:{} };
 
   document.addEventListener('DOMContentLoaded', init);
 
@@ -442,10 +514,158 @@ document.addEventListener("DOMContentLoaded", dproInitAdminAccess);
     renderAll();
   }
 
+
+  function reservationById(id){
+    return (state.reservations || []).find(r => String(r.id || "") === String(id || "")) || null;
+  }
+
+  function nextStaffAction(r){
+    const map = {
+      reserved:{status:"checked_in", label:"来店受付", cls:"btnSoft"},
+      checked_in:{status:"in_treatment", label:"施術開始", cls:"btnWarn"},
+      in_treatment:{status:"waiting_payment", label:"会計待ちへ", cls:"btnSoft"},
+      waiting_payment:{status:"completed", label:"完了にする", cls:"btnOk"}
+    };
+    return map[r?.status] || null;
+  }
+
+  function priorityRank(r){
+    if(r.status === "waiting_payment") return 1;
+    if(r.status === "checked_in") return 2;
+    if(r.status === "in_treatment") return 3;
+    if(r.status === "reserved"){
+      const start = parseApiDate(r.start_at);
+      const diff = (start.getTime() - Date.now()) / 60000;
+      if(diff <= 30 && diff >= -30) return 4;
+    }
+    return 9;
+  }
+
+  function renderFieldCommandCenter(){
+    const rows = filteredReservations().filter(r => !["completed","cancelled","no_show"].includes(r.status));
+    const counts = {
+      checked_in:rows.filter(r=>r.status==="checked_in").length,
+      in_treatment:rows.filter(r=>r.status==="in_treatment").length,
+      waiting_payment:rows.filter(r=>r.status==="waiting_payment").length,
+      reserved:rows.filter(r=>r.status==="reserved").length
+    };
+
+    $("fieldQuickCounts").innerHTML = `
+      <span class="field-count">来店待ち ${counts.reserved}</span>
+      <span class="field-count ${counts.checked_in ? "attention" : ""}">施術待ち ${counts.checked_in}</span>
+      <span class="field-count">施術中 ${counts.in_treatment}</span>
+      <span class="field-count ${counts.waiting_payment ? "attention" : ""}">会計待ち ${counts.waiting_payment}</span>
+    `;
+
+    const target = rows.slice().sort((a,b) =>
+      priorityRank(a) - priorityRank(b) ||
+      new Date(a.start_at || 0) - new Date(b.start_at || 0)
+    )[0];
+
+    if(!target){
+      $("fieldNowMain").className = "field-now-card active";
+      $("fieldNowMain").innerHTML = `
+        <div class="field-now-label">現在の対応</div>
+        <div class="field-now-title">未完了の担当予約はありません。</div>
+        <div class="field-now-meta">最新に更新して、次の予約を確認してください。</div>
+      `;
+      return;
+    }
+
+    const d = parseApiDate(target.start_at);
+    const action = nextStaffAction(target);
+    const urgent = ["waiting_payment","checked_in"].includes(target.status);
+    $("fieldNowMain").className = `field-now-card ${urgent ? "urgent" : target.status === "in_treatment" ? "active" : ""}`;
+    $("fieldNowMain").innerHTML = `
+      <div class="field-now-label">${escapeHtml(statusInfo(target.status).label)}｜${escapeHtml(selectedStaffName())}</div>
+      <div class="field-now-title">${escapeHtml(formatTime(d))} ${escapeHtml(target.customer_name || "お客様")}</div>
+      <div class="field-now-meta">${escapeHtml(target.menu_name || "-")} / ${escapeHtml(target.staff_name || "指名なし")}</div>
+      <div class="field-now-actions">
+        ${action ? `<button class="${escapeHtml(action.cls)}" data-field-next="${escapeHtml(target.id)}:${escapeHtml(action.status)}">${escapeHtml(action.label)}</button>` : ""}
+        <button class="btnSub" data-field-detail="${escapeHtml(target.id)}">予約詳細</button>
+      </div>
+    `;
+
+    $("fieldNowMain").querySelector("[data-field-next]")?.addEventListener("click", (event) => {
+      const [id,status] = event.currentTarget.dataset.fieldNext.split(":");
+      confirmStatus(id,status,event.currentTarget);
+    });
+    $("fieldNowMain").querySelector("[data-field-detail]")?.addEventListener("click", (event) => {
+      openStaffDetail(event.currentTarget.dataset.fieldDetail);
+    });
+  }
+
+  function renderStaffPriority(){
+    const rows = filteredReservations()
+      .filter(r => !["completed","cancelled","no_show"].includes(r.status))
+      .sort((a,b) => priorityRank(a) - priorityRank(b) || new Date(a.start_at) - new Date(b.start_at))
+      .slice(0,8);
+
+    $("staffPriorityList").innerHTML = rows.length ? rows.map(r => {
+      const d = parseApiDate(r.start_at);
+      return `<div class="staff-priority-item">
+        <b>${escapeHtml(formatTime(d))} ${escapeHtml(r.customer_name || "お客様")}</b>
+        <span>${escapeHtml(statusInfo(r.status).label)} / ${escapeHtml(r.menu_name || "-")}</span>
+      </div>`;
+    }).join("") : `<div class="empty">優先対応はありません。</div>`;
+  }
+
+  function openStaffDetail(id){
+    const r = reservationById(id);
+    if(!r) return;
+    const d = parseApiDate(r.start_at);
+    const end = parseApiDate(r.end_at);
+    openConfirm({
+      title:"予約・施術情報",
+      message:"スタッフに必要な今回の予約情報だけを表示します。",
+      rows:[
+        ["お客様", r.customer_name || "-"],
+        ["日時", `${formatDateLong(d)} ${formatTime(d)}〜${formatTime(end)}`],
+        ["メニュー", r.menu_name || "-"],
+        ["担当", r.staff_name || "指名なし"],
+        ["電話", r.customer_phone || "-"],
+        ["予約番号", r.reservation_code || "-"],
+        ["ご要望", r.request_note || "-"],
+        ["状態", statusInfo(r.status).label]
+      ],
+      okLabel:"閉じる",
+      onOk:async()=>closeConfirm()
+    });
+  }
+
+  function normalizeStaffPhone(value){
+    let s = String(value || "").replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0)).trim();
+    s = s.replace(/[^\d+]/g, "");
+    if(s.startsWith("+81")) s = "0" + s.slice(3);
+    return s.replace(/\D/g, "");
+  }
+
+  async function loadStaffCustomerDetail(r){
+    const cacheKey = String(r.customer_id || normalizeStaffPhone(r.customer_phone || ""));
+    if(cacheKey && state.detailCache[cacheKey]) return state.detailCache[cacheKey];
+    const query = r.customer_id
+      ? `customer_id=${encodeURIComponent(r.customer_id)}`
+      : `phone=${encodeURIComponent(normalizeStaffPhone(r.customer_phone || ""))}`;
+    const detail = await api(`/api/admin/customers/detail?${query}`, {admin:true});
+    if(cacheKey) state.detailCache[cacheKey] = detail;
+    return detail;
+  }
+
+  function hasPreTreatmentConfirmation(detail,r){
+    const key = String(r.reservation_code || r.id || "");
+    return (detail?.notes || []).some(note => {
+      if(String(note.note_title || "") === `施術前確認｜${key}`) return true;
+      return String(note.note_type || "") === "pre_treatment_confirmation" &&
+        key && String(note.note_body || "").includes(key);
+    });
+  }
+
   function renderAll(){
     renderStats();
     renderReservations();
     renderTimeline();
+    renderFieldCommandCenter();
+    renderStaffPriority();
     renderBottom();
   }
 
@@ -506,6 +726,7 @@ document.addEventListener("DOMContentLoaded", dproInitAdminAccess);
     const detail = makeDetail(r);
     const nowClass = isNearNow(d, end) ? ' now' : '';
     const disabled = ['cancelled','no_show'].includes(r.status) ? 'disabled' : '';
+    const next = nextStaffAction(r);
     return `
       <div class="resCard${nowClass}" data-id="${escapeHtml(r.id)}" data-detail="${escapeHtml(JSON.stringify(detail))}">
         <div class="resTop">
@@ -521,33 +742,85 @@ document.addEventListener("DOMContentLoaded", dproInitAdminAccess);
           <b>予約番号：</b>${escapeHtml(r.reservation_code || '-')}<br>
           <b>ご要望：</b>${escapeHtml(r.request_note || '-')}
         </div>
-        <div class="actionTitle">スタッフ操作</div>
+        <div class="actionTitle">次の操作</div>
         <div class="actions">
-          <button class="btnSoft btnTiny" data-status="checked_in" ${disabled}>来店済みにする</button>
-          <button class="btnWarn btnTiny" data-status="in_treatment" ${disabled}>施術開始</button>
-          <button class="btnSoft btnTiny" data-status="waiting_payment" ${disabled}>会計待ち</button>
-          <button class="btnOk btnTiny" data-status="completed" ${disabled}>完了にする</button>
+          ${next ? `<button class="${escapeHtml(next.cls)} btnTiny staff-primary-action" data-next-status="${escapeHtml(next.status)}" ${disabled}>${escapeHtml(next.label)}</button>` : ""}
+          <button class="btnSub btnTiny staff-detail-action" data-staff-detail="true">予約詳細</button>
           <button class="btnSub btnTiny" data-copy="true">確認文コピー</button>
+          <details class="staff-more">
+            <summary>その他の状態変更</summary>
+            <div class="actions">
+              <button class="btnSoft btnTiny" data-status="checked_in" ${disabled}>来店済み</button>
+              <button class="btnWarn btnTiny" data-status="in_treatment" ${disabled}>施術開始</button>
+              <button class="btnSoft btnTiny" data-status="waiting_payment" ${disabled}>会計待ち</button>
+              <button class="btnOk btnTiny" data-status="completed" ${disabled}>完了</button>
+            </div>
+          </details>
         </div>
       </div>`;
   }
 
   function bindCardActions(root){
+    root.querySelectorAll('[data-next-status]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const card = btn.closest('.resCard');
+        confirmStatus(card.dataset.id, btn.dataset.nextStatus, card);
+      });
+    });
     root.querySelectorAll('[data-status]').forEach(btn=>{
       btn.addEventListener('click', ()=>{
         const card = btn.closest('.resCard');
-        const status = btn.dataset.status;
-        confirmStatus(card.dataset.id, status, card);
+        confirmStatus(card.dataset.id, btn.dataset.status, card);
       });
+    });
+    root.querySelectorAll('[data-staff-detail]').forEach(btn=>{
+      btn.addEventListener('click', ()=>openStaffDetail(btn.closest('.resCard').dataset.id));
     });
     root.querySelectorAll('[data-copy]').forEach(btn=>{
       btn.addEventListener('click', ()=>copyMessage(btn.closest('.resCard')));
     });
   }
 
-  function confirmStatus(id, status, card){
-    const detail = getCardDetail(card);
+  async function confirmStatus(id, status, card){
+    const reservation = reservationById(id);
+    const detail = card?.classList?.contains("resCard")
+      ? getCardDetail(card)
+      : makeDetail(reservation || {});
     const label = statusInfo(status).label;
+
+    if(status === "in_treatment"){
+      if(!reservation){
+        showMessage("予約情報を確認できませんでした。",'bad');
+        return;
+      }
+      showMessage("施術前確認の記録を確認中です。",'info',false);
+      try{
+        const customerDetail = await loadStaffCustomerDetail(reservation);
+        if(!hasPreTreatmentConfirmation(customerDetail,reservation)){
+          openConfirm({
+            title:"施術前確認が未保存です",
+            message:"店舗iPadで施術内容・料金・注意事項・お客様同意を確認し、記録を保存してください。",
+            rows:[
+              ["お客様", reservation.customer_name || "-"],
+              ["メニュー", reservation.menu_name || "-"],
+              ["状態", "施術開始前"],
+              ["必要操作", "店舗iPadで施術前確認を保存"]
+            ],
+            okLabel:"店舗iPadを開く",
+            onOk:async()=>{
+              closeConfirm();
+              window.location.href = "owner-ipad.html";
+            }
+          });
+          showMessage("施術前確認が未保存のため、施術開始を停止しました。",'bad');
+          return;
+        }
+      }catch(error){
+        showMessage("施術前確認を取得できないため、施術開始を停止しました。",'bad');
+        return;
+      }
+    }
+
     openConfirm({
       title:`「${label}」に変更しますか？`,
       message:'押し間違い防止のため、内容を確認してから反映します。',

@@ -1,20 +1,20 @@
 schema_version: 1
 system: "DPRO エステ LINE"
-current_step: "ESTHE-NEXT-5-COMPLETE"
-next_step: "ESTHE-NEXT-6"
-updated_at_jst: "2026-07-23T22:14:07+09:00"
-source_commit: "03d73192a277f2610f48d6863d1efe1b7400d138"
-backup_tag: "backup-esthe-before-next5-r2-20260723"
+current_step: "ESTHE-NEXT-6-COMPLETE"
+next_step: "ESTHE-NEXT-7"
+updated_at_jst: "2026-07-23T22:36:20+09:00"
+source_commit: "1a72ec42536d3df084d1f384dc29971e4bdca638"
+backup_tag: "backup-esthe-before-next6-20260723"
 result: "OK"
 changes:
   worker: false
   supabase: false
   api: false
-  treatment_confirmation: true
-  booking_consent_visible: true
-  persistent_confirmation_via_karte: true
-  reservation_relation: true
-  treatment_start_guard: true
-  individual_customer_message_copy: true
-  bulk_auto_line_delivery: false
-  additional_initial_api_requests: 0
+  owner_ipad_created: true
+  owner_ipad_day_only_initial_load: true
+  staff_command_center: true
+  staff_contextual_next_action: true
+  staff_pre_treatment_guard: true
+  staff_customer_detail_lazy_fetch: true
+  additional_staff_initial_api_requests: 0
+  owner_ipad_initial_admin_api_requests: 1

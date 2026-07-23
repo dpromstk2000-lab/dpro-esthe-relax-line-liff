@@ -1,0 +1,3092 @@
+<!doctype html>
+<!-- STEP ESTHE-NEXT-6 -->
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DPRO Esthe Relaxation｜STEP ESTHE-NEXT-6｜owner-ipad.html</title>
+  <style>
+    :root{
+      --bg:#fffaf7;
+      --card:#fff;
+      --soft:#fbf0eb;
+      --soft2:#f6e5dc;
+      --main:#7c4f44;
+      --main2:#a46e5f;
+      --gold:#b88647;
+      --accent:#0f8a6a;
+      --danger:#c94c4c;
+      --warn:#b7771f;
+      --text:#2d211f;
+      --muted:#806b64;
+      --line:#ead4cb;
+      --shadow:0 24px 72px rgba(88,55,46,.14);
+      --radius:24px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 12% 2%,rgba(190,142,117,.23),transparent 34%),
+        radial-gradient(circle at 86% 3%,rgba(124,79,68,.16),transparent 28%),
+        linear-gradient(180deg,#fffaf7 0%,#fff 52%,#fffaf7 100%);
+      min-height:100vh;
+    }
+    a{color:inherit;text-decoration:none}
+    button,input,select,textarea{font-family:inherit}
+    .wrap{width:min(1280px,calc(100% - 28px));margin:26px auto 116px}
+    .hero{
+      position:relative;overflow:hidden;border-radius:30px;color:#fff;padding:30px 34px;
+      background:
+        radial-gradient(circle at 96% 92%,rgba(255,255,255,.20) 0 24%,transparent 25%),
+        linear-gradient(135deg,#684038,#a87263);
+      box-shadow:var(--shadow);
+    }
+    .hero::after{content:"";position:absolute;right:-48px;top:-54px;width:280px;height:280px;border-radius:999px;background:rgba(255,255,255,.12)}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.13);color:#fff;font-size:12px;font-weight:900;backdrop-filter:blur(8px)}
+    .hero h1{position:relative;z-index:1;margin:16px 0 8px;font-size:clamp(30px,4vw,48px);line-height:1;letter-spacing:-.04em}
+    .hero p{position:relative;z-index:1;margin:0;max-width:900px;font-weight:750;line-height:1.65;color:rgba(255,255,255,.94)}
+    .hero-meta{position:relative;z-index:1;display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;font-size:12px;font-weight:900;color:rgba(255,255,255,.95)}
+    .topnav{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0 16px}
+    .btn{border:1px solid var(--line);background:#fff;color:var(--main);border-radius:999px;padding:12px 16px;font-weight:950;cursor:pointer;box-shadow:0 8px 24px rgba(88,55,46,.08);transition:.15s ease;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+    .btn:hover{transform:translateY(-1px)}
+    .btn.primary{background:var(--main);border-color:var(--main);color:#fff}
+    .btn.gold{background:var(--gold);border-color:var(--gold);color:#fff}
+    .btn.green{background:var(--accent);border-color:var(--accent);color:#fff}
+    .btn.red{background:var(--danger);border-color:var(--danger);color:#fff}
+    .btn.warn{background:var(--warn);border-color:var(--warn);color:#fff}
+    .btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px}
+    .tab{border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--main);font-weight:950;padding:11px 15px;cursor:pointer}
+    .tab.on{background:var(--main);border-color:var(--main);color:#fff}
+    .grid{display:grid;grid-template-columns:1.28fr .86fr;gap:18px;align-items:start}
+    .grid-wide{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+    .panel{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);margin-bottom:18px}
+    .panel h2{margin:0 0 6px;font-size:22px;letter-spacing:-.03em}
+    .sub{margin:0 0 18px;color:var(--muted);font-size:13px;line-height:1.7;font-weight:760}
+    .section-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+    .pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:950;background:var(--soft);color:var(--main);border:1px solid var(--line);white-space:nowrap}
+    .pill.ok{background:#e8f8f1;color:#087a59;border-color:#bce9d8}
+    .pill.warn{background:#fff6df;color:#8d600d;border-color:#f0d9a8}
+    .pill.red{background:#fff0f0;color:#ad3737;border-color:#f2c8c8}
+    .cards{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:0 0 18px}
+    .metric{background:#fff;border:1px solid var(--line);border-radius:18px;padding:15px;box-shadow:0 10px 26px rgba(88,55,46,.07)}
+    .metric strong{display:block;color:var(--main);font-size:28px;line-height:1;letter-spacing:-.04em}
+    .metric span{display:block;color:var(--muted);margin-top:8px;font-size:12px;font-weight:850}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .field{display:grid;gap:7px;margin-bottom:12px}
+    label{font-size:12px;font-weight:950;color:var(--main)}
+    input,select,textarea{width:100%;border:1px solid var(--line);background:#fff;color:var(--text);border-radius:15px;padding:13px 13px;font-size:15px;font-weight:850;outline:none}
+    textarea{min-height:96px;resize:vertical;line-height:1.6}
+    input:focus,select:focus,textarea:focus{border-color:var(--main);box-shadow:0 0 0 4px rgba(124,79,68,.1)}
+    .dateField{position:relative;width:100%}
+    .dateField input[type="date"]{position:absolute;inset:0;width:100%;height:100%;opacity:.01;z-index:2;cursor:pointer}
+    .dateDisplay{width:100%;min-height:50px;border:1px solid var(--line);background:#fff;color:var(--text);border-radius:15px;padding:13px 42px 13px 13px;text-align:left;font-weight:950;cursor:pointer}
+    .dateField::after{content:"📅";position:absolute;right:13px;top:50%;transform:translateY(-50%);z-index:1;opacity:.7;pointer-events:none}
+    .notice{border:1px solid var(--line);border-radius:16px;padding:13px 14px;background:var(--soft);color:var(--muted);font-size:13px;font-weight:800;line-height:1.65;margin:12px 0}
+    .notice.ok{background:#effaf5;color:#087a59;border-color:#bee8d9}
+    .notice.warn{background:#fff8e8;color:#8b5c0b;border-color:#f0d6a4}
+    .notice.ng{background:#fff0f0;color:#ad3737;border-color:#f2c8c8}
+    .template-preview{
+      white-space:pre-wrap;
+      word-break:break-word;
+      background:var(--soft);
+      border:1px solid var(--line);
+      border-radius:15px;
+      padding:13px 14px;
+      color:var(--text);
+      font-size:13px;
+      line-height:1.75;
+      font-weight:800;
+      margin:10px 0 0;
+    }
+    .template-type{
+      display:inline-flex;
+      align-items:center;
+      border-radius:999px;
+      background:#fff7eb;
+      border:1px solid #edd1a8;
+      color:#8d5f12;
+      padding:5px 9px;
+      font-size:11px;
+      font-weight:950;
+    }
+    .list{display:grid;gap:10px}
+    .reservation-card,.customer-card,.ticket-card,.follow-card,.mini-card{border:1px solid var(--line);border-radius:18px;background:#fff;padding:16px;box-shadow:0 10px 26px rgba(88,55,46,.05)}
+    .reservation-card.next{background:#fff8f3;border-color:#dfbfb2}
+    .customer-card{cursor:pointer}
+    .customer-card.on{border-color:var(--main);background:#fff7f2;box-shadow:0 0 0 3px rgba(124,79,68,.08)}
+    .card-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:8px}
+    .card-title{font-size:16px;font-weight:1000;line-height:1.35}
+    .card-meta{color:var(--muted);font-size:12px;font-weight:850;line-height:1.6}
+    .card-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    .mini{border:1px solid var(--line);background:#fff;color:var(--main);border-radius:999px;padding:8px 11px;font-size:12px;font-weight:950;cursor:pointer}
+    .mini.primary{background:var(--main);color:#fff;border-color:var(--main)}
+    .mini.green{background:var(--accent);color:#fff;border-color:var(--accent)}
+    .mini.red{background:var(--danger);color:#fff;border-color:var(--danger)}
+    .mini.warn{background:var(--warn);color:#fff;border-color:var(--warn)}
+    .summary-row{display:grid;grid-template-columns:130px 1fr;border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-top:12px}
+    .summary-row div{padding:12px;border-bottom:1px solid var(--line);font-weight:850;font-size:13px}
+    .summary-row div:nth-child(odd){background:var(--soft);color:var(--muted)}
+    .summary-row div:nth-child(even){background:#fff}
+    .summary-row div:nth-last-child(-n+2){border-bottom:0}
+    .hidden{display:none!important}
+    .bottom{position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(255,250,247,.92);backdrop-filter:blur(16px);border-top:1px solid var(--line)}
+    .bottom-inner{width:min(1280px,calc(100% - 28px));margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0}
+    .bottom-text{color:var(--muted);font-size:12px;font-weight:850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .modal-backdrop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(45,33,31,.56);z-index:90;padding:16px}
+    .modal-backdrop.show{display:flex}
+    .modal{width:min(760px,100%);max-height:86vh;overflow:auto;background:#fff;border:1px solid var(--line);border-radius:24px;box-shadow:0 26px 100px rgba(0,0,0,.25);padding:22px}
+    .modal h3{margin:0 0 8px;font-size:24px;letter-spacing:-.04em}
+    .modal p{margin:0 0 16px;color:var(--muted);font-weight:750;line-height:1.7}
+    .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+    .toast{position:fixed;right:18px;bottom:86px;z-index:120;background:#2d211f;color:#fff;border-radius:16px;padding:13px 16px;display:none;font-weight:950;box-shadow:0 18px 44px rgba(0,0,0,.22);max-width:420px}
+    .toast.show{display:block}
+    .setting-block{border:1px solid var(--line);border-radius:20px;background:#fff;padding:16px;margin-bottom:14px}
+    .setting-block h3{margin:0 0 12px;font-size:18px;letter-spacing:-.03em}
+    .setting-block{border:1px solid var(--line);border-radius:20px;background:#fff;padding:18px;margin-bottom:14px}
+    .setting-index{display:flex;gap:8px;flex-wrap:wrap;position:sticky;top:8px;z-index:12;background:rgba(255,250,247,.92);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:18px;padding:10px;margin-bottom:14px}
+    .setting-index-btn{border:1px solid var(--line);background:#fff;color:var(--main);border-radius:999px;padding:10px 13px;font-size:12px;font-weight:950;cursor:pointer}
+    .setting-index-btn.on{background:var(--main);border-color:var(--main);color:#fff}
+    .setting-section{display:none}
+    .setting-section.on{display:block}
+    .setting-card-list{display:grid;gap:10px}
+    .setting-compact-card{border:1px solid var(--line);border-radius:17px;background:#fff;padding:12px 14px}
+    .setting-compact-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+    .setting-compact-title{font-weight:1000;line-height:1.4}
+    .setting-compact-meta{margin-top:4px;color:var(--muted);font-size:12px;font-weight:850;line-height:1.6}
+    .setting-compact-body{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+    .setting-compact-card.open .setting-compact-body{display:block}
+    .setting-help{background:#fff8e8;border:1px solid #f0d6a4;color:#8b5c0b;border-radius:16px;padding:12px 14px;font-size:12px;font-weight:850;line-height:1.7;margin:10px 0 14px}
+    .setting-section-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+
+    .setting-row{display:grid;grid-template-columns:1.1fr 1fr 1fr .8fr .7fr;gap:10px;align-items:end;border:1px solid var(--line);border-radius:16px;padding:12px;margin:10px 0;background:#fffaf7}
+    .setting-row.menu{grid-template-columns:1fr 1.2fr .7fr .7fr .7fr .6fr}
+    .setting-row.staff{grid-template-columns:1fr 1.2fr .8fr .7fr .6fr}
+    .setting-row.room{grid-template-columns:1fr 1.2fr 1fr .7fr .6fr}
+    .setting-row.hours{grid-template-columns:.7fr .7fr .8fr .8fr 1fr}
+    .checkline{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:950;color:var(--main)}
+    .checkline input{width:auto}
+    .settings-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .muted-line{font-size:12px;color:var(--muted);font-weight:800;line-height:1.7}
+    @media(max-width:1060px){
+      .grid,.grid-wide{grid-template-columns:1fr}
+      .cards{grid-template-columns:repeat(2,1fr)}
+    }
+    @media(max-width:640px){
+      .wrap{width:min(100% - 18px,1280px);margin-top:12px}
+      .hero{padding:22px 20px;border-radius:22px}
+      .hero h1{font-size:31px}
+      .form-grid{grid-template-columns:1fr}
+      .cards{grid-template-columns:1fr}
+      .summary-row{grid-template-columns:110px 1fr}
+      .actions{grid-template-columns:1fr}
+      .bottom-inner{flex-direction:column;align-items:stretch}
+      .bottom-inner .btn{width:100%}
+    }
+  
+/* DPRO NEXT-2: 管理コード入力・削除 */
+.dpro-admin-access{
+  margin:0 0 18px;
+  padding:16px 18px;
+  border:1px solid var(--line);
+  border-radius:20px;
+  background:rgba(255,255,255,.96);
+  box-shadow:0 10px 28px rgba(88,55,46,.07);
+}
+.dpro-admin-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.dpro-admin-title{font-size:16px;font-weight:1000;color:var(--main)}
+.dpro-admin-status{
+  display:inline-flex;
+  align-items:center;
+  min-height:30px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:#fff6df;
+  border:1px solid #efd49e;
+  color:#8d600d;
+  font-size:12px;
+  font-weight:950;
+}
+.dpro-admin-status.ok{
+  background:#e8f8f1;
+  border-color:#bce9d8;
+  color:#087a59;
+}
+.dpro-admin-controls{
+  display:grid;
+  grid-template-columns:minmax(180px,1fr) auto auto;
+  gap:9px;
+  margin-top:12px;
+}
+.dpro-admin-controls input{
+  width:100%;
+  min-height:46px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#fff;
+  color:var(--text,var(--ink,#2d211f));
+  padding:11px 13px;
+  font-size:16px;
+  font-weight:900;
+}
+.dpro-admin-button{
+  min-height:46px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:10px 15px;
+  background:var(--main);
+  color:#fff;
+  font-weight:950;
+  cursor:pointer;
+}
+.dpro-admin-button.clear{
+  background:#fff;
+  color:var(--danger,var(--bad,#b33a3a));
+}
+.dpro-admin-help{
+  margin:9px 0 0;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.65;
+  font-weight:750;
+}
+@media(max-width:680px){
+  .dpro-admin-controls{grid-template-columns:1fr}
+  .dpro-admin-button{width:100%}
+}
+
+
+/* DPRO NEXT-2: 今日やること優先表示 */
+.todo-summary{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin:0 0 12px;
+}
+.todo-summary-item{
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:var(--soft);
+  padding:10px;
+  text-align:center;
+}
+.todo-summary-item strong{
+  display:block;
+  color:var(--main);
+  font-size:22px;
+  line-height:1;
+}
+.todo-summary-item span{
+  display:block;
+  margin-top:5px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:900;
+}
+.todo-priority{
+  border:1px solid var(--line);
+  border-left:6px solid var(--main);
+  border-radius:17px;
+  background:#fff;
+  padding:13px 14px;
+}
+.todo-priority.p1{border-left-color:var(--danger);background:#fff5f5}
+.todo-priority.p2{border-left-color:var(--warn);background:#fff9ec}
+.todo-priority.p3{border-left-color:var(--accent);background:#f2fbf7}
+.todo-priority.p4{border-left-color:var(--main2);background:#fff}
+.todo-priority-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+}
+.todo-priority-title{font-weight:1000;line-height:1.4}
+.todo-priority-meta{
+  margin-top:5px;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+  line-height:1.6;
+}
+.todo-priority-label{
+  flex:0 0 auto;
+  border-radius:999px;
+  padding:5px 8px;
+  background:#fff;
+  border:1px solid var(--line);
+  color:var(--main);
+  font-size:11px;
+  font-weight:950;
+}
+.todo-priority-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+@media(max-width:640px){
+  .todo-summary{grid-template-columns:1fr 1fr 1fr}
+}
+
+
+*(DPRO, NEXT-3:, 予約・来店・施術統合パネル, */)
+.visit-hub-layer{
+  position:fixed;
+  inset:0;
+  z-index:82;
+  display:none;
+  justify-content:flex-end;
+  background:rgba(45,33,31,.48);
+  backdrop-filter:blur(4px);
+}
+.visit-hub-layer.show{display:flex}
+.visit-hub{
+  width:min(720px,100%);
+  height:100%;
+  overflow:auto;
+  background:#fffaf7;
+  border-left:1px solid var(--line);
+  box-shadow:-24px 0 80px rgba(45,33,31,.22);
+}
+.visit-hub-head{
+  position:sticky;
+  top:0;
+  z-index:4;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  padding:22px;
+  background:rgba(255,250,247,.96);
+  border-bottom:1px solid var(--line);
+  backdrop-filter:blur(14px);
+}
+.visit-hub-head h2{margin:0;font-size:24px;letter-spacing:-.04em}
+.visit-hub-head p{margin:6px 0 0;color:var(--muted);font-size:13px;font-weight:800;line-height:1.6}
+.visit-hub-close{
+  flex:0 0 auto;
+  width:44px;
+  height:44px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:#fff;
+  color:var(--main);
+  font-size:20px;
+  font-weight:1000;
+  cursor:pointer;
+}
+.visit-hub-body{padding:20px 22px 110px}
+.visit-hub-section{
+  margin-bottom:16px;
+  padding:17px;
+  border:1px solid var(--line);
+  border-radius:20px;
+  background:#fff;
+  box-shadow:0 10px 28px rgba(88,55,46,.06);
+}
+.visit-hub-section h3{margin:0 0 10px;font-size:17px;color:var(--main)}
+.visit-hub-progress{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:7px;
+}
+.visit-hub-step{
+  min-height:62px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:var(--soft);
+  color:var(--muted);
+  padding:8px 5px;
+  font-size:11px;
+  line-height:1.4;
+  font-weight:950;
+}
+.visit-hub-step.done{background:#e8f8f1;border-color:#bce9d8;color:#087a59}
+.visit-hub-step.current{background:var(--main);border-color:var(--main);color:#fff}
+.visit-hub-grid{
+  display:grid;
+  grid-template-columns:130px 1fr;
+  border:1px solid var(--line);
+  border-radius:16px;
+  overflow:hidden;
+}
+.visit-hub-grid div{padding:11px 12px;border-bottom:1px solid var(--line);font-size:13px;font-weight:850;line-height:1.55}
+.visit-hub-grid div:nth-child(odd){background:var(--soft);color:var(--muted)}
+.visit-hub-grid div:nth-child(even){background:#fff}
+.visit-hub-grid div:nth-last-child(-n+2){border-bottom:0}
+.visit-hub-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+.visit-hub-loading{
+  padding:28px 16px;
+  text-align:center;
+  color:var(--muted);
+  font-weight:900;
+}
+.visit-hub-counts{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+.visit-hub-count{
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:var(--soft);
+  text-align:center;
+}
+.visit-hub-count strong{display:block;font-size:22px;color:var(--main)}
+.visit-hub-count span{display:block;margin-top:4px;color:var(--muted);font-size:11px;font-weight:900}
+@media(max-width:680px){
+  .visit-hub{width:100%}
+  .visit-hub-body{padding:15px 13px 110px}
+  .visit-hub-head{padding:17px 14px}
+  .visit-hub-progress{grid-template-columns:1fr}
+  .visit-hub-step{min-height:42px}
+  .visit-hub-grid{grid-template-columns:105px 1fr}
+}
+
+
+/* DPRO NEXT-4: 当日業務進捗ボード */
+.progress-board-panel{
+  margin-bottom:18px;
+  padding:20px;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:rgba(255,255,255,.96);
+  box-shadow:var(--shadow);
+}
+.progress-board-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:14px;
+}
+.progress-board-head h2{
+  margin:0 0 5px;
+  font-size:23px;
+  letter-spacing:-.035em;
+}
+.progress-board-head p{
+  margin:0;
+  color:var(--muted);
+  font-size:13px;
+  font-weight:800;
+  line-height:1.65;
+}
+.progress-board-summary{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.progress-summary-pill{
+  display:inline-flex;
+  align-items:center;
+  min-height:34px;
+  padding:7px 10px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:var(--soft);
+  color:var(--main);
+  font-size:11px;
+  font-weight:950;
+  white-space:nowrap;
+}
+.progress-summary-pill.attention{
+  background:#fff3e4;
+  border-color:#edc998;
+  color:#8d5908;
+}
+.progress-board-scroll{
+  overflow-x:auto;
+  padding:1px 1px 8px;
+  scrollbar-width:thin;
+}
+.progress-board{
+  min-width:1050px;
+  display:grid;
+  grid-template-columns:repeat(5,minmax(190px,1fr));
+  gap:10px;
+}
+.progress-column{
+  min-width:0;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:var(--soft);
+  overflow:hidden;
+}
+.progress-column[data-board-status="checked_in"]{background:#fff8e9}
+.progress-column[data-board-status="in_treatment"]{background:#f0faf6}
+.progress-column[data-board-status="waiting_payment"]{background:#fff1ed}
+.progress-column[data-board-status="completed"]{background:#eff6f2}
+.progress-column-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  min-height:58px;
+  padding:12px;
+  border-bottom:1px solid var(--line);
+  background:rgba(255,255,255,.8);
+}
+.progress-column-title{
+  font-size:13px;
+  font-weight:1000;
+  line-height:1.35;
+  color:var(--main);
+}
+.progress-column-count{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:30px;
+  height:30px;
+  border-radius:999px;
+  background:#fff;
+  border:1px solid var(--line);
+  color:var(--main);
+  font-size:12px;
+  font-weight:1000;
+}
+.progress-column-list{
+  display:grid;
+  gap:8px;
+  padding:9px;
+  max-height:570px;
+  overflow:auto;
+}
+.progress-board-card{
+  border:1px solid var(--line);
+  border-left:5px solid var(--main2);
+  border-radius:15px;
+  padding:11px;
+  background:#fff;
+  box-shadow:0 7px 20px rgba(88,55,46,.06);
+}
+.progress-board-card.overdue{
+  border-left-color:var(--danger);
+  background:#fff7f7;
+}
+.progress-board-card.soon{
+  border-left-color:var(--warn);
+  background:#fffaf0;
+}
+.progress-board-card.attention{
+  border-left-color:var(--gold);
+}
+.progress-board-time{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:6px;
+}
+.progress-board-time strong{
+  color:var(--main);
+  font-size:17px;
+  line-height:1;
+}
+.progress-board-customer{
+  font-size:14px;
+  font-weight:1000;
+  line-height:1.4;
+}
+.progress-board-meta{
+  margin-top:4px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:850;
+  line-height:1.55;
+}
+.progress-board-alert{
+  display:inline-flex;
+  align-items:center;
+  margin-top:7px;
+  border-radius:999px;
+  padding:5px 8px;
+  background:var(--soft);
+  color:var(--main);
+  font-size:10px;
+  font-weight:950;
+}
+.progress-board-alert.overdue{background:#fff0f0;color:#ad3737}
+.progress-board-alert.soon{background:#fff4dc;color:#8d600d}
+.progress-board-alert.active{background:#e8f8f1;color:#087a59}
+.progress-board-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  margin-top:9px;
+}
+.progress-board-actions .mini{
+  width:100%;
+  min-height:38px;
+  padding:7px 8px;
+}
+.progress-board-empty{
+  min-height:96px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:14px 8px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:900;
+  line-height:1.6;
+}
+@media(max-width:760px){
+  .progress-board-panel{padding:15px 12px}
+  .progress-board-head{display:grid}
+  .progress-board-summary{justify-content:flex-start}
+  .progress-board{min-width:920px}
+}
+
+
+          /* DPRO NEXT-5: 施術内容・料金・同意確認 */
+          .preconfirm-status-grid{
+            display:grid;
+            grid-template-columns:repeat(2,1fr);
+            gap:9px;
+            margin-bottom:12px;
+          }
+          .preconfirm-status{
+            border:1px solid var(--line);
+            border-radius:15px;
+            background:var(--soft);
+            padding:12px;
+          }
+          .preconfirm-status strong{
+            display:block;
+            color:var(--main);
+            font-size:15px;
+            line-height:1.35;
+          }
+          .preconfirm-status span{
+            display:block;
+            margin-top:5px;
+            color:var(--muted);
+            font-size:11px;
+            font-weight:850;
+            line-height:1.55;
+          }
+          .preconfirm-status.ok{
+            background:#eaf8f2;
+            border-color:#bce9d8;
+          }
+          .preconfirm-status.ok strong{color:#087a59}
+          .preconfirm-status.warn{
+            background:#fff8e8;
+            border-color:#f0d6a4;
+          }
+          .preconfirm-status.warn strong{color:#8b5c0b}
+          .preconfirm-checks{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:8px;
+            margin-top:12px;
+          }
+          .preconfirm-check{
+            display:flex;
+            gap:9px;
+            align-items:flex-start;
+            min-height:52px;
+            padding:10px;
+            border:1px solid var(--line);
+            border-radius:14px;
+            background:#fff;
+            color:var(--text);
+            font-size:12px;
+            font-weight:900;
+            line-height:1.55;
+          }
+          .preconfirm-check input{
+            width:auto;
+            margin-top:3px;
+            accent-color:var(--main);
+          }
+          .preconfirm-note{
+            width:100%;
+            min-height:74px;
+            margin-top:10px;
+            padding:11px 12px;
+            border:1px solid var(--line);
+            border-radius:14px;
+            background:#fff;
+            color:var(--text);
+            font:inherit;
+            font-size:13px;
+            font-weight:800;
+            line-height:1.6;
+            resize:vertical;
+          }
+          .preconfirm-saved{
+            margin-top:10px;
+            padding:11px 12px;
+            border:1px solid #bce9d8;
+            border-radius:14px;
+            background:#eaf8f2;
+            color:#087a59;
+            font-size:12px;
+            font-weight:900;
+            line-height:1.6;
+          }
+          @media(max-width:680px){
+            .preconfirm-status-grid,
+            .preconfirm-checks{grid-template-columns:1fr}
+          }
+          
+
+/* DPRO NEXT-6: 店舗iPad専用表示 */
+.owner-ipad-mode .wrap{width:min(1180px,calc(100% - 22px));margin:14px auto 104px}
+.owner-ipad-mode .hero{padding:22px 25px;border-radius:24px}
+.owner-ipad-mode .hero h1{font-size:clamp(28px,4vw,40px)}
+.owner-ipad-mode .topnav #prepareBtn,
+.owner-ipad-mode .topnav a:not([data-ipad-owner-link]){display:none!important}
+.owner-ipad-mode .tabs .tab:not([data-tab="today"]){display:none!important}
+.owner-ipad-mode .cards{grid-template-columns:repeat(3,1fr)}
+.owner-ipad-mode .cards .metric:nth-child(n+4){display:none}
+.owner-ipad-mode #tabReservations,
+.owner-ipad-mode #tabCustomers,
+.owner-ipad-mode #tabTickets,
+.owner-ipad-mode #tabFollowups,
+.owner-ipad-mode #tabTemplates,
+.owner-ipad-mode #tabSettings{display:none!important}
+.owner-ipad-mode .progress-board-panel{padding:17px}
+.owner-ipad-mode .progress-board{min-width:980px}
+.owner-ipad-mode .progress-board-actions .mini{min-height:44px}
+.owner-ipad-mode .mini,
+.owner-ipad-mode .btn{min-height:46px}
+.owner-ipad-mode .visit-hub{width:min(780px,100%)}
+.owner-ipad-mode [data-integrated-customer]{display:none!important}
+.owner-ipad-mode .bottom-inner{width:min(1180px,calc(100% - 22px))}
+@media(max-width:900px){
+  .owner-ipad-mode .grid{grid-template-columns:1fr}
+  .owner-ipad-mode .cards{grid-template-columns:repeat(3,1fr)}
+  .owner-ipad-mode .progress-board{min-width:900px}
+}
+@media(max-width:680px){
+  .owner-ipad-mode .cards{grid-template-columns:1fr 1fr 1fr}
+  .owner-ipad-mode .metric{padding:11px}
+  .owner-ipad-mode .metric strong{font-size:23px}
+}
+
+</style>
+</head>
+<body class="owner-ipad-mode">
+  <main class="wrap">
+    <section class="hero">
+      <div class="badge">STEP ESTHE-NEXT-6｜店舗iPad・当日運用</div>
+      <h1>DPRO Esthe Relaxation</h1>
+      <p>店舗全体の進捗、施術前確認、来店から完了までをタッチ操作で進める店舗iPad専用画面です。</p>
+      <div class="hero-meta">
+        <span>API接続：<span id="apiStatus">確認中</span></span>
+        <span>本日：<span id="todayLabel">-</span></span>
+        <span>画面：owner-ipad.html</span>
+      </div>
+    </section>
+
+    <div class="topnav">
+      <button class="btn primary" id="reloadBtn">最新に更新</button>
+      <a class="btn" data-ipad-owner-link href="owner.html">PC管理画面</a>
+      <button class="btn green" id="prepareBtn">営業前デモ準備</button>
+      <a class="btn" href="index-brush.html" target="_blank" rel="noopener">ブラッシュアップ予約</a>
+      <a class="btn" href="member.html" target="_blank" rel="noopener">お客様マイページ</a>
+      <a class="btn" href="staff.html" target="_blank" rel="noopener">スタッフ画面</a>
+      <a class="btn" href="system-check.html" target="_blank" rel="noopener">system-check</a>
+    </div>
+
+<section class="dpro-admin-access" id="dproAdminAccess" aria-label="管理コード">
+  <div class="dpro-admin-head">
+    <div class="dpro-admin-title">管理画面の接続</div>
+    <span class="dpro-admin-status" id="dproAdminStatus">管理コード未入力</span>
+  </div>
+  <div class="dpro-admin-controls">
+    <input id="dproAdminCode" type="password" inputmode="numeric"
+      autocomplete="current-password" placeholder="管理コードを入力">
+    <button class="dpro-admin-button" id="dproAdminSave" type="button">管理コードを設定</button>
+    <button class="dpro-admin-button clear" id="dproAdminClear" type="button">管理コードを削除</button>
+  </div>
+  <p class="dpro-admin-help">
+    管理コードはこのタブの一時領域だけに保存します。共有端末では操作後に「管理コードを削除」を押してください。
+  </p>
+</section>
+
+
+    <div class="tabs">
+      <button class="tab on" data-tab="today">今日の予約</button>
+      <button class="tab" data-tab="reservations">予約一覧</button>
+      <button class="tab" data-tab="customers">顧客・カルテ</button>
+      <button class="tab" data-tab="tickets">回数券</button>
+      <button class="tab" data-tab="followups">フォロー</button>
+      <button class="tab" data-tab="templates">文面</button>
+      <button class="tab" data-tab="settings">店舗設定確認</button>
+    </div>
+
+    <div id="message" class="notice warn">読み込み中です。</div>
+
+    <section class="cards">
+      <div class="metric"><strong id="metricToday">-</strong><span>本日の予約</span></div>
+      <div class="metric"><strong id="metricActive">-</strong><span>未完・施術中</span></div>
+      <div class="metric"><strong id="metricCompleted">-</strong><span>完了</span></div>
+      <div class="metric"><strong id="metricFollowups">-</strong><span>未対応フォロー</span></div>
+      <div class="metric"><strong id="metricTickets">-</strong><span>有効回数券</span></div>
+    </section>
+
+    <section id="tabToday">
+
+<section class="progress-board-panel" aria-labelledby="progressBoardTitle">
+  <div class="progress-board-head">
+    <div>
+      <h2 id="progressBoardTitle">本日の施術進捗</h2>
+      <p>予約から完了までを横並びで確認します。詳細確認と次の状態への更新だけに絞った軽量ボードです。</p>
+    </div>
+    <div class="progress-board-summary" id="progressBoardSummary"></div>
+  </div>
+  <div class="progress-board-scroll">
+    <div class="progress-board" id="progressBoard"></div>
+  </div>
+</section>
+      <div class="grid">
+        <div>
+          <div class="panel">
+            <div class="section-title">
+              <div>
+                <h2>今日の予約</h2>
+                <p class="sub">来店済み・施術中・会計待ち・完了へステータス変更できます。変更前に確認画面を表示します。</p>
+              </div>
+              <span class="pill ok">本日運用</span>
+            </div>
+            <div class="form-grid">
+              <div class="field">
+                <label>表示日</label>
+                <div class="dateField">
+                  <button class="dateDisplay" id="todayDateDisplay" type="button">日付を選択</button>
+                  <input id="todayDateInput" type="date">
+                </div>
+              </div>
+              <div class="field">
+                <label>操作</label>
+                <button class="btn primary" id="loadDayBtn">この日を表示</button>
+              </div>
+            </div>
+            <div id="todayList" class="list"></div>
+          </div>
+        </div>
+        <aside>
+          <div class="panel">
+      <h2>今日やること</h2>
+      <p class="sub">緊急度と進行状況の順に表示します。最初にここを確認してください。</p>
+      <div id="todoSummary" class="todo-summary"></div>
+      <div id="todoList" class="list"></div>
+    </div>
+          <div class="panel">
+      <h2>今日の基本操作</h2>
+      <div class="list">
+        <div class="mini-card"><b>1．対象のお客様を確認</b><div class="card-meta">今日やることから予約へ移動します。</div></div>
+        <div class="mini-card"><b>2．進捗を変更</b><div class="card-meta">来店済み・施術中・会計待ち・完了を選びます。</div></div>
+        <div class="mini-card"><b>3．必要な時だけ詳細</b><div class="card-meta">カルテ、回数券、フォローは必要な時だけ開きます。</div></div>
+      </div>
+    </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="tabReservations" class="hidden">
+      <div class="panel">
+        <div class="section-title">
+          <div>
+            <h2>予約一覧</h2>
+            <p class="sub">期間・ステータスで予約を検索します。ブラッシュアップ予約やマイページ変更もここに表示されます。</p>
+          </div>
+          <span class="pill">予約管理</span>
+        </div>
+        <div class="form-grid">
+          <div class="field"><label>開始日</label><input id="resFrom" type="date"></div>
+          <div class="field"><label>終了日</label><input id="resTo" type="date"></div>
+          <div class="field">
+            <label>ステータス</label>
+            <select id="resStatus">
+              <option value="">すべて</option>
+              <option value="reserved">予約済み</option>
+              <option value="checked_in">来店済み</option>
+              <option value="in_treatment">施術中</option>
+              <option value="waiting_payment">会計待ち</option>
+              <option value="completed">完了</option>
+              <option value="cancelled">キャンセル</option>
+            </select>
+          </div>
+          <div class="field"><label>操作</label><button class="btn primary" id="loadReservationsBtn">予約一覧を表示</button></div>
+        </div>
+        <div id="reservationList" class="list"></div>
+      </div>
+    </section>
+
+    <section id="tabCustomers" class="hidden">
+      <div class="grid-wide">
+        <div class="panel">
+          <div class="section-title">
+            <div>
+              <h2>顧客検索</h2>
+              <p class="sub">名前・電話番号・LINE表示名で検索し、顧客カルテを確認します。</p>
+            </div>
+            <span class="pill">カルテ</span>
+          </div>
+          <div class="form-grid">
+            <div class="field"><label>検索キーワード</label><input id="customerQuery" placeholder="例：佐藤 / 08000003002 / 080-0000-3002"></div>
+            <div class="field"><label>操作</label><button class="btn primary" id="searchCustomerBtn">顧客を検索</button></div>
+          </div>
+          <div id="customerList" class="list"></div>
+        </div>
+
+        <div class="panel">
+          <div class="section-title">
+            <div>
+              <h2>顧客カルテ</h2>
+              <p class="sub">予約履歴・回数券・カウンセリング・メモを確認します。</p>
+            </div>
+            <span class="pill ok">詳細</span>
+          </div>
+          <div id="customerDetail" class="notice">顧客を選択してください。</div>
+          <div id="karteForm" class="hidden">
+            <h3 style="margin:18px 0 8px;">カルテメモ追加</h3>
+            <div class="field"><label>タイトル</label><input id="noteTitle" placeholder="例：施術後メモ"></div>
+            <div class="field"><label>メモ内容</label><textarea id="noteBody" placeholder="例：肩まわりの張りが強い。次回は首肩中心を提案。"></textarea></div>
+            <button class="btn primary" id="saveNoteBtn">カルテメモを保存</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tabTickets" class="hidden">
+      <div class="panel">
+        <div class="section-title">
+          <div>
+            <h2>回数券</h2>
+            <p class="sub">保有中の回数券を確認し、必要に応じて1回分使用できます。</p>
+          </div>
+          <span class="pill">チケット</span>
+        </div>
+        <div class="form-grid">
+          <div class="field"><label>ステータス</label><select id="ticketStatus"><option value="active">有効</option><option value="all">すべて</option></select></div>
+          <div class="field"><label>操作</label><button class="btn primary" id="loadTicketsBtn">回数券を表示</button></div>
+        </div>
+        <div id="ticketList" class="list"></div>
+      </div>
+    </section>
+
+    <section id="tabFollowups" class="hidden">
+      <div class="panel">
+        <div class="section-title">
+          <div>
+            <h2>未対応フォロー</h2>
+            <p class="sub">施術後フォロー、回数券期限、再来店案内などを確認し、対応済みにできます。</p>
+          </div>
+          <span class="pill warn">フォロー</span>
+        </div>
+        <div class="form-grid">
+          <div class="field"><label>ステータス</label><select id="followStatus"><option value="pending">未対応</option><option value="all">すべて</option></select></div>
+          <div class="field"><label>操作</label><button class="btn primary" id="loadFollowupsBtn">フォローを表示</button></div>
+        </div>
+        <div id="followupList" class="list"></div>
+      </div>
+    </section>
+
+    <section id="tabTemplates" class="hidden">
+      <div class="panel">
+        <div class="section-title">
+          <div>
+            <h2>文面テンプレート</h2>
+            <p class="sub">予約確認、施術後フォロー、回数券期限案内などの文面を確認・コピーできます。</p>
+          </div>
+          <span class="pill">文面</span>
+        </div>
+        <div id="templateList" class="list"></div>
+      </div>
+    </section>
+
+        <section id="tabSettings" class="hidden">
+      <div class="panel">
+        <div class="section-title">
+          <div>
+            <h2>店舗設定</h2>
+            <p class="sub">店舗情報・予約受付・営業時間・メニュー・スタッフ・ルームを編集して保存できます。保存後、予約画面やスタッフ画面に反映されます。</p>
+          </div>
+          <span class="pill ok">編集・保存</span>
+        </div>
+        <div id="settingsBox" class="list"></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="bottom">
+    <div class="bottom-inner">
+      <div class="bottom-text" id="bottomText">店舗iPadの本日予約を読み込み中...</div>
+      <button class="btn primary" id="bottomReloadBtn">最新に更新</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal">
+      <h3 id="modalTitle">確認</h3>
+      <p id="modalText">内容を確認してください。</p>
+      <div id="modalBody"></div>
+      <div class="actions">
+        <button class="btn" id="modalCancel">戻る</button>
+        <button class="btn primary" id="modalOk">実行する</button>
+      </div>
+    </div>
+  </div>
+
+
+<div class="visit-hub-layer" id="visitHubLayer" aria-hidden="true">
+  <section class="visit-hub" role="dialog" aria-modal="true" aria-labelledby="visitHubTitle">
+    <header class="visit-hub-head">
+      <div>
+        <h2 id="visitHubTitle">受付・施術詳細</h2>
+        <p id="visitHubLead">予約を中心に、来店から完了までを確認します。</p>
+      </div>
+      <button class="visit-hub-close" id="visitHubClose" type="button" aria-label="閉じる">×</button>
+    </header>
+    <div class="visit-hub-body" id="visitHubBody">
+      <div class="visit-hub-loading">予約を選択してください。</div>
+    </div>
+  </section>
+</div>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+const VERSION = "ESTHE-NEXT-6-OWNER-IPAD-20260723";
+const API_BASE = "https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev";
+const SHOP_CODE = "esthe_demo_default";
+const ADMIN_STORAGE_KEY = "dpro_esthe_admin_secret";
+const DEMO_ADMIN_CODE = "1234";
+let ADMIN_KEY = sessionStorage.getItem(ADMIN_STORAGE_KEY) || "";
+
+const state = {
+  tab: "today",
+  today: "",
+  day: null,
+  reservations: [],
+  customers: [],
+  customerDetail: null,
+  tickets: [],
+  followups: [],
+  templates: [],
+  settings: null,
+  pendingAction: null,
+  selectedCustomerId: null,
+  settingsSection: "basic",
+  integratedVisit: null,
+  integratedVisitCache: {},
+  menuCatalog: []
+};
+
+const $ = (id) => document.getElementById(id);
+
+
+function dproAdminStatusMessage(message, ok=false){
+  const status = document.getElementById("dproAdminStatus");
+  if(!status) return;
+  status.textContent = message;
+  status.classList.toggle("ok", ok);
+}
+
+function dproRequireAdminCode(){
+  if(!ADMIN_KEY){
+    throw new Error("管理コードを入力し、「管理コードを設定」を押してください。");
+  }
+}
+
+function dproInitAdminAccess(){
+  const input = document.getElementById("dproAdminCode");
+  const save = document.getElementById("dproAdminSave");
+  const clear = document.getElementById("dproAdminClear");
+  if(!input || !save || !clear) return;
+
+  if(ADMIN_KEY && ADMIN_KEY !== DEMO_ADMIN_CODE){
+    sessionStorage.removeItem(ADMIN_STORAGE_KEY);
+    ADMIN_KEY = "";
+  }
+
+  if(ADMIN_KEY){
+    input.value = "";
+    input.placeholder = "管理コード設定済み";
+    dproAdminStatusMessage("管理コード設定済み", true);
+  }else{
+    dproAdminStatusMessage("管理コード未入力", false);
+  }
+
+  save.addEventListener("click", () => {
+    const value = String(input.value || "").trim();
+    if(!value){
+      dproAdminStatusMessage("管理コードを入力してください", false);
+      input.focus();
+      return;
+    }
+    if(value !== DEMO_ADMIN_CODE){
+      dproAdminStatusMessage("管理コードが違います", false);
+      input.select();
+      return;
+    }
+    sessionStorage.setItem(ADMIN_STORAGE_KEY, value);
+    ADMIN_KEY = value;
+    dproAdminStatusMessage("管理コード設定済み", true);
+    window.location.reload();
+  });
+
+  clear.addEventListener("click", () => {
+    sessionStorage.removeItem(ADMIN_STORAGE_KEY);
+    ADMIN_KEY = "";
+    input.value = "";
+    input.placeholder = "管理コードを入力";
+    dproAdminStatusMessage("管理コードを削除しました", false);
+    window.location.reload();
+  });
+
+  input.addEventListener("keydown", (event) => {
+    if(event.key === "Enter") save.click();
+  });
+}
+
+document.addEventListener("DOMContentLoaded", dproInitAdminAccess);
+
+
+function escapeHtml(v){
+  return String(v ?? "")
+    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+}
+
+
+    function normalizePhone(value){
+      let s = String(value || "")
+        .replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0))
+        .replace(/[＋]/g, "+")
+        .trim();
+
+      s = s.replace(/[ー－―‐‑‒–—ｰ]/g, "-");
+      s = s.replace(/[^\d+]/g, "");
+
+      if(s.startsWith("+81")){
+        s = "0" + s.slice(3);
+      }else if(s.startsWith("81") && s.length === 12){
+        s = "0" + s.slice(2);
+      }
+
+      return s.replace(/\D/g, "");
+    }
+
+    function isPhoneLike(value){
+      return normalizePhone(value).length >= 8;
+    }
+
+function jstDate(d = new Date()){
+  const parts = new Intl.DateTimeFormat("ja-JP", {timeZone:"Asia/Tokyo", year:"numeric", month:"2-digit", day:"2-digit"}).formatToParts(d).reduce((a,p)=>{a[p.type]=p.value;return a;},{});
+  return `${parts.year}-${parts.month}-${parts.day}`;
+}
+
+function addDays(dateStr, days){
+  const [y,m,d] = dateStr.split("-").map(Number);
+  const date = new Date(Date.UTC(y, m-1, d));
+  date.setUTCDate(date.getUTCDate() + days);
+  return `${date.getUTCFullYear()}-${String(date.getUTCMonth()+1).padStart(2,"0")}-${String(date.getUTCDate()).padStart(2,"0")}`;
+}
+
+function weekday(dateStr){
+  const [y,m,d] = String(dateStr || "").split("-").map(Number);
+  if(!y || !m || !d) return "";
+  return ["日","月","火","水","木","金","土"][new Date(Date.UTC(y,m-1,d)).getUTCDay()];
+}
+
+function dateText(dateStr){
+  if(!dateStr) return "-";
+  const [y,m,d] = String(dateStr).split("-").map(Number);
+  if(!y || !m || !d) return dateStr;
+  return `${y}年${m}月${d}日（${weekday(dateStr)}）`;
+}
+
+function isoParts(value){
+  if(!value) return {date:"", time:""};
+  const d = new Date(value);
+  if(Number.isNaN(d.getTime())) return {date:"", time:""};
+  const date = new Intl.DateTimeFormat("ja-JP", {timeZone:"Asia/Tokyo", year:"numeric", month:"2-digit", day:"2-digit"}).formatToParts(d).reduce((a,p)=>{a[p.type]=p.value;return a;},{});
+  const time = new Intl.DateTimeFormat("ja-JP", {timeZone:"Asia/Tokyo", hour:"2-digit", minute:"2-digit", hour12:false}).formatToParts(d).reduce((a,p)=>{a[p.type]=p.value;return a;},{});
+  return {date:`${date.year}-${date.month}-${date.day}`, time:`${time.hour}:${time.minute}`};
+}
+
+function dtText(value){
+  const p = isoParts(value);
+  return p.date ? `${dateText(p.date)} ${p.time}` : "-";
+}
+
+function statusLabel(s){
+  const map = {
+    reserved:"予約済み",
+    checked_in:"来店済み",
+    in_treatment:"施術中",
+    waiting_payment:"会計待ち",
+    completed:"完了",
+    cancelled:"キャンセル",
+    no_show:"無断キャンセル"
+  };
+  return map[s] || s || "予約済み";
+}
+
+function statusClass(s){
+  if(s === "completed") return "ok";
+  if(s === "cancelled" || s === "no_show") return "red";
+  if(s === "in_treatment" || s === "waiting_payment") return "warn";
+  return "";
+}
+
+async function api(path, options = {}){
+  const url = new URL(path.startsWith("http") ? path : `${API_BASE}${path}`);
+  if(url.pathname.startsWith("/api/admin/")){
+      dproRequireAdminCode();
+    }
+  if(!url.searchParams.get("shop_code")){
+    url.searchParams.set("shop_code", SHOP_CODE);
+  }
+  const res = await fetch(url.toString(), {
+    method: options.method || "GET",
+    headers: {"Accept":"application/json","Content-Type":"application/json","x-admin-secret":ADMIN_KEY,...(options.headers || {})},
+    body: options.body ? JSON.stringify(options.body) : undefined
+  });
+  const text = await res.text();
+  let data = {};
+  try{ data = text ? JSON.parse(text) : {}; }catch(e){ data = {raw:text}; }
+  if(!res.ok || data.ok === false) throw new Error(data.message || data.error || `HTTP ${res.status}`);
+  return data;
+}
+
+function setMessage(type, text){
+  const el = $("message");
+  el.className = `notice ${type || ""}`;
+  el.textContent = text;
+}
+
+function showToast(text){
+  const el = $("toast");
+  el.textContent = text;
+  el.classList.add("show");
+  setTimeout(()=>el.classList.remove("show"), 2500);
+}
+
+function openModal(title, text, body, okText, action, danger=false){
+  $("modalTitle").textContent = title;
+  $("modalText").textContent = text;
+  $("modalBody").innerHTML = body || "";
+  $("modalOk").textContent = okText || "実行する";
+  $("modalOk").className = danger ? "btn red" : "btn primary";
+  state.pendingAction = action;
+  $("modalBackdrop").classList.add("show");
+}
+
+function closeModal(){
+  $("modalBackdrop").classList.remove("show");
+  state.pendingAction = null;
+}
+
+function setTab(tab){
+  state.tab = tab;
+  document.querySelectorAll("[data-tab]").forEach(b => b.classList.toggle("on", b.dataset.tab === tab));
+  ["Today","Reservations","Customers","Tickets","Followups","Templates","Settings"].forEach(name => {
+    $("tab"+name).classList.add("hidden");
+  });
+  const id = "tab" + tab.charAt(0).toUpperCase() + tab.slice(1);
+  if($(id)) $(id).classList.remove("hidden");
+  $("bottomText").textContent = `表示中：${document.querySelector(`[data-tab="${tab}"]`)?.textContent || tab}`;
+}
+
+function updateDateDisplays(){
+  $("todayDateDisplay").textContent = dateText(state.today);
+  $("todayDateInput").value = state.today;
+}
+
+function renderMetrics(){
+  const reservations = state.day?.reservations || [];
+  const followups = state.day?.followups || state.followups || [];
+  const active = reservations.filter(r => !["completed","cancelled","no_show"].includes(r.status)).length;
+  const completed = reservations.filter(r => r.status === "completed").length;
+  $("metricToday").textContent = reservations.length || 0;
+  $("metricActive").textContent = active;
+  $("metricCompleted").textContent = completed;
+  $("metricFollowups").textContent = followups.filter(f => f.status !== "done").length || 0;
+  $("metricTickets").textContent = state.tickets.length || "-";
+}
+
+function renderReservationCard(r, idx, source){
+  const p = isoParts(r.start_at);
+  const phone = r.customer_phone || r.phone || "";
+  return `
+    <div id="${source}-reservation-${idx}" class="reservation-card ${r.status !== "cancelled" ? "next" : ""}">
+      <div class="card-head">
+        <div>
+          <div class="card-title">${escapeHtml(p.time || "-")} ${escapeHtml(r.customer_name || "お客様")}</div>
+          <div class="card-meta">${escapeHtml(p.date ? dateText(p.date) : "-")} / ${escapeHtml(r.menu_name || "-")} / ${escapeHtml(r.staff_name || "指名なし")}</div>
+        </div>
+        <span class="pill ${statusClass(r.status)}">${escapeHtml(statusLabel(r.status))}</span>
+      </div>
+      <div class="card-meta">電話：${escapeHtml(phone || "-")}</div>
+      <div class="card-meta">予約番号：${escapeHtml(r.reservation_code || "-")}</div>
+      <div class="card-meta">要望：${escapeHtml(r.request_note || "-")}</div>
+      <div class="card-actions">
+        <button class="mini primary" type="button" data-visit-hub="${source}:${idx}">受付・施術詳細</button>
+        <button class="mini" data-copy="${source}:${idx}">予約確認文</button>
+        <button class="mini primary" data-customer-detail="${escapeHtml(r.customer_id || "")}" data-phone="${escapeHtml(phone)}">カルテ</button>
+        <button class="mini" data-status="${source}:${idx}:checked_in">来店済み</button>
+        <button class="mini warn" data-status="${source}:${idx}:in_treatment">施術中</button>
+        <button class="mini" data-status="${source}:${idx}:waiting_payment">会計待ち</button>
+        <button class="mini green" data-status="${source}:${idx}:completed">完了</button>
+        <button class="mini red" data-status="${source}:${idx}:cancelled">キャンセル</button>
+      </div>
+    </div>
+  `;
+}
+
+
+
+function reservationBySource(source, index){
+  const list = source === "day" ? (state.day?.reservations || []) : state.reservations;
+  return list[Number(index)] || null;
+}
+
+function visitProgressHtml(status){
+  const steps = [
+    ["reserved","予約"],
+    ["checked_in","来店"],
+    ["in_treatment","施術"],
+    ["waiting_payment","会計"],
+    ["completed","完了"]
+  ];
+  const current = steps.findIndex(([key]) => key === status);
+  return steps.map(([key,label], index) => {
+    const className = index < current ? "done" : index === current ? "current" : "";
+    return `<div class="visit-hub-step ${className}">${escapeHtml(label)}</div>`;
+  }).join("");
+}
+
+function latestPreviousReservation(detail, currentReservationId){
+  return (detail?.reservations || [])
+    .filter(item => String(item.id || "") !== String(currentReservationId || ""))
+    .filter(item => item.status === "completed")
+    .sort((a,b) => new Date(b.start_at || 0) - new Date(a.start_at || 0))[0] || null;
+}
+
+function visitConsultationHtml(detail){
+  const item = (detail?.consultations || [])[0];
+  return item
+    ? consultationRowsHtml(item)
+    : `<div class="notice">カウンセリング記録はありません。</div>`;
+}
+
+function visitNotesHtml(detail){
+  const notes = (detail?.notes || []).slice(0,3);
+  if(!notes.length) return `<div class="notice">カルテメモはありません。</div>`;
+  return notes.map(note => `
+    <div class="mini-card">
+      <b>${escapeHtml(note.note_title || "カルテメモ")}</b>
+      <div class="card-meta">${escapeHtml(note.note_body || "-").slice(0,220)}</div>
+    </div>
+  `).join("");
+}
+
+
+          function yenText(value){
+            const amount = Number(value);
+            return Number.isFinite(amount) ? `${amount.toLocaleString("ja-JP")}円` : "当日確認";
+          }
+
+          function menuForReservation(r){
+            const menus = state.menuCatalog || [];
+            const menuId = String(r?.menu_id || r?.menu?.id || "");
+            const menuName = String(r?.menu_name || r?.menu?.menu_name || "");
+            return menus.find(menu =>
+              (menuId && String(menu.id || "") === menuId) ||
+              (menuName && String(menu.menu_name || "") === menuName)
+            ) || r?.menu || null;
+          }
+
+          function reservationPriceInfo(r){
+            const menu = menuForReservation(r) || {};
+            const price = r?.price_yen ?? r?.menu_price_yen ?? menu.price_yen;
+            const duration = r?.duration_minutes ?? r?.menu_duration_minutes ?? menu.duration_minutes;
+            return {
+              price,
+              duration,
+              priceText: Number.isFinite(Number(price)) ? yenText(price) : "当日確認",
+              durationText: Number.isFinite(Number(duration)) ? `${Number(duration)}分` : "当日確認"
+            };
+          }
+
+          function latestConsultation(detail){
+            return (detail?.consultations || [])
+              .slice()
+              .sort((a,b) =>
+                new Date(b.answered_at || b.created_at || 0) -
+                new Date(a.answered_at || a.created_at || 0)
+              )[0] || null;
+          }
+
+          function reservationConsentChecked(detail){
+            const consultation = latestConsultation(detail);
+            if(!consultation) return false;
+            const answers = parseConsultationAnswers(consultation);
+            const raw = consultation.consent_checked ??
+              consultation.consent ??
+              answers.consent_checked ??
+              answers.consent;
+            return raw === true || raw === 1 || raw === "1" || raw === "true";
+          }
+
+          function preTreatmentConfirmationTitle(r){
+            const key = r?.reservation_code || r?.id || "予約";
+            return `施術前確認｜${key}`;
+          }
+
+          function findPreTreatmentConfirmation(detail, r){
+            const title = preTreatmentConfirmationTitle(r);
+            const relationKey = String(r?.reservation_code || r?.id || "");
+            return (detail?.notes || []).find(note => {
+              if(String(note.note_title || "") === title) return true;
+              const typeMatch = String(note.note_type || "") === "pre_treatment_confirmation";
+              const bodyMatch = relationKey && String(note.note_body || "").includes(relationKey);
+              return typeMatch && bodyMatch;
+            }) || null;
+          }
+
+          async function loadMenuCatalogIfNeeded(){
+            if((state.menuCatalog || []).length) return;
+            const existing = state.settings?.menus;
+            if(Array.isArray(existing) && existing.length){
+              state.menuCatalog = existing;
+              return;
+            }
+            try{
+              const settings = await api("/api/public/settings");
+              state.menuCatalog = settings.menus || [];
+            }catch(error){
+              state.menuCatalog = [];
+            }
+          }
+
+          function preTreatmentCustomerText(r){
+            const p = isoParts(r.start_at);
+            const info = reservationPriceInfo(r);
+            return [
+              `${r.customer_name || "お客様"}様`,
+              "",
+              "施術内容のご確認です。",
+              `日時：${p.date ? dateText(p.date) : "-"} ${p.time || ""}`,
+              `メニュー：${r.menu_name || "-"}`,
+              `料金目安：${info.priceText}`,
+              `所要時間目安：${info.durationText}`,
+              `担当：${r.staff_name || "指名なし"}`,
+              `予約番号：${r.reservation_code || "-"}`,
+              "",
+              "当日の体調・肌状態により、メニュー変更や施術を控える場合があります。",
+              "回数券・追加内容・当日の変更がある場合は、最終金額を店頭で確認します。",
+              "内容を確認してから施術を開始します。"
+            ].join("\n");
+          }
+
+          function copyPreTreatmentCustomerText(){
+            const r = state.integratedVisit?.reservation;
+            if(!r) return;
+            const text = preTreatmentCustomerText(r);
+            navigator.clipboard?.writeText(text)
+              .then(() => showToast("お客様確認文をコピーしました。"))
+              .catch(() => showToast("確認文をコピーできませんでした。"));
+          }
+
+          async function savePreTreatmentConfirmation(){
+            const hub = state.integratedVisit;
+            const r = hub?.reservation;
+            const detail = hub?.detail || {};
+            const customer = detail.customer || {};
+            if(!r || !customer.id){
+              showToast("顧客詳細を確認してから保存してください。");
+              return;
+            }
+
+            const requiredIds = [
+              "preconfirmMenu",
+              "preconfirmPrice",
+              "preconfirmSafety",
+              "preconfirmCustomer"
+            ];
+            const missing = requiredIds.filter(id => !$(id)?.checked);
+            if(missing.length){
+              showToast("4つの確認項目をすべて確認してください。");
+              return;
+            }
+
+            const p = isoParts(r.start_at);
+            const info = reservationPriceInfo(r);
+            const bookingConsent = reservationConsentChecked(detail);
+            const note = $("preconfirmNote")?.value.trim() || "";
+            const title = preTreatmentConfirmationTitle(r);
+            const body = [
+              "[DPRO_PRE_TREATMENT_CONFIRMATION]",
+              `予約番号：${r.reservation_code || "-"}`,
+              `予約ID：${r.id || "-"}`,
+              `日時：${p.date ? dateText(p.date) : "-"} ${p.time || ""}`,
+              `メニュー：${r.menu_name || "-"}`,
+              `標準料金：${info.priceText}`,
+              `所要時間：${info.durationText}`,
+              `予約時同意：${bookingConsent ? "同意済み" : "当日確認"}`,
+              "店舗確認：メニュー説明済み／料金説明済み／注意事項確認済み／お客様本人確認済み",
+              `補足：${note || "-"}`,
+              `記録画面：${VERSION}`
+            ].join("\n");
+
+            try{
+              await api("/api/admin/karte/save", {
+                method:"POST",
+                body:{
+                  customer_id:customer.id,
+                  note_title:title,
+                  note_body:body,
+                  note_type:"pre_treatment_confirmation",
+                  created_by:"owner",
+                  is_demo:true
+                }
+              });
+
+              const query = r.customer_id
+                ? `customer_id=${encodeURIComponent(r.customer_id)}`
+                : `phone=${encodeURIComponent(normalizePhone(r.customer_phone || r.phone || customer.phone || ""))}`;
+              const refreshed = await api(`/api/admin/customers/detail?${query}`);
+              hub.detail = refreshed;
+              const cacheKey = String(r.customer_id || normalizePhone(r.customer_phone || r.phone || customer.phone || ""));
+              if(cacheKey) state.integratedVisitCache[cacheKey] = refreshed;
+              showToast("施術前確認を顧客カルテへ保存しました。");
+              renderIntegratedVisit();
+            }catch(error){
+              showToast("施術前確認の保存に失敗しました。");
+              setMessage("ng", "施術前確認の保存に失敗しました：" + error.message);
+            }
+          }
+
+          async function requestTreatmentStart(source, index){
+            await openIntegratedVisit(source, index);
+            const hub = state.integratedVisit;
+            if(!hub?.reservation) return;
+
+            const saved = findPreTreatmentConfirmation(hub.detail, hub.reservation);
+            if(saved){
+              closeIntegratedVisit();
+              await updateStatus(source, index, "in_treatment", true);
+              return;
+            }
+
+            showToast("施術前確認を保存してから施術を開始してください。");
+            setTimeout(() => {
+              document.getElementById("preTreatmentConfirmSection")
+                ?.scrollIntoView({behavior:"smooth", block:"start"});
+            }, 80);
+          }
+
+          
+function renderIntegratedVisit(){
+  const hub = state.integratedVisit;
+  const body = $("visitHubBody");
+  if(!hub?.reservation){
+    body.innerHTML = `<div class="visit-hub-loading">予約情報がありません。</div>`;
+    return;
+  }
+
+  const r = hub.reservation;
+  const detail = hub.detail || {};
+  const p = isoParts(r.start_at);
+  const previous = latestPreviousReservation(detail, r.id);
+  const activeTickets = (detail.tickets || []).filter(ticket =>
+    ticket.status === "active" && Number(ticket.remaining_count || 0) > 0
+  );
+  const customer = detail.customer || {};
+  const detailError = hub.detailError
+    ? `<div class="notice warn">顧客詳細の取得に失敗しました：${escapeHtml(hub.detailError)}</div>`
+    : "";
+  const priceInfo = reservationPriceInfo(r);
+  const bookingConsent = reservationConsentChecked(detail);
+  const confirmationNote = findPreTreatmentConfirmation(detail, r);
+  const confirmationSaved = Boolean(confirmationNote);
+
+  $("visitHubTitle").textContent = `${r.customer_name || "お客様"}｜受付・施術詳細`;
+  $("visitHubLead").textContent = `${p.date ? dateText(p.date) : "-"} ${p.time || ""} / ${r.menu_name || "-"}`;
+
+  body.innerHTML = `
+    ${detailError}
+    <section class="visit-hub-section">
+      <h3>現在の進捗</h3>
+      <div class="visit-hub-progress">${visitProgressHtml(r.status)}</div>
+      <div class="visit-hub-actions">
+        <button class="mini" type="button" data-integrated-status="checked_in">来店済み</button>
+        <button class="mini warn" type="button" data-integrated-status="in_treatment">施術開始</button>
+        <button class="mini" type="button" data-integrated-status="waiting_payment">会計待ち</button>
+        <button class="mini green" type="button" data-integrated-status="completed">完了</button>
+      </div>
+    </section>
+
+    <section class="visit-hub-section">
+      <h3>今回の予約・受付</h3>
+      <div class="visit-hub-grid">
+        <div>予約番号</div><div>${escapeHtml(r.reservation_code || "-")}</div>
+        <div>日時</div><div>${escapeHtml(p.date ? `${dateText(p.date)} ${p.time}` : "-")}</div>
+        <div>メニュー</div><div>${escapeHtml(r.menu_name || "-")}</div>
+        <div>担当</div><div>${escapeHtml(r.staff_name || "指名なし")}</div>
+        <div>電話</div><div>${escapeHtml(r.customer_phone || r.phone || customer.phone || "-")}</div>
+        <div>要望</div><div>${escapeHtml(r.request_note || "-")}</div>
+        <div>状態</div><div>${escapeHtml(statusLabel(r.status))}</div>
+      </div>
+    </section>
+
+
+    <section class="visit-hub-section" id="preTreatmentConfirmSection">
+      <h3>施術内容・料金・同意確認</h3>
+      <div class="preconfirm-status-grid">
+        <div class="preconfirm-status ${bookingConsent ? "ok" : "warn"}">
+          <strong>${bookingConsent ? "予約時同意あり" : "予約時同意は当日確認"}</strong>
+          <span>${bookingConsent ? "予約画面で施術前確認事項へ同意済みです。" : "電話・店頭予約等は、お客様本人へ当日確認してください。"}</span>
+        </div>
+        <div class="preconfirm-status ${confirmationSaved ? "ok" : "warn"}">
+          <strong>${confirmationSaved ? "店舗確認を保存済み" : "店舗確認は未保存"}</strong>
+          <span>${confirmationSaved ? escapeHtml(confirmationNote.note_title || "施術前確認記録") : "4項目を確認し、顧客カルテへ記録してください。"}</span>
+        </div>
+      </div>
+      <div class="visit-hub-grid">
+        <div>施術内容</div><div>${escapeHtml(r.menu_name || "-")}</div>
+        <div>標準料金</div><div>${escapeHtml(priceInfo.priceText)}</div>
+        <div>所要時間</div><div>${escapeHtml(priceInfo.durationText)}</div>
+        <div>支払確認</div><div>${activeTickets.length ? "回数券利用候補あり／会計時に最終確認" : "店頭会計時に最終確認"}</div>
+      </div>
+      <div class="notice warn">
+        標準料金を表示しています。回数券、追加内容、当日のメニュー変更がある場合は、施術前または会計時に最終金額を確認してください。
+      </div>
+      <div class="preconfirm-checks">
+        <label class="preconfirm-check"><input id="preconfirmMenu" type="checkbox" ${confirmationSaved ? "checked" : ""}>施術メニューと内容を説明しました</label>
+        <label class="preconfirm-check"><input id="preconfirmPrice" type="checkbox" ${confirmationSaved ? "checked" : ""}>料金・回数券利用を確認しました</label>
+        <label class="preconfirm-check"><input id="preconfirmSafety" type="checkbox" ${confirmationSaved ? "checked" : ""}>体調・肌状態・注意事項を確認しました</label>
+        <label class="preconfirm-check"><input id="preconfirmCustomer" type="checkbox" ${confirmationSaved ? "checked" : ""}>お客様本人の同意を確認しました</label>
+      </div>
+      <textarea class="preconfirm-note" id="preconfirmNote" placeholder="当日の変更点や補足がある場合だけ入力してください。"></textarea>
+      ${confirmationSaved ? `<div class="preconfirm-saved">保存済み：${escapeHtml(confirmationNote.created_at || confirmationNote.updated_at || "日時記録あり")}</div>` : ""}
+      <div class="visit-hub-actions">
+        <button class="mini" type="button" data-preconfirm-copy="1">お客様確認文をコピー</button>
+        <button class="mini primary" type="button" data-preconfirm-save="1">${confirmationSaved ? "再確認を保存" : "確認記録を保存"}</button>
+      </div>
+    </section>
+
+              <section class="visit-hub-section">
+      <h3>顧客情報のつながり</h3>
+      <div class="visit-hub-counts">
+        <div class="visit-hub-count"><strong>${Number(customer.visit_count || 0)}</strong><span>来店回数</span></div>
+        <div class="visit-hub-count"><strong>${(detail.reservations || []).length}</strong><span>予約履歴</span></div>
+        <div class="visit-hub-count"><strong>${activeTickets.length}</strong><span>有効回数券</span></div>
+      </div>
+      <div class="visit-hub-actions">
+        <button class="mini primary" type="button" data-integrated-customer="1">顧客カルテを開く</button>
+      </div>
+    </section>
+
+    <section class="visit-hub-section">
+      <h3>最新カウンセリング</h3>
+      ${visitConsultationHtml(detail)}
+    </section>
+
+    <section class="visit-hub-section">
+      <h3>前回来店</h3>
+      ${previous ? `
+        <div class="visit-hub-grid">
+          <div>日時</div><div>${escapeHtml(dtText(previous.start_at))}</div>
+          <div>メニュー</div><div>${escapeHtml(previous.menu_name || "-")}</div>
+          <div>担当</div><div>${escapeHtml(previous.staff_name || "指名なし")}</div>
+          <div>状態</div><div>${escapeHtml(statusLabel(previous.status))}</div>
+        </div>
+      ` : `<div class="notice">完了済みの前回来店はありません。</div>`}
+    </section>
+
+    <section class="visit-hub-section">
+      <h3>回数券</h3>
+      ${activeTickets.length ? activeTickets.slice(0,3).map(ticket => `
+        <div class="mini-card">
+          <b>${escapeHtml(ticket.ticket_name || "回数券")}</b>
+          <div class="card-meta">残り ${escapeHtml(ticket.remaining_count ?? "-")}/${escapeHtml(ticket.total_count ?? "-")}回 / 有効期限 ${escapeHtml(ticket.expires_at || "-")}</div>
+        </div>
+      `).join("") : `<div class="notice">利用可能な回数券はありません。</div>`}
+    </section>
+
+    <section class="visit-hub-section">
+      <h3>直近カルテメモ</h3>
+      <div class="list">${visitNotesHtml(detail)}</div>
+    </section>
+  `;
+}
+
+async function openIntegratedVisit(source, index){
+  const r = reservationBySource(source, index);
+  if(!r) return;
+
+  state.integratedVisit = {
+    source,
+    index:Number(index),
+    reservation:r,
+    detail:null,
+    detailError:""
+  };
+
+  $("visitHubLayer").classList.add("show");
+  $("visitHubLayer").setAttribute("aria-hidden", "false");
+  $("visitHubBody").innerHTML = `<div class="visit-hub-loading">予約・顧客情報を読み込み中です。</div>`;
+
+  await loadMenuCatalogIfNeeded();
+
+  const cacheKey = String(r.customer_id || normalizePhone(r.customer_phone || r.phone || ""));
+  if(cacheKey && state.integratedVisitCache[cacheKey]){
+    state.integratedVisit.detail = state.integratedVisitCache[cacheKey];
+    renderIntegratedVisit();
+    return;
+  }
+
+  try{
+    const query = r.customer_id
+      ? `customer_id=${encodeURIComponent(r.customer_id)}`
+      : `phone=${encodeURIComponent(normalizePhone(r.customer_phone || r.phone || ""))}`;
+    const detail = await api(`/api/admin/customers/detail?${query}`);
+    state.integratedVisit.detail = detail;
+    if(cacheKey) state.integratedVisitCache[cacheKey] = detail;
+  }catch(error){
+    state.integratedVisit.detailError = error.message || "詳細取得エラー";
+  }
+
+  renderIntegratedVisit();
+}
+
+function closeIntegratedVisit(){
+  $("visitHubLayer").classList.remove("show");
+  $("visitHubLayer").setAttribute("aria-hidden", "true");
+}
+
+async function openIntegratedCustomer(){
+  const hub = state.integratedVisit;
+  if(!hub?.reservation) return;
+
+  const detail = hub.detail;
+  closeIntegratedVisit();
+  setTab("customers");
+
+  if(detail?.customer){
+    state.customerDetail = detail;
+    state.selectedCustomerId = detail.customer.id || hub.reservation.customer_id || null;
+    renderCustomerDetail();
+    return;
+  }
+
+  if(hub.reservation.customer_id){
+    await loadCustomerDetailByCustomer({id:hub.reservation.customer_id});
+    return;
+  }
+
+  const phone = normalizePhone(hub.reservation.customer_phone || hub.reservation.phone || "");
+  if(phone){
+    $("customerQuery").value = phone;
+    await searchCustomers();
+    if(state.customers[0]) await loadCustomerDetailByCustomer(state.customers[0]);
+  }
+}
+
+
+
+const progressBoardColumns = [
+  {status:"reserved", label:"予約・来店待ち", nextStatus:"checked_in", nextLabel:"来店受付"},
+  {status:"checked_in", label:"来店済み・施術待ち", nextStatus:"in_treatment", nextLabel:"施術開始"},
+  {status:"in_treatment", label:"施術中", nextStatus:"waiting_payment", nextLabel:"会計待ちへ"},
+  {status:"waiting_payment", label:"会計待ち", nextStatus:"completed", nextLabel:"完了"},
+  {status:"completed", label:"完了", nextStatus:"", nextLabel:""}
+];
+
+function boardNowMinutes(){
+  const parts = new Intl.DateTimeFormat("ja-JP", {
+    timeZone:"Asia/Tokyo",
+    hour:"2-digit",
+    minute:"2-digit",
+    hour12:false
+  }).formatToParts(new Date()).reduce((result, part) => {
+    result[part.type] = part.value;
+    return result;
+  }, {});
+  return Number(parts.hour || 0) * 60 + Number(parts.minute || 0);
+}
+
+function boardReservationTiming(r){
+  const p = isoParts(r.start_at);
+  const [hour, minute] = String(p.time || "00:00").split(":").map(Number);
+  const startMinutes = (Number(hour) || 0) * 60 + (Number(minute) || 0);
+  const diff = startMinutes - boardNowMinutes();
+  const isActualToday = state.today === jstDate();
+
+  if(r.status === "reserved" && isActualToday && diff < -5){
+    return {className:"overdue", label:"予約時刻を経過"};
+  }
+  if(r.status === "reserved" && isActualToday && diff >= -5 && diff <= 30){
+    return {className:"soon", label:diff <= 0 ? "来店確認" : `あと${diff}分`};
+  }
+  if(r.status === "checked_in"){
+    return {className:"attention", label:"施術開始待ち"};
+  }
+  if(r.status === "in_treatment"){
+    return {className:"active", label:"施術対応中"};
+  }
+  if(r.status === "waiting_payment"){
+    return {className:"overdue", label:"会計対応"};
+  }
+  if(r.status === "completed"){
+    return {className:"active", label:"対応完了"};
+  }
+  return {className:"", label:"予約確認"};
+}
+
+function progressBoardCardHtml(r, index, column){
+  const p = isoParts(r.start_at);
+  const timing = boardReservationTiming(r);
+  return `
+    <article class="progress-board-card ${escapeHtml(timing.className)}">
+      <div class="progress-board-time">
+        <strong>${escapeHtml(p.time || "-")}</strong>
+        <span class="pill ${statusClass(r.status)}">${escapeHtml(statusLabel(r.status))}</span>
+      </div>
+      <div class="progress-board-customer">${escapeHtml(r.customer_name || "お客様")}</div>
+      <div class="progress-board-meta">${escapeHtml(r.menu_name || "-")}</div>
+      <div class="progress-board-meta">担当：${escapeHtml(r.staff_name || "指名なし")}</div>
+      <span class="progress-board-alert ${escapeHtml(timing.className)}">${escapeHtml(timing.label)}</span>
+      <div class="progress-board-actions">
+        <button class="mini" type="button" data-board-detail="${index}">詳細</button>
+        ${column.nextStatus
+          ? `<button class="mini primary" type="button" data-board-next="${index}:${escapeHtml(column.nextStatus)}">${escapeHtml(column.nextLabel)}</button>`
+          : `<button class="mini green" type="button" disabled>完了済み</button>`
+        }
+      </div>
+    </article>
+  `;
+}
+
+function renderProgressBoard(rows){
+  const board = $("progressBoard");
+  const summary = $("progressBoardSummary");
+  if(!board || !summary) return;
+
+  const indexedRows = rows.map((reservation, index) => ({reservation, index}));
+  const cancelledCount = indexedRows.filter(({reservation}) =>
+    ["cancelled","no_show"].includes(reservation.status)
+  ).length;
+  const activeCount = indexedRows.filter(({reservation}) =>
+    ["checked_in","in_treatment","waiting_payment"].includes(reservation.status)
+  ).length;
+  const waitingPaymentCount = indexedRows.filter(({reservation}) =>
+    reservation.status === "waiting_payment"
+  ).length;
+  const completedCount = indexedRows.filter(({reservation}) =>
+    reservation.status === "completed"
+  ).length;
+
+  summary.innerHTML = `
+    <span class="progress-summary-pill">進行中 ${activeCount}件</span>
+    <span class="progress-summary-pill ${waitingPaymentCount ? "attention" : ""}">会計待ち ${waitingPaymentCount}件</span>
+    <span class="progress-summary-pill">完了 ${completedCount}件</span>
+    <span class="progress-summary-pill">取消等 ${cancelledCount}件</span>
+  `;
+
+  board.innerHTML = progressBoardColumns.map(column => {
+    const items = indexedRows
+      .filter(({reservation}) => reservation.status === column.status)
+      .sort((a,b) => new Date(a.reservation.start_at || 0) - new Date(b.reservation.start_at || 0));
+
+    return `
+      <section class="progress-column" data-board-status="${escapeHtml(column.status)}">
+        <header class="progress-column-head">
+          <div class="progress-column-title">${escapeHtml(column.label)}</div>
+          <span class="progress-column-count">${items.length}</span>
+        </header>
+        <div class="progress-column-list">
+          ${items.length
+            ? items.map(({reservation,index}) => progressBoardCardHtml(reservation,index,column)).join("")
+            : `<div class="progress-board-empty">現在、この段階の予約はありません。</div>`
+          }
+        </div>
+      </section>
+    `;
+  }).join("");
+
+  board.querySelectorAll("[data-board-detail]").forEach(button => {
+    button.addEventListener("click", async () => {
+      await openIntegratedVisit("day", Number(button.dataset.boardDetail));
+    });
+  });
+
+  board.querySelectorAll("[data-board-next]").forEach(button => {
+    button.addEventListener("click", () => {
+      const [index, nextStatus] = button.dataset.boardNext.split(":");
+      updateStatus("day", Number(index), nextStatus);
+    });
+  });
+}
+
+
+function renderToday(){
+  const rows = state.day?.reservations || [];
+  $("todayList").innerHTML = rows.length
+    ? rows.map((r,i)=>renderReservationCard(r,i,"day")).join("")
+    : `<div class="notice">この日の予約はありません。</div>`;
+
+  renderProgressBoard(rows);
+
+  const followups = (state.day?.followups || []).filter(f => f.status !== "done");
+  const nowParts = new Intl.DateTimeFormat("ja-JP", {
+    timeZone:"Asia/Tokyo",
+    hour:"2-digit",
+    minute:"2-digit",
+    hour12:false
+  }).formatToParts(new Date()).reduce((a,p)=>{a[p.type]=p.value;return a;},{});
+  const nowMinutes = Number(nowParts.hour || 0) * 60 + Number(nowParts.minute || 0);
+  const actualToday = state.today === jstDate();
+  const tasks = [];
+
+  rows.forEach((r, index) => {
+    if(["completed","cancelled","no_show"].includes(r.status)) return;
+    const p = isoParts(r.start_at);
+    const [hour, minute] = String(p.time || "00:00").split(":").map(Number);
+    const startMinutes = (Number(hour) || 0) * 60 + (Number(minute) || 0);
+    const untilStart = startMinutes - nowMinutes;
+
+    let priority = 4;
+    let label = "本日の予約";
+
+    if(r.status === "waiting_payment"){
+      priority = 1;
+      label = "会計待ち";
+    }else if(r.status === "checked_in"){
+      priority = 1;
+      label = "来店済み・施術待ち";
+    }else if(r.status === "in_treatment"){
+      priority = 2;
+      label = "施術中";
+    }else if(r.status === "reserved" && actualToday && untilStart <= 60 && untilStart >= -30){
+      priority = 2;
+      label = untilStart >= 0 ? "まもなく来店" : "来店確認";
+    }
+
+    tasks.push({
+      priority,
+      sortTime:startMinutes,
+      html:`
+        <div class="todo-priority p${priority}">
+          <div class="todo-priority-head">
+            <div>
+              <div class="todo-priority-title">${escapeHtml(p.time || "-")} ${escapeHtml(r.customer_name || "お客様")}</div>
+              <div class="todo-priority-meta">${escapeHtml(r.menu_name || "-")} / ${escapeHtml(r.staff_name || "指名なし")} / ${escapeHtml(statusLabel(r.status))}</div>
+            </div>
+            <span class="todo-priority-label">${escapeHtml(label)}</span>
+          </div>
+          <div class="todo-priority-actions">
+            <button class="mini primary" type="button" data-todo-reservation="${index}">予約を確認</button>
+          </div>
+        </div>
+      `
+    });
+  });
+
+  followups.forEach((f) => {
+    const due = String(f.due_date || "");
+    const dueTodayOrPast = !due || due <= state.today;
+    tasks.push({
+      priority:dueTodayOrPast ? 3 : 4,
+      sortTime:1440,
+      html:`
+        <div class="todo-priority p${dueTodayOrPast ? 3 : 4}">
+          <div class="todo-priority-head">
+            <div>
+              <div class="todo-priority-title">${escapeHtml(f.customer_name || "お客様")}｜${escapeHtml(f.title || f.followup_type || "フォロー")}</div>
+              <div class="todo-priority-meta">期限 ${escapeHtml(due || "-")} / ${escapeHtml(f.status || "未対応")}</div>
+            </div>
+            <span class="todo-priority-label">${dueTodayOrPast ? "期限フォロー" : "予定フォロー"}</span>
+          </div>
+          <div class="todo-priority-actions">
+            <button class="mini" type="button" data-open-followups="1">フォローを開く</button>
+          </div>
+        </div>
+      `
+    });
+  });
+
+  tasks.sort((a,b) => a.priority - b.priority || a.sortTime - b.sortTime);
+
+  const urgentCount = tasks.filter(t => t.priority === 1).length;
+  const progressCount = rows.filter(r => ["checked_in","in_treatment","waiting_payment"].includes(r.status)).length;
+  const followCount = followups.length;
+
+  $("todoSummary").innerHTML = `
+    <div class="todo-summary-item"><strong>${urgentCount}</strong><span>優先対応</span></div>
+    <div class="todo-summary-item"><strong>${progressCount}</strong><span>進行中</span></div>
+    <div class="todo-summary-item"><strong>${followCount}</strong><span>フォロー</span></div>
+  `;
+
+  const visibleTasks = tasks.slice(0, 10);
+  const remaining = Math.max(0, tasks.length - visibleTasks.length);
+  $("todoList").innerHTML = visibleTasks.length
+    ? visibleTasks.map(t => t.html).join("") +
+      (remaining ? `<div class="notice">${remaining}件は各一覧画面で確認できます。</div>` : "")
+    : `<div class="notice ok">今日の優先対応はありません。</div>`;
+
+  $("todoList").querySelectorAll("[data-todo-reservation]").forEach(button => {
+    button.addEventListener("click", () => {
+      const target = document.getElementById(`day-reservation-${button.dataset.todoReservation}`);
+      if(target){
+        target.scrollIntoView({behavior:"smooth", block:"center"});
+        target.focus?.({preventScroll:true});
+      }
+    });
+  });
+
+  $("todoList").querySelectorAll("[data-open-followups]").forEach(button => {
+    button.addEventListener("click", async () => {
+      setTab("followups");
+      await loadFollowups();
+    });
+  });
+}
+
+async function loadDay(){
+  setMessage("warn", "本日の予約を読み込み中です。");
+  try{
+    state.day = await api(`/api/admin/day?date=${encodeURIComponent(state.today)}`);
+    $("apiStatus").textContent = "OK";
+    $("todayLabel").textContent = dateText(state.today);
+    renderToday();
+    renderMetrics();
+    setMessage("ok", "本日の予約を更新しました。");
+    $("bottomText").textContent = `${dateText(state.today)} の予約を表示中です。`;
+  }catch(e){
+    setMessage("ng", "予約取得に失敗しました：" + e.message);
+  }
+}
+
+async function loadReservations(){
+  setMessage("warn", "予約一覧を読み込み中です。");
+  const from = $("resFrom").value || state.today;
+  const to = $("resTo").value || addDays(from, 30);
+  const status = $("resStatus").value;
+  try{
+    const qs = new URLSearchParams({from, to});
+    if(status) qs.set("status", status);
+    const data = await api(`/api/admin/reservations?${qs.toString()}`);
+    state.reservations = data.reservations || [];
+    $("reservationList").innerHTML = state.reservations.length
+      ? state.reservations.map((r,i)=>renderReservationCard(r,i,"reservations")).join("")
+      : `<div class="notice">該当する予約はありません。</div>`;
+    setMessage("ok", "予約一覧を表示しました。");
+  }catch(e){
+    setMessage("ng", "予約一覧の取得に失敗しました：" + e.message);
+  }
+}
+
+async function updateStatus(source, idx, status, preTreatmentConfirmed=false){
+  const list = source === "day" ? (state.day?.reservations || []) : state.reservations;
+  const r = list[idx];
+  if(!r) return;
+  if(status === "in_treatment" && !preTreatmentConfirmed){
+    await requestTreatmentStart(source, idx);
+    return;
+  }
+  const p = isoParts(r.start_at);
+  openModal(
+    `${statusLabel(status)}に変更しますか？`,
+    "内容を確認してからステータスを反映します。",
+    `<div class="summary-row">
+      <div>お客様</div><div>${escapeHtml(r.customer_name || "-")}</div>
+      <div>日時</div><div>${escapeHtml(p.date ? `${dateText(p.date)} ${p.time}` : "-")}</div>
+      <div>メニュー</div><div>${escapeHtml(r.menu_name || "-")}</div>
+      <div>変更後</div><div>${escapeHtml(statusLabel(status))}</div>
+    </div>`,
+    `${statusLabel(status)}に変更`,
+    async () => {
+      closeModal();
+      setMessage("warn", "ステータス変更中です。");
+      try{
+        await api(`/api/admin/reservations/status`, {method:"PATCH", body:{reservation_id:r.id, status, reason:"owner.html"}});
+        showToast("ステータスを変更しました。");
+        if(source === "day") await loadDay();
+        else await loadReservations();
+      }catch(e){
+        setMessage("ng", "ステータス変更に失敗しました：" + e.message);
+      }
+    },
+    status === "cancelled"
+  );
+}
+
+function copyReservation(source, idx){
+  const list = source === "day" ? (state.day?.reservations || []) : state.reservations;
+  const r = list[idx];
+  if(!r) return;
+  const p = isoParts(r.start_at);
+  const text = [
+    `${r.customer_name || "お客様"}様`,
+    "",
+    "ご予約内容の確認です。",
+    `日時：${p.date ? dateText(p.date) : "-"} ${p.time || ""}`,
+    `メニュー：${r.menu_name || "-"}`,
+    `スタッフ：${r.staff_name || "指名なし"}`,
+    `予約番号：${r.reservation_code || "-"}`,
+    "",
+    "変更やキャンセルがある場合は、LINEでお早めにご連絡ください。"
+  ].join("\n");
+  navigator.clipboard?.writeText(text).then(()=>showToast("予約確認文をコピーしました。")).catch(()=>showToast(text));
+}
+
+async function searchCustomers(){
+  const rawQ = $("customerQuery").value.trim();
+  const q = isPhoneLike(rawQ) ? normalizePhone(rawQ) : rawQ;
+  if(isPhoneLike(rawQ)) $("customerQuery").value = q;
+  setMessage("warn", "顧客を検索中です。");
+  try{
+    const data = await api(`/api/admin/customers/search?q=${encodeURIComponent(q)}&limit=50`);
+    state.customers = data.customers || [];
+    $("customerList").innerHTML = state.customers.length ? state.customers.map((c,i)=>`
+      <div class="customer-card ${state.selectedCustomerId === c.id ? "on" : ""}" data-customer-index="${i}">
+        <div class="card-title">${escapeHtml(c.customer_name || "お客様")}</div>
+        <div class="card-meta">電話：${escapeHtml(c.phone || "-")} / 来店回数：${c.visit_count ?? 0}回 / 最終来店：${escapeHtml(c.last_visit_date || "-")}</div>
+      </div>
+    `).join("") : `<div class="notice">顧客が見つかりません。</div>`;
+    setMessage("ok", "顧客検索が完了しました。");
+  }catch(e){
+    setMessage("ng", "顧客検索に失敗しました：" + e.message);
+  }
+}
+
+async function loadCustomerDetailByCustomer(c){
+  if(!c) return;
+  state.selectedCustomerId = c.id;
+  setMessage("warn", "顧客カルテを読み込み中です。");
+  try{
+    const qs = c.id ? `customer_id=${encodeURIComponent(c.id)}` : `phone=${encodeURIComponent(normalizePhone(c.phone || ""))}`;
+    const data = await api(`/api/admin/customers/detail?${qs}`);
+    state.customerDetail = data;
+    renderCustomerDetail();
+    setMessage("ok", "顧客カルテを表示しました。");
+  }catch(e){
+    setMessage("ng", "顧客カルテ取得に失敗しました：" + e.message);
+  }
+}
+
+
+function parseConsultationAnswers(a){
+  const candidates = [
+    a?.answers,
+    a?.answer_json,
+    a?.consultation,
+    a?.consultation_data,
+    a?.request_json,
+    a?.body
+  ];
+
+  for(const item of candidates){
+    if(!item) continue;
+    if(typeof item === "object") return item;
+    if(typeof item === "string"){
+      try{
+        const parsed = JSON.parse(item);
+        if(parsed && typeof parsed === "object") return parsed;
+      }catch(e){}
+    }
+  }
+  return {};
+}
+
+function arrayText(v){
+  if(Array.isArray(v)) return v.filter(Boolean).join("、") || "-";
+  if(typeof v === "string" && v.trim()) return v;
+  return "-";
+}
+
+function consultationRowsHtml(a){
+  const ans = parseConsultationAnswers(a);
+  const purpose = ans.purpose || ans.visit_purpose || a?.purpose || "-";
+  const concerns = ans.concerns || ans.worries || ans.symptoms || a?.concerns;
+  const areas = ans.body_areas || ans.areas || ans.focus_areas || a?.body_areas;
+  const skin = ans.skin_type || ans.constitution || a?.skin_type || "-";
+  const allergy = ans.allergies || ans.allergy || a?.allergies || "-";
+  const pregnancy = ans.pregnancy_check || ans.health_check || a?.pregnancy_check || "-";
+  const request = ans.request_note || ans.note || ans.requests || a?.request_note || "-";
+  const version = ans.version || a?.version || "-";
+  const answeredAt = a?.answered_at || a?.created_at || "-";
+  const consentRaw = a?.consent_checked ?? a?.consent ?? ans.consent_checked ?? ans.consent;
+  const consentChecked = consentRaw === true || consentRaw === 1 || consentRaw === "1" || consentRaw === "true";
+
+  return `
+    <div class="summary-row">
+      <div>回答日</div><div>${escapeHtml(answeredAt)}</div>
+      <div>来店目的</div><div>${escapeHtml(purpose)}</div>
+      <div>お悩み</div><div>${escapeHtml(arrayText(concerns))}</div>
+      <div>重点部位</div><div>${escapeHtml(arrayText(areas))}</div>
+      <div>肌質・体質</div><div>${escapeHtml(skin)}</div>
+      <div>妊娠中・通院中</div><div>${escapeHtml(pregnancy)}</div>
+      <div>注意事項</div><div>${escapeHtml(allergy)}</div>
+      <div>ご要望</div><div>${escapeHtml(request)}</div>
+      <div>施術前同意</div><div>${consentChecked ? "同意済み" : "当日確認"}</div>
+      <div>入力画面</div><div>${escapeHtml(version)}</div>
+    </div>
+  `;
+}
+
+function renderCustomerDetail(){
+  const d = state.customerDetail;
+  if(!d?.customer){
+    $("customerDetail").className = "notice";
+    $("customerDetail").textContent = "顧客を選択してください。";
+    return;
+  }
+  const c = d.customer;
+  $("customerDetail").className = "list";
+  $("customerDetail").innerHTML = `
+    <div class="mini-card">
+      <div class="card-title">${escapeHtml(c.customer_name || "お客様")}</div>
+      <div class="card-meta">電話：${escapeHtml(c.phone || "-")} / 来店回数：${c.visit_count ?? 0}回 / 最終来店：${escapeHtml(c.last_visit_date || "-")}</div>
+    </div>
+    <div class="mini-card">
+      <b>予約履歴</b>
+      ${(d.reservations || []).slice(0,6).map(r=>`<div class="card-meta">${escapeHtml(dtText(r.start_at))} / ${escapeHtml(r.menu_name || "-")} / ${escapeHtml(statusLabel(r.status))}</div>`).join("") || '<div class="card-meta">なし</div>'}
+    </div>
+    <div class="mini-card">
+      <b>カウンセリング</b>
+      ${(d.consultations || []).slice(0,3).map(a=>consultationRowsHtml(a)).join("") || '<div class="card-meta">なし</div>'}
+    </div>
+    <div class="mini-card">
+      <b>回数券</b>
+      ${(d.tickets || []).slice(0,5).map(t=>`<div class="card-meta">${escapeHtml(t.ticket_name || "回数券")} / 残り ${t.remaining_count ?? "-"}/${t.total_count ?? "-"} / ${escapeHtml(t.status || "-")}</div>`).join("") || '<div class="card-meta">なし</div>'}
+    </div>
+    <div class="mini-card">
+      <b>メモ</b>
+      ${(d.notes || []).slice(0,5).map(n=>`<div class="card-meta">${escapeHtml(n.note_title || "メモ")}：${escapeHtml(n.note_body || "").slice(0,120)}</div>`).join("") || '<div class="card-meta">なし</div>'}
+    </div>
+  `;
+  $("karteForm").classList.remove("hidden");
+}
+
+async function saveKarteNote(){
+  const d = state.customerDetail;
+  if(!d?.customer?.id){
+    setMessage("ng", "顧客を選択してください。");
+    return;
+  }
+  const title = $("noteTitle").value.trim();
+  const body = $("noteBody").value.trim();
+  if(!body){
+    setMessage("ng", "メモ内容を入力してください。");
+    return;
+  }
+  try{
+    await api(`/api/admin/karte/save`, {method:"POST", body:{customer_id:d.customer.id, note_title:title || "カルテメモ", note_body:body, note_type:"karte", created_by:"owner", is_demo:true}});
+    $("noteTitle").value = "";
+    $("noteBody").value = "";
+    showToast("カルテメモを保存しました。");
+    await loadCustomerDetailByCustomer(d.customer);
+  }catch(e){
+    setMessage("ng", "カルテ保存に失敗しました：" + e.message);
+  }
+}
+
+async function loadTickets(){
+  setMessage("warn", "回数券を読み込み中です。");
+  try{
+    const status = $("ticketStatus").value;
+    const data = await api(`/api/admin/tickets?status=${encodeURIComponent(status)}&limit=200`);
+    state.tickets = data.tickets || [];
+    $("ticketList").innerHTML = state.tickets.length ? state.tickets.map((t,i)=>`
+      <div class="ticket-card">
+        <div class="card-head">
+          <div>
+            <div class="card-title">${escapeHtml(t.ticket_name || "回数券")}</div>
+            <div class="card-meta">顧客ID：${escapeHtml(t.customer_id || "-")} / 残り ${t.remaining_count ?? "-"}/${t.total_count ?? "-"}回 / 有効期限 ${escapeHtml(t.expires_at || "-")}</div>
+          </div>
+          <span class="pill ${Number(t.remaining_count) <= 1 ? "warn" : "ok"}">${escapeHtml(t.status || "-")}</span>
+        </div>
+        <div class="card-actions">
+          <button class="mini warn" data-use-ticket="${i}">1回使用</button>
+        </div>
+      </div>
+    `).join("") : `<div class="notice">回数券はありません。</div>`;
+    renderMetrics();
+    setMessage("ok", "回数券を表示しました。");
+  }catch(e){
+    setMessage("ng", "回数券取得に失敗しました：" + e.message);
+  }
+}
+
+function openUseTicket(idx){
+  const t = state.tickets[idx];
+  if(!t) return;
+  openModal(
+    "回数券を1回使用しますか？",
+    "施術完了時などに、残数を1回分減らします。",
+    `<div class="summary-row">
+      <div>回数券</div><div>${escapeHtml(t.ticket_name || "-")}</div>
+      <div>現在残数</div><div>${escapeHtml(t.remaining_count ?? "-")}/${escapeHtml(t.total_count ?? "-")}回</div>
+      <div>使用数</div><div>1回</div>
+    </div>`,
+    "1回使用する",
+    async () => {
+      closeModal();
+      try{
+        await api(`/api/admin/ticket/use`, {method:"POST", body:{customer_ticket_id:t.id, used_count:1, note:"owner.html", is_demo:true}});
+        showToast("回数券を1回使用しました。");
+        await loadTickets();
+      }catch(e){
+        setMessage("ng", "回数券使用に失敗しました：" + e.message);
+      }
+    }
+  );
+}
+
+async function loadFollowups(){
+  setMessage("warn", "フォローを読み込み中です。");
+  try{
+    const status = $("followStatus").value;
+    const date = status === "all" ? "all" : state.today;
+    const data = await api(`/api/admin/followups?status=${encodeURIComponent(status)}&due_before=${encodeURIComponent(date)}&limit=200`);
+    state.followups = data.followups || [];
+    $("followupList").innerHTML = state.followups.length ? state.followups.map((f,i)=>`
+      <div class="follow-card">
+        <div class="card-head">
+          <div>
+            <div class="card-title">${escapeHtml(f.title || "フォロー")}</div>
+            <div class="card-meta">期限：${escapeHtml(f.due_date || "-")} / 優先度：${escapeHtml(f.priority === "high" ? "高め" : f.priority === "normal" ? "通常" : f.priority || "-")} / 状態：${escapeHtml(f.status === "pending" ? "未対応" : f.status === "done" ? "対応済み" : f.status || "-")}</div>
+          </div>
+          <span class="pill warn">未対応</span>
+        </div>
+        <div class="card-meta">${escapeHtml(f.message_body || f.body || "-")}</div>
+        <div class="card-actions">
+          <button class="mini" data-copy-follow="${i}">文面コピー</button>
+          <button class="mini green" data-done-follow="${i}">対応済み</button>
+          <button class="mini warn" data-snooze-follow="${i}">3日後</button>
+        </div>
+      </div>
+    `).join("") : `<div class="notice">フォローはありません。</div>`;
+    renderMetrics();
+    setMessage("ok", "フォローを表示しました。");
+  }catch(e){
+    setMessage("ng", "フォロー取得に失敗しました：" + e.message);
+  }
+}
+
+async function updateFollow(idx, status){
+  const f = state.followups[idx];
+  if(!f) return;
+  try{
+    await api(`/api/admin/followups`, {method:"PATCH", body:{followup_id:f.id, status, handled_by:"owner"}});
+    showToast(status === "done" ? "対応済みにしました。" : "3日後に回しました。");
+    await loadFollowups();
+  }catch(e){
+    setMessage("ng", "フォロー更新に失敗しました：" + e.message);
+  }
+}
+
+
+function normalizeTemplateBody(text){
+  return String(text || "")
+    .replaceAll("\\n", "\n")
+    .replaceAll("{{customer_name}}", "お客様名")
+    .replaceAll("{{reservation_datetime}}", "予約日時")
+    .replaceAll("{{menu_name}}", "メニュー名")
+    .replaceAll("{{staff_name}}", "担当スタッフ")
+    .replaceAll("{{recommend_menu}}", "おすすめメニュー");
+}
+
+function templateTypeLabel(type, body){
+  const t = String(type || "").toLowerCase();
+  const b = String(body || "");
+  if(t.includes("confirm") || b.includes("ご予約ありがとうございます")) return "予約受付・確認";
+  if(t.includes("change") || b.includes("変更")) return "予約変更";
+  if(t.includes("cancel") || b.includes("キャンセル")) return "キャンセル";
+  if(t.includes("remind") || b.includes("明日")) return "前日確認";
+  if(t.includes("after") || b.includes("来店ありがとうございました")) return "施術後フォロー";
+  if(t.includes("revisit") || b.includes("再来店")) return "再来店案内";
+  if(t.includes("ticket") || b.includes("回数券")) return "回数券案内";
+  if(t.includes("birthday") || b.includes("誕生日")) return "誕生日案内";
+  return "テンプレート";
+}
+
+function templateTitle(t){
+  const rawTitle = t.template_name || t.title || "";
+  const body = t.message_body || t.body || t.template_body || "";
+  const type = t.template_type || t.message_type || "";
+  if(rawTitle && rawTitle !== "テンプレート" && rawTitle !== "-") return rawTitle;
+  return templateTypeLabel(type, body);
+}
+
+async function loadTemplates(){
+  setMessage("warn", "文面テンプレートを読み込み中です。");
+  try{
+    const data = await api(`/api/admin/message-templates`);
+    state.templates = data.templates || [];
+    $("templateList").innerHTML = state.templates.length ? state.templates.map((t,i)=>{
+      const body = t.message_body || t.body || t.template_body || "";
+      const type = t.template_type || t.message_type || "";
+      const title = templateTitle(t);
+      const preview = normalizeTemplateBody(body);
+      return `
+        <div class="mini-card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">${escapeHtml(title)}</div>
+              <div class="card-meta"><span class="template-type">${escapeHtml(templateTypeLabel(type, body))}</span></div>
+            </div>
+            <button class="mini primary" data-copy-template="${i}">文面コピー</button>
+          </div>
+          <div class="template-preview">${escapeHtml(preview || "-")}</div>
+        </div>
+      `;
+    }).join("") : `<div class="notice">文面テンプレートはありません。</div>`;
+    setMessage("ok", "文面テンプレートを表示しました。");
+  }catch(e){
+    setMessage("ng", "文面取得に失敗しました：" + e.message);
+  }
+}
+
+async function loadSettings(){
+  setMessage("warn", "店舗設定を読み込み中です。");
+  try{
+    const data = await api(`/api/admin/settings`);
+    state.settings = data;
+    renderSettingsEditor();
+    setMessage("ok", "店舗設定を編集できます。");
+  }catch(e){
+    setMessage("ng", "店舗設定取得に失敗しました：" + e.message);
+  }
+}
+
+function boolAttr(v){ return v ? "checked" : ""; }
+
+function valueAttr(v){
+  return escapeHtml(v ?? "");
+}
+
+function dayNameByNumber(n){
+  return ["日","月","火","水","木","金","土"][Number(n)] || "-";
+}
+
+function safeTime(v, fallback){
+  return String(v || fallback || "").slice(0,5);
+}
+
+function settingStatusText(active, activeText = "表示", inactiveText = "非表示"){
+  return active ? activeText : inactiveText;
+}
+
+function menuRowHtml(m = {}, i = 0, open = false){
+  const code = m.menu_code || `menu_new_${Date.now()}_${i}`;
+  const name = m.menu_name || "新しいメニュー";
+  const active = m.is_active !== false;
+  return `
+    <div class="setting-compact-card ${open ? "open" : ""}" data-setting-menu-row>
+      <div class="setting-compact-head">
+        <div>
+          <div class="setting-compact-title">${escapeHtml(name)}</div>
+          <div class="setting-compact-meta">${Number(m.duration_minutes ?? 60)}分 / ${Number(m.price_yen ?? 0).toLocaleString()}円 / ${settingStatusText(active)}</div>
+        </div>
+        <button class="mini" type="button" data-toggle-setting-card>編集</button>
+      </div>
+      <div class="setting-compact-body">
+        <div class="setting-row menu">
+          <div class="field"><label>メニューコード</label><input data-menu-code value="${valueAttr(code)}" placeholder="menu_code"></div>
+          <div class="field"><label>メニュー名</label><input data-menu-name value="${valueAttr(m.menu_name || "")}" placeholder="例：アロマボディ 60分"></div>
+          <div class="field"><label>料金</label><input data-menu-price type="number" min="0" value="${valueAttr(m.price_yen ?? 0)}"></div>
+          <div class="field"><label>時間</label><input data-menu-duration type="number" min="10" value="${valueAttr(m.duration_minutes ?? 60)}"></div>
+          <div class="field"><label>並び順</label><input data-menu-order type="number" min="0" value="${valueAttr(m.display_order ?? (i+1)*10)}"></div>
+          <label class="checkline"><input data-menu-active type="checkbox" ${boolAttr(active)}>表示</label>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function staffRowHtml(st = {}, i = 0, open = false){
+  const code = st.staff_code || `staff_new_${Date.now()}_${i}`;
+  const name = st.staff_name || "新しいスタッフ";
+  const active = st.is_active !== false;
+  const selectable = st.can_be_selected !== false;
+  return `
+    <div class="setting-compact-card ${open ? "open" : ""}" data-setting-staff-row>
+      <div class="setting-compact-head">
+        <div>
+          <div class="setting-compact-title">${escapeHtml(name)}</div>
+          <div class="setting-compact-meta">${roleLabel(st.role || "therapist")} / ${settingStatusText(selectable, "指名可", "指名不可")} / ${settingStatusText(active)}</div>
+        </div>
+        <button class="mini" type="button" data-toggle-setting-card>編集</button>
+      </div>
+      <div class="setting-compact-body">
+        <div class="setting-row staff">
+          <div class="field"><label>スタッフコード</label><input data-staff-code value="${valueAttr(code)}" placeholder="staff_code"></div>
+          <div class="field"><label>スタッフ名</label><input data-staff-name value="${valueAttr(st.staff_name || "")}" placeholder="例：美奈"></div>
+          <div class="field"><label>役割</label>
+            <select data-staff-role>
+              ${["therapist","owner","manager","reception","other"].map(r => `<option value="${r}" ${String(st.role || "therapist") === r ? "selected" : ""}>${roleLabel(r)}</option>`).join("")}
+            </select>
+          </div>
+          <label class="checkline"><input data-staff-selectable type="checkbox" ${boolAttr(selectable)}>指名可</label>
+          <label class="checkline"><input data-staff-active type="checkbox" ${boolAttr(active)}>表示</label>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function roomRowHtml(r = {}, i = 0, open = false){
+  const code = r.room_code || `room_new_${Date.now()}_${i}`;
+  const name = r.room_name || "新しいルーム";
+  const active = r.is_active !== false;
+  return `
+    <div class="setting-compact-card ${open ? "open" : ""}" data-setting-room-row>
+      <div class="setting-compact-head">
+        <div>
+          <div class="setting-compact-title">${escapeHtml(name)}</div>
+          <div class="setting-compact-meta">${roomTypeLabel(r.room_type || "bed")} / 並び順 ${Number(r.display_order ?? (i+1)*10)} / ${settingStatusText(active, "使用", "停止")}</div>
+        </div>
+        <button class="mini" type="button" data-toggle-setting-card>編集</button>
+      </div>
+      <div class="setting-compact-body">
+        <div class="setting-row room">
+          <div class="field"><label>ルームコード</label><input data-room-code value="${valueAttr(code)}" placeholder="room_code"></div>
+          <div class="field"><label>ルーム名</label><input data-room-name value="${valueAttr(r.room_name || "")}" placeholder="例：個室ベッド1"></div>
+          <div class="field"><label>タイプ</label>
+            <select data-room-type>
+              ${["bed","private_room","facial_room","headspa_seat","other"].map(x => `<option value="${x}" ${String(r.room_type || "bed") === x ? "selected" : ""}>${roomTypeLabel(x)}</option>`).join("")}
+            </select>
+          </div>
+          <div class="field"><label>並び順</label><input data-room-order type="number" min="0" value="${valueAttr(r.display_order ?? (i+1)*10)}"></div>
+          <label class="checkline"><input data-room-active type="checkbox" ${boolAttr(active)}>使用</label>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function hourRowHtml(h = {}, i = 0){
+  const day = h.day_of_week ?? i;
+  return `
+    <div class="setting-row hours" data-setting-hours-row>
+      <input type="hidden" data-hour-day value="${valueAttr(day)}">
+      <div><label>曜日</label><div class="pill">${dayNameByNumber(day)}曜日</div></div>
+      <label class="checkline"><input data-hour-open type="checkbox" ${boolAttr(h.is_open !== false)}>営業</label>
+      <div class="field"><label>開店</label><input data-hour-open-time type="time" value="${valueAttr(safeTime(h.open_time, "10:00"))}"></div>
+      <div class="field"><label>閉店</label><input data-hour-close-time type="time" value="${valueAttr(safeTime(h.close_time, "19:00"))}"></div>
+      <div class="field"><label>メモ</label><input data-hour-note value="${valueAttr(h.note || "")}" placeholder="例：最終受付18:00"></div>
+    </div>
+  `;
+}
+
+function roleLabel(v){
+  return ({therapist:"セラピスト", owner:"オーナー", manager:"店長", reception:"受付", other:"その他"})[v] || v;
+}
+
+function roomTypeLabel(v){
+  return ({bed:"ベッド", private_room:"個室", facial_room:"フェイシャル室", headspa_seat:"ヘッドスパ席", other:"その他"})[v] || v;
+}
+
+function settingsSectionLabel(key){
+  return ({basic:"基本情報", rules:"予約ルール", hours:"営業時間", menus:"メニュー", staff:"スタッフ", rooms:"ルーム"})[key] || key;
+}
+
+function setSettingsSection(section){
+  state.settingsSection = section || "basic";
+  document.querySelectorAll("[data-setting-index]").forEach(btn => {
+    btn.classList.toggle("on", btn.dataset.settingIndex === state.settingsSection);
+  });
+  document.querySelectorAll("[data-setting-section]").forEach(sec => {
+    sec.classList.toggle("on", sec.dataset.settingSection === state.settingsSection);
+  });
+  $("bottomText").textContent = `店舗設定：${settingsSectionLabel(state.settingsSection)}を表示中`;
+}
+
+function renderSettingsEditor(){
+  const data = state.settings || {};
+  const shop = data.shop || {};
+  const hours = Array.isArray(data.business_hours) && data.business_hours.length
+    ? data.business_hours
+    : Array.from({length:7}, (_,i)=>({day_of_week:i,is_open:i !== 1,open_time:"10:00",close_time:"19:00"}));
+  const menus = data.menus || [];
+  const staff = data.staff || [];
+  const rooms = data.rooms || [];
+
+  $("settingsBox").innerHTML = `
+    <div class="setting-index" aria-label="店舗設定メニュー">
+      <button class="setting-index-btn" type="button" data-setting-index="basic">基本情報</button>
+      <button class="setting-index-btn" type="button" data-setting-index="rules">予約ルール</button>
+      <button class="setting-index-btn" type="button" data-setting-index="hours">営業時間</button>
+      <button class="setting-index-btn" type="button" data-setting-index="menus">メニュー ${menus.length || 0}</button>
+      <button class="setting-index-btn" type="button" data-setting-index="staff">スタッフ ${staff.length || 0}</button>
+      <button class="setting-index-btn" type="button" data-setting-index="rooms">ルーム ${rooms.length || 0}</button>
+    </div>
+
+    <div class="setting-help">
+      店舗設定はカテゴリごとに分けています。メニュー・スタッフ・ルームは一覧から「編集」を押した項目だけ開くので、数が増えても縦長になりにくい構成です。
+    </div>
+
+    <div class="setting-section" data-setting-section="basic">
+      <div class="setting-block">
+        <h3>店舗基本情報</h3>
+        <div class="form-grid">
+          <div class="field"><label>店舗名</label><input id="setShopName" value="${valueAttr(shop.shop_name || "")}" placeholder="例：DPRO Esthe Relaxation"></div>
+          <div class="field"><label>表示名</label><input id="setDisplayName" value="${valueAttr(shop.display_name || shop.shop_name || "")}" placeholder="例：DPRO Esthe Relaxation"></div>
+          <div class="field"><label>電話番号</label><input id="setPhone" value="${valueAttr(shop.phone || "")}" placeholder="例：090-0000-0000"></div>
+          <div class="field"><label>住所</label><input id="setAddress" value="${valueAttr(shop.address || "")}" placeholder="例：大分県..."></div>
+        </div>
+        <div class="field"><label>店舗説明</label><textarea id="setDescription" placeholder="予約画面に表示する説明">${escapeHtml(shop.description || "")}</textarea></div>
+        <div class="field"><label>予約完了メッセージ</label><textarea id="setCompletionMessage" placeholder="予約完了画面に表示する文面">${escapeHtml(shop.completion_message || "")}</textarea></div>
+        <div class="setting-section-actions">
+          <button class="btn primary" data-save-settings-section type="button">店舗設定を保存</button>
+          <button class="btn" data-reload-settings type="button">設定を再読み込み</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="setting-section" data-setting-section="rules">
+      <div class="setting-block">
+        <h3>予約受付設定</h3>
+        <div class="form-grid">
+          <div class="field"><label>何日先まで予約可能</label><input id="setBookingDays" type="number" min="1" max="365" value="${valueAttr(shop.default_booking_days_ahead ?? 60)}"></div>
+          <div class="field"><label>予約締切 何時間前</label><input id="setBookingDeadline" type="number" min="0" max="168" value="${valueAttr(shop.booking_deadline_hours ?? 3)}"></div>
+          <div class="field"><label>キャンセル締切 何時間前</label><input id="setCancelDeadline" type="number" min="0" max="720" value="${valueAttr(shop.cancel_deadline_hours ?? 6)}"></div>
+          <div class="field"><label>予約枠間隔</label>
+            <select id="setSlotInterval">
+              ${[10,15,20,30,45,60].map(n => `<option value="${n}" ${Number(shop.slot_interval_minutes || 30) === n ? "selected" : ""}>${n}分</option>`).join("")}
+            </select>
+          </div>
+          <div class="field"><label>1日の予約上限</label><input id="setMaxDaily" type="number" min="1" max="200" value="${valueAttr(shop.max_daily_reservations ?? 12)}"></div>
+          <div class="field"><label>ルーム数</label><input id="setRoomsCount" type="number" min="1" max="50" value="${valueAttr(shop.rooms_count ?? 2)}"></div>
+        </div>
+        <label class="checkline"><input id="setSameDay" type="checkbox" ${boolAttr(shop.same_day_booking === true)}> 当日予約を許可する</label>
+        <div class="setting-section-actions">
+          <button class="btn primary" data-save-settings-section type="button">予約ルールを保存</button>
+          <button class="btn" data-reload-settings type="button">設定を再読み込み</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="setting-section" data-setting-section="hours">
+      <div class="setting-block">
+        <div class="section-title">
+          <h3>曜日別営業時間</h3>
+          <span class="pill">定休日もここで設定</span>
+        </div>
+        <div id="settingsHoursRows">
+          ${hours.map((h,i)=>hourRowHtml(h,i)).join("")}
+        </div>
+        <div class="setting-section-actions">
+          <button class="btn primary" data-save-settings-section type="button">営業時間を保存</button>
+          <button class="btn" data-reload-settings type="button">設定を再読み込み</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="setting-section" data-setting-section="menus">
+      <div class="setting-block">
+        <div class="section-title">
+          <div>
+            <h3>メニュー</h3>
+            <div class="muted-line">一覧表示にして、編集したいメニューだけ開きます。</div>
+          </div>
+          <button class="mini primary" id="addMenuBtn" type="button">メニュー追加</button>
+        </div>
+        <div id="settingsMenuRows" class="setting-card-list">
+          ${menus.map((m,i)=>menuRowHtml(m,i,false)).join("") || menuRowHtml({},0,true)}
+        </div>
+        <div class="setting-section-actions">
+          <button class="btn primary" data-save-settings-section type="button">メニューを保存</button>
+          <button class="btn" data-reload-settings type="button">設定を再読み込み</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="setting-section" data-setting-section="staff">
+      <div class="setting-block">
+        <div class="section-title">
+          <div>
+            <h3>スタッフ</h3>
+            <div class="muted-line">一覧表示にして、編集したいスタッフだけ開きます。</div>
+          </div>
+          <button class="mini primary" id="addStaffBtn" type="button">スタッフ追加</button>
+        </div>
+        <div id="settingsStaffRows" class="setting-card-list">
+          ${staff.map((st,i)=>staffRowHtml(st,i,false)).join("") || staffRowHtml({},0,true)}
+        </div>
+        <div class="setting-section-actions">
+          <button class="btn primary" data-save-settings-section type="button">スタッフを保存</button>
+          <button class="btn" data-reload-settings type="button">設定を再読み込み</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="setting-section" data-setting-section="rooms">
+      <div class="setting-block">
+        <div class="section-title">
+          <div>
+            <h3>ルーム・ベッド</h3>
+            <div class="muted-line">一覧表示にして、編集したいルームだけ開きます。</div>
+          </div>
+          <button class="mini primary" id="addRoomBtn" type="button">ルーム追加</button>
+        </div>
+        <div id="settingsRoomRows" class="setting-card-list">
+          ${rooms.map((r,i)=>roomRowHtml(r,i,false)).join("") || roomRowHtml({},0,true)}
+        </div>
+        <div class="setting-section-actions">
+          <button class="btn primary" data-save-settings-section type="button">ルームを保存</button>
+          <button class="btn" data-reload-settings type="button">設定を再読み込み</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-actions">
+      <button class="btn primary" id="saveSettingsBtn" type="button">店舗設定をまとめて保存</button>
+      <button class="btn" id="reloadSettingsBtn" type="button">設定を再読み込み</button>
+    </div>
+  `;
+
+  $("addMenuBtn").addEventListener("click", () => {
+    $("settingsMenuRows").insertAdjacentHTML("beforeend", menuRowHtml({}, document.querySelectorAll("[data-setting-menu-row]").length, true));
+  });
+  $("addStaffBtn").addEventListener("click", () => {
+    $("settingsStaffRows").insertAdjacentHTML("beforeend", staffRowHtml({}, document.querySelectorAll("[data-setting-staff-row]").length, true));
+  });
+  $("addRoomBtn").addEventListener("click", () => {
+    $("settingsRoomRows").insertAdjacentHTML("beforeend", roomRowHtml({}, document.querySelectorAll("[data-setting-room-row]").length, true));
+  });
+  $("saveSettingsBtn").addEventListener("click", confirmSaveSettings);
+  $("reloadSettingsBtn").addEventListener("click", loadSettings);
+  document.querySelectorAll("[data-save-settings-section]").forEach(btn => btn.addEventListener("click", confirmSaveSettings));
+  document.querySelectorAll("[data-reload-settings]").forEach(btn => btn.addEventListener("click", loadSettings));
+  document.querySelectorAll("[data-setting-index]").forEach(btn => {
+    btn.addEventListener("click", () => setSettingsSection(btn.dataset.settingIndex));
+  });
+  document.querySelectorAll("[data-toggle-setting-card]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const card = btn.closest(".setting-compact-card");
+      card.classList.toggle("open");
+      btn.textContent = card.classList.contains("open") ? "閉じる" : "編集";
+    });
+  });
+  setSettingsSection(state.settingsSection || "basic");
+}
+
+function intValue(id, fallback){
+  const n = Number($(id)?.value);
+  return Number.isFinite(n) ? Math.round(n) : fallback;
+}
+
+function collectSettingsPayload(){
+  const menus = Array.from(document.querySelectorAll("[data-setting-menu-row]")).map((row, i) => ({
+    menu_code: row.querySelector("[data-menu-code]")?.value.trim(),
+    menu_name: row.querySelector("[data-menu-name]")?.value.trim(),
+    price_yen: Number(row.querySelector("[data-menu-price]")?.value || 0),
+    duration_minutes: Number(row.querySelector("[data-menu-duration]")?.value || 60),
+    display_order: Number(row.querySelector("[data-menu-order]")?.value || (i+1)*10),
+    is_active: row.querySelector("[data-menu-active]")?.checked === true,
+    category: "body",
+    is_ticket_target: true
+  })).filter(m => m.menu_code || m.menu_name);
+
+  const staff = Array.from(document.querySelectorAll("[data-setting-staff-row]")).map((row, i) => ({
+    staff_code: row.querySelector("[data-staff-code]")?.value.trim(),
+    staff_name: row.querySelector("[data-staff-name]")?.value.trim(),
+    role: row.querySelector("[data-staff-role]")?.value || "therapist",
+    can_be_selected: row.querySelector("[data-staff-selectable]")?.checked === true,
+    is_active: row.querySelector("[data-staff-active]")?.checked === true,
+    display_order: (i+1)*10
+  })).filter(s => s.staff_code || s.staff_name);
+
+  const rooms = Array.from(document.querySelectorAll("[data-setting-room-row]")).map((row, i) => ({
+    room_code: row.querySelector("[data-room-code]")?.value.trim(),
+    room_name: row.querySelector("[data-room-name]")?.value.trim(),
+    room_type: row.querySelector("[data-room-type]")?.value || "bed",
+    display_order: Number(row.querySelector("[data-room-order]")?.value || (i+1)*10),
+    is_active: row.querySelector("[data-room-active]")?.checked === true
+  })).filter(r => r.room_code || r.room_name);
+
+  const business_hours = Array.from(document.querySelectorAll("[data-setting-hours-row]")).map(row => ({
+    day_of_week: Number(row.querySelector("[data-hour-day]")?.value),
+    is_open: row.querySelector("[data-hour-open]")?.checked === true,
+    open_time: row.querySelector("[data-hour-open-time]")?.value || "10:00",
+    close_time: row.querySelector("[data-hour-close-time]")?.value || "19:00",
+    note: row.querySelector("[data-hour-note]")?.value.trim() || ""
+  }));
+
+  return {
+    shop_code: SHOP_CODE,
+    shop: {
+      shop_name: $("setShopName").value.trim(),
+      display_name: $("setDisplayName").value.trim(),
+      phone: $("setPhone").value.trim(),
+      address: $("setAddress").value.trim(),
+      description: $("setDescription").value.trim(),
+      completion_message: $("setCompletionMessage").value.trim(),
+      default_booking_days_ahead: intValue("setBookingDays", 60),
+      booking_deadline_hours: intValue("setBookingDeadline", 3),
+      cancel_deadline_hours: intValue("setCancelDeadline", 6),
+      slot_interval_minutes: Number($("setSlotInterval").value || 30),
+      max_daily_reservations: intValue("setMaxDaily", 12),
+      rooms_count: intValue("setRoomsCount", 2),
+      same_day_booking: $("setSameDay").checked === true
+    },
+    business_hours,
+    menus,
+    staff,
+    rooms
+  };
+}
+
+function confirmSaveSettings(){
+  const payload = collectSettingsPayload();
+  const closed = payload.business_hours.filter(h => !h.is_open).map(h => `${dayNameByNumber(h.day_of_week)}曜`).join("、") || "なし";
+  openModal(
+    "店舗設定を保存しますか？",
+    "保存すると予約画面・ブラッシュアップ予約画面・スタッフ画面に反映されます。",
+    `<div class="summary-row">
+      <div>店舗名</div><div>${escapeHtml(payload.shop.display_name || payload.shop.shop_name || "-")}</div>
+      <div>電話番号</div><div>${escapeHtml(payload.shop.phone || "-")}</div>
+      <div>予約受付</div><div>${escapeHtml(payload.shop.default_booking_days_ahead)}日先まで / ${escapeHtml(payload.shop.booking_deadline_hours)}時間前締切</div>
+      <div>定休日</div><div>${escapeHtml(closed)}</div>
+      <div>メニュー</div><div>${payload.menus.length}件</div>
+      <div>スタッフ</div><div>${payload.staff.length}件</div>
+      <div>ルーム</div><div>${payload.rooms.length}件</div>
+    </div>`,
+    "この内容で保存",
+    async () => saveSettings(payload)
+  );
+}
+
+async function saveSettings(payload){
+  closeModal();
+  setMessage("warn", "店舗設定を保存中です。");
+  try{
+    const data = await api(`/api/admin/settings/save`, {method:"POST", body:payload});
+    state.settings = data.settings || state.settings;
+    showToast("店舗設定を保存しました。");
+    setMessage("ok", "店舗設定を保存しました。予約画面にも反映されます。");
+    await loadSettings();
+  }catch(e){
+    setMessage("ng", "店舗設定の保存に失敗しました：" + e.message);
+  }
+}
+
+async function runPrepare(){
+  openModal(
+    "営業前デモ準備を実行しますか？",
+    "本日基準でデモ予約・顧客・フォロー・回数券を作り直します。",
+    `<div class="summary-row"><div>API</div><div>${API_BASE}/api/admin/demo/prepare</div><div>管理コード</div><div>1234</div></div>`,
+    "営業前デモ準備を実行",
+    async () => {
+      closeModal();
+      setMessage("warn", "営業前デモ準備を実行中です。");
+      try{
+        await api(`/api/admin/demo/prepare`, {method:"POST", body:{shop_code:SHOP_CODE}});
+        showToast("営業前デモ準備が完了しました。");
+        await loadAll();
+      }catch(e){
+        setMessage("ng", "営業前デモ準備に失敗しました：" + e.message);
+      }
+    }
+  );
+}
+
+async function loadAll(){
+  await loadDay();
+}
+
+document.addEventListener("click", async (e) => {
+  const tab = e.target.closest("[data-tab]");
+  if(tab){
+    setTab(tab.dataset.tab);
+    if(tab.dataset.tab === "reservations") loadReservations();
+    if(tab.dataset.tab === "tickets") loadTickets();
+    if(tab.dataset.tab === "followups") loadFollowups();
+    if(tab.dataset.tab === "templates") loadTemplates();
+    if(tab.dataset.tab === "settings") loadSettings();
+    return;
+  }
+
+
+  const visitHub = e.target.closest("[data-visit-hub]");
+  if(visitHub){
+    const [source, index] = visitHub.dataset.visitHub.split(":");
+    await openIntegratedVisit(source, Number(index));
+    return;
+  }
+
+  const preconfirmCopy = e.target.closest("[data-preconfirm-copy]");
+  if(preconfirmCopy){
+    copyPreTreatmentCustomerText();
+    return;
+  }
+
+  const preconfirmSave = e.target.closest("[data-preconfirm-save]");
+  if(preconfirmSave){
+    await savePreTreatmentConfirmation();
+    return;
+  }
+
+  const integratedStatus = e.target.closest("[data-integrated-status]");
+  if(integratedStatus){
+    const hub = state.integratedVisit;
+    if(!hub) return;
+    const statusValue = integratedStatus.dataset.integratedStatus;
+    closeIntegratedVisit();
+    updateStatus(hub.source, hub.index, statusValue);
+    return;
+  }
+
+  const integratedCustomer = e.target.closest("[data-integrated-customer]");
+  if(integratedCustomer){
+    await openIntegratedCustomer();
+    return;
+  }
+
+  const status = e.target.closest("[data-status]");
+  if(status){
+    const [source, idx, st] = status.dataset.status.split(":");
+    updateStatus(source, Number(idx), st);
+    return;
+  }
+
+  const copy = e.target.closest("[data-copy]");
+  if(copy){
+    const [source, idx] = copy.dataset.copy.split(":");
+    copyReservation(source, Number(idx));
+    return;
+  }
+
+  const customerDetail = e.target.closest("[data-customer-detail]");
+  if(customerDetail){
+    const customerId = customerDetail.dataset.customerDetail;
+    const phone = customerDetail.dataset.phone;
+    if(customerId) await loadCustomerDetailByCustomer({id:customerId});
+    else if(phone){
+      $("customerQuery").value = normalizePhone(phone);
+      setTab("customers");
+      await searchCustomers();
+      if(state.customers[0]) await loadCustomerDetailByCustomer(state.customers[0]);
+    }
+    setTab("customers");
+    return;
+  }
+
+  const ci = e.target.closest("[data-customer-index]");
+  if(ci){
+    await loadCustomerDetailByCustomer(state.customers[Number(ci.dataset.customerIndex)]);
+    searchCustomers();
+    return;
+  }
+
+  const useTicket = e.target.closest("[data-use-ticket]");
+  if(useTicket){ openUseTicket(Number(useTicket.dataset.useTicket)); return; }
+
+  const doneFollow = e.target.closest("[data-done-follow]");
+  if(doneFollow){ await updateFollow(Number(doneFollow.dataset.doneFollow), "done"); return; }
+
+  const snoozeFollow = e.target.closest("[data-snooze-follow]");
+  if(snoozeFollow){ await updateFollow(Number(snoozeFollow.dataset.snoozeFollow), "snoozed"); return; }
+
+  const copyFollow = e.target.closest("[data-copy-follow]");
+  if(copyFollow){
+    const f = state.followups[Number(copyFollow.dataset.copyFollow)];
+    const text = f?.message_body || f?.body || f?.title || "";
+    navigator.clipboard?.writeText(text).then(()=>showToast("フォロー文面をコピーしました。"));
+    return;
+  }
+
+  const copyTemplate = e.target.closest("[data-copy-template]");
+  if(copyTemplate){
+    const t = state.templates[Number(copyTemplate.dataset.copyTemplate)];
+    const raw = t?.message_body || t?.body || t?.template_body || "";
+    const text = normalizeTemplateBody(raw);
+    navigator.clipboard?.writeText(text).then(()=>showToast("文面テンプレートをコピーしました。"));
+    return;
+  }
+});
+
+
+$("visitHubClose").addEventListener("click", closeIntegratedVisit);
+$("visitHubLayer").addEventListener("click", (event) => {
+  if(event.target.id === "visitHubLayer") closeIntegratedVisit();
+});
+document.addEventListener("keydown", (event) => {
+  if(event.key === "Escape" && $("visitHubLayer").classList.contains("show")){
+    closeIntegratedVisit();
+  }
+});
+
+$("todayDateDisplay").addEventListener("click", () => {
+  const input = $("todayDateInput");
+  if(typeof input.showPicker === "function") input.showPicker();
+  else input.focus();
+});
+
+$("todayDateInput").addEventListener("change", async () => {
+  state.today = $("todayDateInput").value;
+  updateDateDisplays();
+  await loadDay();
+});
+
+$("loadDayBtn").addEventListener("click", loadDay);
+$("reloadBtn").addEventListener("click", loadAll);
+$("bottomReloadBtn").addEventListener("click", loadAll);
+$("prepareBtn").addEventListener("click", runPrepare);
+$("loadReservationsBtn").addEventListener("click", loadReservations);
+$("customerQuery").addEventListener("blur", () => {
+  const raw = $("customerQuery").value;
+  if(isPhoneLike(raw)) $("customerQuery").value = normalizePhone(raw);
+});
+
+$("searchCustomerBtn").addEventListener("click", searchCustomers);
+$("saveNoteBtn").addEventListener("click", saveKarteNote);
+$("loadTicketsBtn").addEventListener("click", loadTickets);
+$("loadFollowupsBtn").addEventListener("click", loadFollowups);
+$("modalCancel").addEventListener("click", closeModal);
+$("modalBackdrop").addEventListener("click", (e)=>{ if(e.target.id === "modalBackdrop") closeModal(); });
+$("modalOk").addEventListener("click", async ()=>{ if(typeof state.pendingAction === "function") await state.pendingAction(); });
+
+async function init(){
+  state.today = jstDate();
+  $("todayDateInput").value = state.today;
+  $("resFrom").value = state.today;
+  $("resTo").value = addDays(state.today, 30);
+  updateDateDisplays();
+
+  try{
+    const health = await api("/api/health");
+    $("apiStatus").textContent = health.ok ? "OK" : "NG";
+    setMessage("ok", "API接続OKです。店舗iPadの本日運用を読み込みます。");
+    await loadAll();
+  }catch(e){
+    $("apiStatus").textContent = "NG";
+    setMessage("ng", "API接続に失敗しました：" + e.message);
+  }
+}
+
+init();
+</script>
+</body>
+</html>

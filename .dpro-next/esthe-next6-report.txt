@@ -1,0 +1,29 @@
+DPRO エステ LINE / ESTHE-NEXT-6 実行結果
+完了日時JST: 2026-07-23T22:36:20+09:00
+変更前Commit: 1a72ec42536d3df084d1f384dc29971e4bdca638
+バックアップタグ: backup-esthe-before-next6-20260723
+OK: 17
+注意: 0
+NG: 0
+
+役割分離:
+- owner.html: PC本格管理・設定・顧客管理
+- owner-ipad.html: 店舗全体の当日進捗・施術前確認・状態更新
+- staff.html: 自分の担当・今やること・次の1操作
+
+実施内容:
+- 店舗iPad専用owner-ipad.htmlを追加
+- iPad初期取得をday APIだけへ軽量化
+- スタッフ画面へ今やることセンターを追加
+- 状態に応じた次の1操作を大きく表示
+- スタッフ画面から管理・system-check等の役割外リンクを除去
+- 顧客詳細は施術開始時だけ遅延取得
+- 施術前確認が未保存の場合は施術開始を安全停止
+- 既存の状態変更・確認文コピー・担当絞り込みは維持
+
+変更記録:
+- Worker: 変更なし
+- Supabase: 変更なし
+- API: 変更なし
+
+次STEP: ESTHE-NEXT-7
