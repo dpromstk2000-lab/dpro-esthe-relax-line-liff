@@ -1,0 +1,36 @@
+DPRO エステ LINE / ESTHE-NEXT-1 API・公開基準
+基準Commit: 05b6f12116849ebad51ab6df097459b31714acb3
+バックアップタグ: backup-esthe-before-next-20260723
+作成日時JST: 2026-07-23T16:46:20+09:00
+Worker変更: false
+Supabase変更: false
+API変更: false
+
+公開疎通:
+- OK | GitHub Pages top | HTTP 200 | 0.137121s | https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/ | 
+- OK | Customer reservation | HTTP 200 | 0.120900s | https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/index-brush.html | 
+- OK | Owner PC | HTTP 200 | 0.146198s | https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner.html | 
+- OK | Staff | HTTP 200 | 0.168077s | https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/staff.html | 
+- OK | Member | HTTP 200 | 0.099134s | https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/member.html | 
+- OK | System check | HTTP 200 | 0.113090s | https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/system-check.html | 
+- OK | Worker health | HTTP 200 | 2.106682s | https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/health | 
+
+画面ソースから確認したAPIパス:
+- /api/admin/
+- /api/admin/customers/detail?${qs}
+- /api/admin/demo/prepare
+- /api/admin/followups
+- /api/admin/karte/save
+- /api/admin/message-templates
+- /api/admin/reservations
+- /api/admin/reservations/status
+- /api/admin/settings
+- /api/admin/settings/save
+- /api/admin/ticket/use
+- /api/health
+- /api/public/my-page
+- /api/public/reservations
+- /api/public/reservations?shop_code=${SHOP_CODE}
+- /api/public/settings
+- /api/public/settings?shop_code=${SHOP_CODE}
+- /api/public/slots

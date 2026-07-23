@@ -1,0 +1,71 @@
+DPRO エステ LINE / ESTHE-NEXT-1 実行結果
+状態: ATTENTION
+基準Commit: 05b6f12116849ebad51ab6df097459b31714acb3
+バックアップタグ: backup-esthe-before-next-20260723
+完了日時JST: 2026-07-23T16:46:20+09:00
+OK: 36
+注意: 12
+NG: 0
+
+OK項目:
+- OK: 必須ファイル存在: index.html
+- OK: 必須ファイル存在: index-brush.html
+- OK: 必須ファイル存在: admin.html
+- OK: 必須ファイル存在: owner.html
+- OK: 必須ファイル存在: member.html
+- OK: 必須ファイル存在: staff.html
+- OK: 必須ファイル存在: system-check.html
+- OK: HTML基本構造: admin.html
+- OK: HTML基本構造: index-brush.html
+- OK: HTML基本構造: index.html
+- OK: HTML基本構造: member.html
+- OK: HTML基本構造: owner.html
+- OK: HTML基本構造: staff.html
+- OK: HTML基本構造: system-check.html
+- OK: 既存機能維持: PC今日の予約
+- OK: 既存機能維持: PC今日やること
+- OK: 既存機能維持: PC予約一覧
+- OK: 既存機能維持: PC顧客カルテ
+- OK: 既存機能維持: PC回数券
+- OK: 既存機能維持: PCフォロー
+- OK: 既存機能維持: 会員次回予約
+- OK: 既存機能維持: 会員回数券
+- OK: 既存機能維持: 会員来店履歴
+- OK: 既存機能維持: スタッフ本日予約
+- OK: 既存機能維持: 予約メニュー選択
+- OK: 既存機能維持: 予約日時選択
+- OK: 既存機能維持: カウンセリング
+- OK: 既存機能維持: system-check
+- OK: エステ業務進捗ステータス維持
+- OK: エステ業務ロジック: 顧客カルテ
+- OK: エステ業務ロジック: 回数券
+- OK: エステ業務ロジック: 施術後フォロー
+- OK: エステ業務ロジック: カウンセリング
+- OK: エステ業務ロジック: スタッフ指名
+- OK: 電話番号正規化: 5ファイル
+- OK: 過去日時防止ロジック存在
+
+注意項目:
+- ATTENTION: 重複防止はWorker側依存の可能性。NEXT-3前にAPI実査が必要
+- ATTENTION: セキュリティ注意: 公開系画面に管理コード1234の表示が含まれる
+- ATTENTION: セキュリティ注意: 公開系画面から管理系リンクが参照される: admin.html, staff.html, system-check.html
+- ATTENTION: セキュリティ注意: 公開系画面に管理コード1234の表示が含まれる
+- ATTENTION: セキュリティ注意: 公開系画面から管理系リンクが参照される: admin.html, staff.html, system-check.html
+- ATTENTION: セキュリティ注意: 管理コードが画面本文へ固定表示される
+- ATTENTION: セキュリティ注意: URLクエリへadmin_keyを付与する記述がある
+- ATTENTION: セキュリティ注意: 管理コードが画面本文へ固定表示される
+- ATTENTION: セキュリティ注意: 管理コードが画面本文へ固定表示される
+- ATTENTION: セキュリティ注意: 管理コードが画面本文へ固定表示される
+- ATTENTION: セキュリティ注意: URLクエリへadmin_keyを付与する記述がある
+- ATTENTION: 画面STEP表記が複数存在: ESTHE-12C, ESTHE-16, ESTHE-7, ESTHE-9-R1
+
+NG項目:
+
+変更記録:
+- Worker: 変更なし
+- Supabase: 変更なし
+- API: 変更なし
+- 既存HTML/JavaScript: 変更なし
+- 追加: .dpro-next基準台帳のみ
+
+次STEP: ESTHE-NEXT-2

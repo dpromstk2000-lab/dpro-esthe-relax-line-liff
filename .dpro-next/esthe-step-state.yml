@@ -1,0 +1,12 @@
+schema_version: 1
+system: "DPRO エステ LINE"
+current_step: "ESTHE-NEXT-1-COMPLETE"
+next_step: "ESTHE-NEXT-2"
+updated_at_jst: "2026-07-23T16:46:20+09:00"
+source_commit: "05b6f12116849ebad51ab6df097459b31714acb3"
+backup_tag: "backup-esthe-before-next-20260723"
+result: "ATTENTION"
+changes:
+  worker: false
+  supabase: false
+  api: false

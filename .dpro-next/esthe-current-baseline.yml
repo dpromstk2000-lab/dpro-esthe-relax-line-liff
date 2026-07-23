@@ -1,0 +1,55 @@
+schema_version: 1
+system: "DPRO エステ LINE"
+step_name: "ESTHE-NEXT-1"
+current_step: "ESTHE-NEXT-1-COMPLETE"
+next_step: "ESTHE-NEXT-2"
+completed_at_jst: "2026-07-23T16:46:20+09:00"
+repository: "dpromstk2000-lab/dpro-esthe-relax-line-liff"
+branch: "main"
+source_commit: "05b6f12116849ebad51ab6df097459b31714acb3"
+backup:
+  tag: "backup-esthe-before-next-20260723"
+  rollback_method: "バックアップタグから対象ファイルを復元し、通常のCommit/Pushでmainへ戻す"
+pre_step_check:
+  status: "OK"
+  detail: "NEXT-1 is the initial NEXT step; no predecessor is required."
+change_record:
+  summary: "正常版保護、現状ファイル台帳、SHA256、API基準、セキュリティ注意点、STEP状態を.dpro-nextへ保存"
+  worker_changed: false
+  supabase_changed: false
+  api_changed: false
+validation:
+  overall: "ATTENTION"
+  ok_count: 36
+  attention_count: 12
+  ng_count: 0
+  html_files_checked: 7
+  html_id_files_checked: 7
+  javascript_units_checked: 7
+  inline_scripts_checked: 7
+  yaml_files_checked: 1
+  tracked_file_count: 7
+target_files:
+  - "admin.html"
+  - "index-brush.html"
+  - "index.html"
+  - "member.html"
+  - "owner.html"
+  - "staff.html"
+  - "system-check.html"
+known_risks:
+  - "重複防止はWorker側依存の可能性。NEXT-3前にAPI実査が必要"
+  - "セキュリティ注意: 公開系画面に管理コード1234の表示が含まれる"
+  - "セキュリティ注意: 公開系画面から管理系リンクが参照される: admin.html, staff.html, system-check.html"
+  - "セキュリティ注意: 公開系画面に管理コード1234の表示が含まれる"
+  - "セキュリティ注意: 公開系画面から管理系リンクが参照される: admin.html, staff.html, system-check.html"
+  - "セキュリティ注意: 管理コードが画面本文へ固定表示される"
+  - "セキュリティ注意: URLクエリへadmin_keyを付与する記述がある"
+  - "セキュリティ注意: 管理コードが画面本文へ固定表示される"
+  - "セキュリティ注意: 管理コードが画面本文へ固定表示される"
+  - "セキュリティ注意: 管理コードが画面本文へ固定表示される"
+  - "セキュリティ注意: URLクエリへadmin_keyを付与する記述がある"
+  - "画面STEP表記が複数存在: ESTHE-12C, ESTHE-16, ESTHE-7, ESTHE-9-R1"
+next_action:
+  step: "ESTHE-NEXT-2"
+  purpose: "公開画面の管理情報分離とPCオーナー画面の今日やること整理"

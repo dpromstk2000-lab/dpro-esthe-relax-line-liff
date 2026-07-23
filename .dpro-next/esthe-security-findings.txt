@@ -1,0 +1,19 @@
+DPRO エステ LINE / ESTHE-NEXT-1 セキュリティ静的検査
+検査基準Commit: 05b6f12116849ebad51ab6df097459b31714acb3
+作成日時JST: 2026-07-23T16:46:20+09:00
+
+ATTENTION	index-brush.html	公開系画面に管理コード1234の表示が含まれる
+ATTENTION	index-brush.html	公開系画面から管理系リンクが参照される: admin.html, staff.html, system-check.html
+ATTENTION	member.html	公開系画面に管理コード1234の表示が含まれる
+ATTENTION	member.html	公開系画面から管理系リンクが参照される: admin.html, staff.html, system-check.html
+ATTENTION	owner.html	管理コードが画面本文へ固定表示される
+ATTENTION	owner.html	URLクエリへadmin_keyを付与する記述がある
+ATTENTION	admin.html	管理コードが画面本文へ固定表示される
+ATTENTION	staff.html	管理コードが画面本文へ固定表示される
+ATTENTION	system-check.html	管理コードが画面本文へ固定表示される
+ATTENTION	system-check.html	URLクエリへadmin_keyを付与する記述がある
+
+対応方針:
+- NEXT-2で公開画面から管理コード表示と管理系リンクを分離する。
+- 管理コードをURLへ固定付与せず、管理画面内で入力・削除できる方式へ整理する。
+- NEXT-1では既存画面を変更しない。
