@@ -1,0 +1,1589 @@
+# DPRO エステ LINE
+# STEP名: ESTHE-NEXT-2-R3
+#
+# 対象ファイル:
+# - index.html
+# - index-brush.html
+# - member.html
+# - owner.html
+# - admin.html
+# - staff.html
+# - system-check.html
+# - .dpro-next/esthe-step-state.yml
+#
+# 実施する変更:
+# - 公開画面から管理コード表示・管理画面リンク・内部確認情報を分離
+# - 管理画面のコードをsessionStorageへ一時保存し、削除ボタンを常設
+# - admin_keyのURL付与を廃止し、既存Worker対応済みのx-admin-secretヘッダーへ統一
+# - owner.htmlの「今日やること」を優先度・状態・期限順に再構成
+# - 初期取得は既存/api/admin/dayのままとし、新しい全件取得を追加しない
+# - 主要画面へSTEP ESTHE-NEXT-2マーカーを付与
+#
+# 追加・修正する機能:
+# - 管理コード入力・設定・削除
+# - 管理コード未入力時の安全停止
+# - 会計待ち、来店済み、施術中、まもなく来店、予約、期限フォローの優先表示
+# - 今日やることから対象予約へ移動、フォロー画面へ移動
+#
+# 変更前バックアップタグ:
+# - backup-esthe-before-next2-YYYYMMDD
+#
+# 前STEP完了確認:
+# - current_step: ESTHE-NEXT-1-COMPLETE
+# - next_step: ESTHE-NEXT-2
+#
+# 自動検査:
+# - HTML / JavaScript / YML構文
+# - HTML ID重複
+# - 既存機能維持
+# - エステ進捗ロジック
+# - 公開画面への管理情報混入
+# - 管理コード入力・削除ボタン
+# - admin_key URL付与の残存
+# - x-admin-secretヘッダー対応
+# - Workerヘッダー認証互換性
+# - 公開URL
+#
+# Worker変更: なし
+# Supabase変更: なし
+# API変更: なし（既存認証方法の利用方法のみ変更）
+#
+# 次のSTEP:
+# - ESTHE-NEXT-3
+#
+# R3修正内容:
+# - 初版: member.htmlの「確認URL」パネルでcount=0、安全停止
+# - R2: member.html修正後、owner.htmlの「今日やること」aside全体置換でcount=0、安全停止
+# - R3: owner.htmlの「今日やること」「確認URL」を見出し＋div階層で個別特定
+# - 初版・R2とも画面ファイル・台帳はCommitされていないため正常版から再実行
+#
+# 成功後:
+# - 台帳更新
+# - 自動Commit / Push
+# - このYML自身を削除
+
+name: "DPRO ESTHE NEXT-2-R3 - Owner Today and Admin Separation"
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/ESTHE-NEXT-2-R3.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: "dpro-esthe-next"
+  cancel-in-progress: false
+
+env:
+  STEP_NAME: "ESTHE-NEXT-2"
+  SYSTEM_NAME: "DPRO エステ LINE"
+  WORKFLOW_FILE: ".github/workflows/ESTHE-NEXT-2-R3.yml"
+  EXPECTED_PREVIOUS_STEP: "ESTHE-NEXT-1-COMPLETE"
+  EXPECTED_CURRENT_NEXT: "ESTHE-NEXT-2"
+  CURRENT_STEP_AFTER_SUCCESS: "ESTHE-NEXT-2-COMPLETE"
+  NEXT_STEP_AFTER_SUCCESS: "ESTHE-NEXT-3"
+  BACKUP_TAG_PREFIX: "backup-esthe-before-next2-r3"
+  API_BASE: "https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev"
+  PAGES_BASE: "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff"
+  SHOP_CODE: "esthe_demo_default"
+  WORKER_CHANGED: "false"
+  SUPABASE_CHANGED: "false"
+  API_CHANGED: "false"
+
+jobs:
+  esthe-next-2:
+    name: "Apply ESTHE NEXT-2 safely"
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: "Checkout repository with history"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: "Configure Git identity"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name "DPRO NEXT Actions"
+          git config user.email "actions@users.noreply.github.com"
+
+      - name: "Confirm ESTHE-NEXT-1 completion"
+        id: precheck
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          STATE_FILE=".dpro-next/esthe-step-state.yml"
+          test -f "$STATE_FILE"
+
+          CURRENT_STEP="$(awk -F': *' '/^current_step:/{gsub(/["'"'"']/, "", $2); print $2; exit}' "$STATE_FILE")"
+          NEXT_STEP="$(awk -F': *' '/^next_step:/{gsub(/["'"'"']/, "", $2); print $2; exit}' "$STATE_FILE")"
+
+          if [[ "$CURRENT_STEP" != "$EXPECTED_PREVIOUS_STEP" ]]; then
+            echo "::error::前STEP未完了です。current_step=$CURRENT_STEP / expected=$EXPECTED_PREVIOUS_STEP"
+            exit 1
+          fi
+
+          if [[ "$NEXT_STEP" != "$EXPECTED_CURRENT_NEXT" ]]; then
+            echo "::error::実行対象STEPが一致しません。next_step=$NEXT_STEP / expected=$EXPECTED_CURRENT_NEXT"
+            exit 1
+          fi
+
+          echo "### 前STEP完了確認" >> "$GITHUB_STEP_SUMMARY"
+          echo "- current_step: \`$CURRENT_STEP\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- next_step: \`$NEXT_STEP\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- 判定: **OK**" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: "Confirm Worker supports header-based admin access"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          URL="${API_BASE}/api/admin/system-check?shop_code=${SHOP_CODE}"
+          HTTP_CODE="$(curl -L -sS --retry 3 --retry-delay 2 \
+            --connect-timeout 10 --max-time 45 \
+            -H "Accept: application/json" \
+            -H "x-admin-secret: 1234" \
+            -o /tmp/esthe-next2-admin-check.json \
+            -w "%{http_code}" \
+            "$URL")"
+
+          if [[ ! "$HTTP_CODE" =~ ^2 ]]; then
+            echo "::error::x-admin-secretヘッダーで管理APIを確認できません。HTTP $HTTP_CODE"
+            cat /tmp/esthe-next2-admin-check.json || true
+            exit 1
+          fi
+
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          data = json.loads(Path("/tmp/esthe-next2-admin-check.json").read_text(encoding="utf-8"))
+          if data.get("ok") is not True:
+              raise SystemExit("Worker system-check returned ok=false")
+          print("Worker header authentication compatibility: OK")
+          print("Worker version:", data.get("version", "-"))
+          PY
+
+          echo "### Worker認証互換性" >> "$GITHUB_STEP_SUMMARY"
+          echo "- x-admin-secret: **利用可能**" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Worker差し替え: **不要**" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: "Create change-before backup tag"
+        id: backup
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          CHANGE_BEFORE_SHA="$GITHUB_SHA"
+          mapfile -t HEAD_FILES < <(git diff-tree --no-commit-id --name-only -r "$GITHUB_SHA")
+
+          if [[ "${#HEAD_FILES[@]}" -eq 1 && "${HEAD_FILES[0]}" == "$WORKFLOW_FILE" ]]; then
+            CHANGE_BEFORE_SHA="$(git rev-parse "${GITHUB_SHA}^")"
+          fi
+
+          JST_DATE="$(TZ=Asia/Tokyo date +%Y%m%d)"
+          BASE_TAG="${BACKUP_TAG_PREFIX}-${JST_DATE}"
+          BACKUP_TAG="$BASE_TAG"
+
+          if git ls-remote --exit-code --tags origin "refs/tags/$BACKUP_TAG" >/dev/null 2>&1; then
+            BACKUP_TAG="${BASE_TAG}-run-${GITHUB_RUN_ID}"
+          fi
+
+          git tag -a "$BACKUP_TAG" "$CHANGE_BEFORE_SHA" \
+            -m "DPRO ESTHE before NEXT-2: $CHANGE_BEFORE_SHA"
+          git push origin "refs/tags/$BACKUP_TAG"
+
+          {
+            echo "CHANGE_BEFORE_SHA=$CHANGE_BEFORE_SHA"
+            echo "BACKUP_TAG=$BACKUP_TAG"
+          } >> "$GITHUB_ENV"
+
+          echo "### 変更前バックアップ" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Commit: \`$CHANGE_BEFORE_SHA\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Tag: \`$BACKUP_TAG\`" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: "Apply NEXT-2 changes"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          python3 <<'PY'
+          from __future__ import annotations
+
+          import datetime as dt
+          import json
+          import re
+          from pathlib import Path
+          from typing import Dict, List
+
+          ROOT = Path(".")
+          STEP_MARKER = "<!-- STEP ESTHE-NEXT-2 -->"
+          MANAGER_FILES = ["owner.html", "admin.html", "staff.html", "system-check.html"]
+          PUBLIC_FILES = ["index.html", "index-brush.html", "member.html"]
+          ALL_FILES = PUBLIC_FILES + MANAGER_FILES
+          changed: List[str] = []
+
+          def read(path: str) -> str:
+              p = ROOT / path
+              if not p.exists():
+                  raise RuntimeError(f"対象ファイルがありません: {path}")
+              return p.read_text(encoding="utf-8")
+
+          def write(path: str, text: str) -> None:
+              if not text.endswith("\n"):
+                  text += "\n"
+              (ROOT / path).write_text(text, encoding="utf-8")
+              if path not in changed:
+                  changed.append(path)
+
+          def replace_once(text: str, old: str, new: str, label: str) -> str:
+              count = text.count(old)
+              if count != 1:
+                  raise RuntimeError(f"{label}: 置換対象が1件ではありません count={count}")
+              return text.replace(old, new, 1)
+
+          def regex_once(text: str, pattern: str, replacement: str, label: str, flags=0) -> str:
+              result, count = re.subn(pattern, replacement, text, count=1, flags=flags)
+              if count != 1:
+                  raise RuntimeError(f"{label}: 正規表現置換対象が1件ではありません count={count}")
+              return result
+
+          def replace_panel_by_heading(text: str, heading: str, replacement: str, label: str) -> str:
+              marker = f"<h2>{heading}</h2>"
+              marker_count = text.count(marker)
+              if marker_count != 1:
+                  raise RuntimeError(f"{label}: 見出しが1件ではありません count={marker_count}")
+
+              heading_pos = text.find(marker)
+              panel_start = text.rfind('<div class="panel">', 0, heading_pos)
+              if panel_start < 0:
+                  raise RuntimeError(f"{label}: 外側panel開始位置を特定できません")
+
+              depth = 0
+              panel_end = -1
+              for match in re.finditer(r"</?div\b[^>]*>", text[panel_start:], flags=re.IGNORECASE):
+                  tag = match.group(0).lower()
+                  if tag.startswith("</div"):
+                      depth -= 1
+                      if depth == 0:
+                          panel_end = panel_start + match.end()
+                          break
+                  else:
+                      depth += 1
+
+              if panel_end < 0:
+                  raise RuntimeError(f"{label}: 外側panel終了位置を特定できません")
+
+              target = text[panel_start:panel_end]
+              if marker not in target:
+                  raise RuntimeError(f"{label}: 特定したpanel内に見出しがありません")
+
+              return text[:panel_start] + replacement.strip() + text[panel_end:]
+
+          def ensure_step_marker(text: str) -> str:
+              if STEP_MARKER in text:
+                  return text
+              return regex_once(
+                  text,
+                  r"(<!doctype\s+html\s*>\s*)",
+                  r"\1" + STEP_MARKER + "\n",
+                  "STEPマーカー追加",
+                  re.IGNORECASE,
+              )
+
+          ADMIN_CSS = r"""
+          /* DPRO NEXT-2: 管理コード入力・削除 */
+          .dpro-admin-access{
+            margin:0 0 18px;
+            padding:16px 18px;
+            border:1px solid var(--line);
+            border-radius:20px;
+            background:rgba(255,255,255,.96);
+            box-shadow:0 10px 28px rgba(88,55,46,.07);
+          }
+          .dpro-admin-head{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            flex-wrap:wrap;
+          }
+          .dpro-admin-title{font-size:16px;font-weight:1000;color:var(--main)}
+          .dpro-admin-status{
+            display:inline-flex;
+            align-items:center;
+            min-height:30px;
+            padding:6px 10px;
+            border-radius:999px;
+            background:#fff6df;
+            border:1px solid #efd49e;
+            color:#8d600d;
+            font-size:12px;
+            font-weight:950;
+          }
+          .dpro-admin-status.ok{
+            background:#e8f8f1;
+            border-color:#bce9d8;
+            color:#087a59;
+          }
+          .dpro-admin-controls{
+            display:grid;
+            grid-template-columns:minmax(180px,1fr) auto auto;
+            gap:9px;
+            margin-top:12px;
+          }
+          .dpro-admin-controls input{
+            width:100%;
+            min-height:46px;
+            border:1px solid var(--line);
+            border-radius:14px;
+            background:#fff;
+            color:var(--text,var(--ink,#2d211f));
+            padding:11px 13px;
+            font-size:16px;
+            font-weight:900;
+          }
+          .dpro-admin-button{
+            min-height:46px;
+            border:1px solid var(--line);
+            border-radius:14px;
+            padding:10px 15px;
+            background:var(--main);
+            color:#fff;
+            font-weight:950;
+            cursor:pointer;
+          }
+          .dpro-admin-button.clear{
+            background:#fff;
+            color:var(--danger,var(--bad,#b33a3a));
+          }
+          .dpro-admin-help{
+            margin:9px 0 0;
+            color:var(--muted);
+            font-size:12px;
+            line-height:1.65;
+            font-weight:750;
+          }
+          @media(max-width:680px){
+            .dpro-admin-controls{grid-template-columns:1fr}
+            .dpro-admin-button{width:100%}
+          }
+          """
+
+          ADMIN_HTML = r"""
+          <section class="dpro-admin-access" id="dproAdminAccess" aria-label="管理コード">
+            <div class="dpro-admin-head">
+              <div class="dpro-admin-title">管理画面の接続</div>
+              <span class="dpro-admin-status" id="dproAdminStatus">管理コード未入力</span>
+            </div>
+            <div class="dpro-admin-controls">
+              <input id="dproAdminCode" type="password" inputmode="numeric"
+                autocomplete="current-password" placeholder="管理コードを入力">
+              <button class="dpro-admin-button" id="dproAdminSave" type="button">管理コードを設定</button>
+              <button class="dpro-admin-button clear" id="dproAdminClear" type="button">管理コードを削除</button>
+            </div>
+            <p class="dpro-admin-help">
+              管理コードはこのタブの一時領域だけに保存します。共有端末では操作後に「管理コードを削除」を押してください。
+            </p>
+          </section>
+          """
+
+          ADMIN_JS = r"""
+          function dproAdminStatusMessage(message, ok=false){
+            const status = document.getElementById("dproAdminStatus");
+            if(!status) return;
+            status.textContent = message;
+            status.classList.toggle("ok", ok);
+          }
+
+          function dproRequireAdminCode(){
+            if(!ADMIN_KEY){
+              throw new Error("管理コードを入力し、「管理コードを設定」を押してください。");
+            }
+          }
+
+          function dproInitAdminAccess(){
+            const input = document.getElementById("dproAdminCode");
+            const save = document.getElementById("dproAdminSave");
+            const clear = document.getElementById("dproAdminClear");
+            if(!input || !save || !clear) return;
+
+            if(ADMIN_KEY && ADMIN_KEY !== DEMO_ADMIN_CODE){
+              sessionStorage.removeItem(ADMIN_STORAGE_KEY);
+              ADMIN_KEY = "";
+            }
+
+            if(ADMIN_KEY){
+              input.value = "";
+              input.placeholder = "管理コード設定済み";
+              dproAdminStatusMessage("管理コード設定済み", true);
+            }else{
+              dproAdminStatusMessage("管理コード未入力", false);
+            }
+
+            save.addEventListener("click", () => {
+              const value = String(input.value || "").trim();
+              if(!value){
+                dproAdminStatusMessage("管理コードを入力してください", false);
+                input.focus();
+                return;
+              }
+              if(value !== DEMO_ADMIN_CODE){
+                dproAdminStatusMessage("管理コードが違います", false);
+                input.select();
+                return;
+              }
+              sessionStorage.setItem(ADMIN_STORAGE_KEY, value);
+              ADMIN_KEY = value;
+              dproAdminStatusMessage("管理コード設定済み", true);
+              window.location.reload();
+            });
+
+            clear.addEventListener("click", () => {
+              sessionStorage.removeItem(ADMIN_STORAGE_KEY);
+              ADMIN_KEY = "";
+              input.value = "";
+              input.placeholder = "管理コードを入力";
+              dproAdminStatusMessage("管理コードを削除しました", false);
+              window.location.reload();
+            });
+
+            input.addEventListener("keydown", (event) => {
+              if(event.key === "Enter") save.click();
+            });
+          }
+
+          document.addEventListener("DOMContentLoaded", dproInitAdminAccess);
+          """
+
+          def add_admin_gate(path: str, nav_class: str) -> None:
+              text = read(path)
+              text = ensure_step_marker(text)
+
+              # 固定表示された管理コードを削除
+              text = re.sub(
+                  r"\s*<span>\s*管理コード\s*[：:]\s*1234\s*</span>",
+                  "",
+                  text,
+                  flags=re.IGNORECASE,
+              )
+
+              # CSS追加
+              if "DPRO NEXT-2: 管理コード入力・削除" not in text:
+                  text = replace_once(
+                      text,
+                      "</style>",
+                      ADMIN_CSS + "\n</style>",
+                      f"{path}: 管理コードCSS",
+                  )
+
+              # ナビゲーション直後に入力欄追加
+              if 'id="dproAdminAccess"' not in text:
+                  nav_pattern = rf'(<div\s+class="{re.escape(nav_class)}"[^>]*>.*?</div>)'
+                  text = regex_once(
+                      text,
+                      nav_pattern,
+                      r"\1\n" + ADMIN_HTML,
+                      f"{path}: 管理コード入力欄",
+                      re.DOTALL | re.IGNORECASE,
+                  )
+
+              # 固定ADMIN_KEYをsessionStorage方式へ変更
+              text, count = re.subn(
+                  r"""const\s+ADMIN_KEY\s*=\s*["']1234["'];""",
+                  'const ADMIN_STORAGE_KEY = "dpro_esthe_admin_secret";\n'
+                  'const DEMO_ADMIN_CODE = "1234";\n'
+                  'let ADMIN_KEY = sessionStorage.getItem(ADMIN_STORAGE_KEY) || "";',
+                  text,
+                  count=1,
+              )
+              if count != 1:
+                  raise RuntimeError(f"{path}: ADMIN_KEY置換対象が1件ではありません count={count}")
+
+              # 共通JS追加
+              if "function dproInitAdminAccess()" not in text:
+                  dollar_pattern = r'(const\s+\$\s*=\s*\(id\)\s*=>\s*document\.getElementById\(id\);)'
+                  text = regex_once(
+                      text,
+                      dollar_pattern,
+                      r"\1\n\n" + ADMIN_JS,
+                      f"{path}: 管理コードJS",
+                  )
+
+              write(path, text)
+
+          # ---------- 公開画面の管理情報分離 ----------
+          index = ensure_step_marker(read("index.html"))
+          index = re.sub(
+              r'<div class="version">.*?</div>',
+              '<div class="version">LINE予約｜かんたん予約</div>',
+              index,
+              count=1,
+              flags=re.DOTALL,
+          )
+          index = re.sub(
+              r'<div class="dev-note">.*?</div>',
+              '<div class="dev-note">ご予約内容は送信前の確認画面で確認できます。</div>',
+              index,
+              count=1,
+              flags=re.DOTALL,
+          )
+          index = re.sub(
+              r"const\s+VERSION\s*=\s*['\"][^'\"]+['\"];",
+              "const VERSION = 'ESTHE-NEXT-2-PUBLIC-SIMPLE-20260723';",
+              index,
+              count=1,
+          )
+          write("index.html", index)
+
+          brush = ensure_step_marker(read("index-brush.html"))
+          brush = re.sub(
+              r'<div class="badge">.*?index-brush\.html</div>',
+              '<div class="badge">LINE予約・会員確認</div>',
+              brush,
+              count=1,
+              flags=re.DOTALL | re.IGNORECASE,
+          )
+          brush = re.sub(
+              r"\s*<span>\s*管理コード\s*[：:]\s*1234\s*</span>",
+              "",
+              brush,
+              flags=re.IGNORECASE,
+          )
+          brush = re.sub(
+              r'\s*<a\b[^>]*href=["\'][^"\']*(?:admin|owner|staff|system-check)\.html[^"\']*["\'][^>]*>.*?</a>',
+              "",
+              brush,
+              flags=re.DOTALL | re.IGNORECASE,
+          )
+          brush = regex_once(
+              brush,
+              r'(<a class="btn" href="index\.html">シンプル予約へ</a>)',
+              r'\1\n      <a class="btn" href="member.html">予約・履歴を確認</a>',
+              "index-brush.html: 公開ナビゲーション",
+          )
+          brush = re.sub(
+              r'const\s+VERSION\s*=\s*["\'][^"\']+["\'];',
+              'const VERSION = "ESTHE-NEXT-2-PUBLIC-BRUSH-20260723";',
+              brush,
+              count=1,
+          )
+          write("index-brush.html", brush)
+
+          member = ensure_step_marker(read("member.html"))
+          member = re.sub(
+              r'<div class="badge">.*?member\.html</div>',
+              '<div class="badge">LINE会員ページ</div>',
+              member,
+              count=1,
+              flags=re.DOTALL | re.IGNORECASE,
+          )
+          member = re.sub(
+              r"\s*<span>\s*管理コード\s*[：:]\s*1234\s*</span>",
+              "",
+              member,
+              flags=re.IGNORECASE,
+          )
+          member = re.sub(
+              r'\s*<a\b[^>]*href=["\'][^"\']*(?:admin|owner|staff|system-check)\.html[^"\']*["\'][^>]*>.*?</a>',
+              "",
+              member,
+              flags=re.DOTALL | re.IGNORECASE,
+          )
+          member = replace_panel_by_heading(
+              member,
+              "確認URL",
+              """
+              <div class="panel">
+                <h2>ご利用案内</h2>
+                <p class="sub">次回予約、回数券残数、来店履歴はこのページから確認できます。</p>
+                <a class="btn primary" href="index-brush.html">新しい予約へ進む</a>
+              </div>
+              """,
+              "member.html: 内部確認URLパネル分離",
+          )
+          member = re.sub(
+              r'const\s+VERSION\s*=\s*["\'][^"\']+["\'];',
+              'const VERSION = "ESTHE-NEXT-2-MEMBER-20260723";',
+              member,
+              count=1,
+          )
+          write("member.html", member)
+
+          # ---------- 管理画面の管理コード方式 ----------
+          add_admin_gate("owner.html", "topnav")
+          add_admin_gate("admin.html", "topActions")
+          add_admin_gate("staff.html", "toolbar")
+          add_admin_gate("system-check.html", "top-actions")
+
+          # owner.html: admin_keyクエリを廃止しヘッダーへ統一
+          owner = read("owner.html")
+          owner = regex_once(
+              owner,
+              r"""if\(url\.pathname\.startsWith\("/api/admin/"\)\)\{\s*
+                    url\.searchParams\.set\("admin_key",\s*ADMIN_KEY\);\s*
+                  \}""",
+              """if(url.pathname.startsWith("/api/admin/")){
+                dproRequireAdminCode();
+              }""",
+              "owner.html: admin_key URL廃止",
+              re.DOTALL | re.VERBOSE,
+          )
+          owner = replace_once(
+              owner,
+              'headers: {"Accept":"application/json","Content-Type":"application/json",...(options.headers || {})},',
+              'headers: {"Accept":"application/json","Content-Type":"application/json","x-admin-secret":ADMIN_KEY,...(options.headers || {})},',
+              "owner.html: x-admin-secret",
+          )
+          owner = re.sub(
+              r'<div class="badge">.*?owner\.html</div>',
+              '<div class="badge">STEP ESTHE-NEXT-2｜PCオーナー管理</div>',
+              owner,
+              count=1,
+              flags=re.DOTALL | re.IGNORECASE,
+          )
+          owner = re.sub(
+              r'const\s+VERSION\s*=\s*["\'][^"\']+["\'];',
+              'const VERSION = "ESTHE-NEXT-2-OWNER-TODAY-20260723";',
+              owner,
+              count=1,
+          )
+
+          OWNER_TODO_CSS = r"""
+          /* DPRO NEXT-2: 今日やること優先表示 */
+          .todo-summary{
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:8px;
+            margin:0 0 12px;
+          }
+          .todo-summary-item{
+            border:1px solid var(--line);
+            border-radius:15px;
+            background:var(--soft);
+            padding:10px;
+            text-align:center;
+          }
+          .todo-summary-item strong{
+            display:block;
+            color:var(--main);
+            font-size:22px;
+            line-height:1;
+          }
+          .todo-summary-item span{
+            display:block;
+            margin-top:5px;
+            color:var(--muted);
+            font-size:11px;
+            font-weight:900;
+          }
+          .todo-priority{
+            border:1px solid var(--line);
+            border-left:6px solid var(--main);
+            border-radius:17px;
+            background:#fff;
+            padding:13px 14px;
+          }
+          .todo-priority.p1{border-left-color:var(--danger);background:#fff5f5}
+          .todo-priority.p2{border-left-color:var(--warn);background:#fff9ec}
+          .todo-priority.p3{border-left-color:var(--accent);background:#f2fbf7}
+          .todo-priority.p4{border-left-color:var(--main2);background:#fff}
+          .todo-priority-head{
+            display:flex;
+            align-items:flex-start;
+            justify-content:space-between;
+            gap:10px;
+          }
+          .todo-priority-title{font-weight:1000;line-height:1.4}
+          .todo-priority-meta{
+            margin-top:5px;
+            color:var(--muted);
+            font-size:12px;
+            font-weight:800;
+            line-height:1.6;
+          }
+          .todo-priority-label{
+            flex:0 0 auto;
+            border-radius:999px;
+            padding:5px 8px;
+            background:#fff;
+            border:1px solid var(--line);
+            color:var(--main);
+            font-size:11px;
+            font-weight:950;
+          }
+          .todo-priority-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+          @media(max-width:640px){
+            .todo-summary{grid-template-columns:1fr 1fr 1fr}
+          }
+          """
+          if "DPRO NEXT-2: 今日やること優先表示" not in owner:
+              owner = replace_once(
+                  owner,
+                  "</style>",
+                  OWNER_TODO_CSS + "\n</style>",
+                  "owner.html: 今日やることCSS",
+              )
+
+          owner = replace_panel_by_heading(
+              owner,
+              "今日やること",
+              """
+              <div class="panel">
+                <h2>今日やること</h2>
+                <p class="sub">緊急度と進行状況の順に表示します。最初にここを確認してください。</p>
+                <div id="todoSummary" class="todo-summary"></div>
+                <div id="todoList" class="list"></div>
+              </div>
+              """,
+              "owner.html: 今日やることパネル",
+          )
+
+          owner = replace_panel_by_heading(
+              owner,
+              "確認URL",
+              """
+              <div class="panel">
+                <h2>今日の基本操作</h2>
+                <div class="list">
+                  <div class="mini-card"><b>1．対象のお客様を確認</b><div class="card-meta">今日やることから予約へ移動します。</div></div>
+                  <div class="mini-card"><b>2．進捗を変更</b><div class="card-meta">来店済み・施術中・会計待ち・完了を選びます。</div></div>
+                  <div class="mini-card"><b>3．必要な時だけ詳細</b><div class="card-meta">カルテ、回数券、フォローは必要な時だけ開きます。</div></div>
+                </div>
+              </div>
+              """,
+              "owner.html: 内部確認URLパネル分離",
+          )
+
+          owner = replace_once(
+              owner,
+              '<div class="reservation-card ${r.status !== "cancelled" ? "next" : ""}">',
+              '<div id="${source}-reservation-${idx}" class="reservation-card ${r.status !== "cancelled" ? "next" : ""}">',
+              "owner.html: 予約カードID",
+          )
+
+          NEW_RENDER_TODAY = r"""
+          function renderToday(){
+            const rows = state.day?.reservations || [];
+            $("todayList").innerHTML = rows.length
+              ? rows.map((r,i)=>renderReservationCard(r,i,"day")).join("")
+              : `<div class="notice">この日の予約はありません。</div>`;
+
+            const followups = (state.day?.followups || []).filter(f => f.status !== "done");
+            const nowParts = new Intl.DateTimeFormat("ja-JP", {
+              timeZone:"Asia/Tokyo",
+              hour:"2-digit",
+              minute:"2-digit",
+              hour12:false
+            }).formatToParts(new Date()).reduce((a,p)=>{a[p.type]=p.value;return a;},{});
+            const nowMinutes = Number(nowParts.hour || 0) * 60 + Number(nowParts.minute || 0);
+            const actualToday = state.today === jstDate();
+            const tasks = [];
+
+            rows.forEach((r, index) => {
+              if(["completed","cancelled","no_show"].includes(r.status)) return;
+              const p = isoParts(r.start_at);
+              const [hour, minute] = String(p.time || "00:00").split(":").map(Number);
+              const startMinutes = (Number(hour) || 0) * 60 + (Number(minute) || 0);
+              const untilStart = startMinutes - nowMinutes;
+
+              let priority = 4;
+              let label = "本日の予約";
+
+              if(r.status === "waiting_payment"){
+                priority = 1;
+                label = "会計待ち";
+              }else if(r.status === "checked_in"){
+                priority = 1;
+                label = "来店済み・施術待ち";
+              }else if(r.status === "in_treatment"){
+                priority = 2;
+                label = "施術中";
+              }else if(r.status === "reserved" && actualToday && untilStart <= 60 && untilStart >= -30){
+                priority = 2;
+                label = untilStart >= 0 ? "まもなく来店" : "来店確認";
+              }
+
+              tasks.push({
+                priority,
+                sortTime:startMinutes,
+                html:`
+                  <div class="todo-priority p${priority}">
+                    <div class="todo-priority-head">
+                      <div>
+                        <div class="todo-priority-title">${escapeHtml(p.time || "-")} ${escapeHtml(r.customer_name || "お客様")}</div>
+                        <div class="todo-priority-meta">${escapeHtml(r.menu_name || "-")} / ${escapeHtml(r.staff_name || "指名なし")} / ${escapeHtml(statusLabel(r.status))}</div>
+                      </div>
+                      <span class="todo-priority-label">${escapeHtml(label)}</span>
+                    </div>
+                    <div class="todo-priority-actions">
+                      <button class="mini primary" type="button" data-todo-reservation="${index}">予約を確認</button>
+                    </div>
+                  </div>
+                `
+              });
+            });
+
+            followups.forEach((f) => {
+              const due = String(f.due_date || "");
+              const dueTodayOrPast = !due || due <= state.today;
+              tasks.push({
+                priority:dueTodayOrPast ? 3 : 4,
+                sortTime:1440,
+                html:`
+                  <div class="todo-priority p${dueTodayOrPast ? 3 : 4}">
+                    <div class="todo-priority-head">
+                      <div>
+                        <div class="todo-priority-title">${escapeHtml(f.customer_name || "お客様")}｜${escapeHtml(f.title || f.followup_type || "フォロー")}</div>
+                        <div class="todo-priority-meta">期限 ${escapeHtml(due || "-")} / ${escapeHtml(f.status || "未対応")}</div>
+                      </div>
+                      <span class="todo-priority-label">${dueTodayOrPast ? "期限フォロー" : "予定フォロー"}</span>
+                    </div>
+                    <div class="todo-priority-actions">
+                      <button class="mini" type="button" data-open-followups="1">フォローを開く</button>
+                    </div>
+                  </div>
+                `
+              });
+            });
+
+            tasks.sort((a,b) => a.priority - b.priority || a.sortTime - b.sortTime);
+
+            const urgentCount = tasks.filter(t => t.priority === 1).length;
+            const progressCount = rows.filter(r => ["checked_in","in_treatment","waiting_payment"].includes(r.status)).length;
+            const followCount = followups.length;
+
+            $("todoSummary").innerHTML = `
+              <div class="todo-summary-item"><strong>${urgentCount}</strong><span>優先対応</span></div>
+              <div class="todo-summary-item"><strong>${progressCount}</strong><span>進行中</span></div>
+              <div class="todo-summary-item"><strong>${followCount}</strong><span>フォロー</span></div>
+            `;
+
+            const visibleTasks = tasks.slice(0, 10);
+            const remaining = Math.max(0, tasks.length - visibleTasks.length);
+            $("todoList").innerHTML = visibleTasks.length
+              ? visibleTasks.map(t => t.html).join("") +
+                (remaining ? `<div class="notice">${remaining}件は各一覧画面で確認できます。</div>` : "")
+              : `<div class="notice ok">今日の優先対応はありません。</div>`;
+
+            $("todoList").querySelectorAll("[data-todo-reservation]").forEach(button => {
+              button.addEventListener("click", () => {
+                const target = document.getElementById(`day-reservation-${button.dataset.todoReservation}`);
+                if(target){
+                  target.scrollIntoView({behavior:"smooth", block:"center"});
+                  target.focus?.({preventScroll:true});
+                }
+              });
+            });
+
+            $("todoList").querySelectorAll("[data-open-followups]").forEach(button => {
+              button.addEventListener("click", async () => {
+                setTab("followups");
+                await loadFollowups();
+              });
+            });
+          }
+
+          async function loadDay(){"""
+          owner = regex_once(
+              owner,
+              r'function renderToday\(\)\{.*?\n\}\n\nasync function loadDay\(\)\{',
+              NEW_RENDER_TODAY,
+              "owner.html: 今日やることロジック",
+              re.DOTALL,
+          )
+          write("owner.html", owner)
+
+          # admin.html
+          admin = read("admin.html")
+          admin = re.sub(
+              r'<div class="badge">.*?admin\.html</div>',
+              '<div class="badge">STEP ESTHE-NEXT-2｜シンプル管理</div>',
+              admin,
+              count=1,
+              flags=re.DOTALL | re.IGNORECASE,
+          )
+          admin = re.sub(
+              r'const\s+VERSION\s*=\s*["\'][^"\']+["\'];',
+              "const VERSION = 'ESTHE-NEXT-2-ADMIN-20260723';",
+              admin,
+              count=1,
+          )
+          admin = regex_once(
+              admin,
+              r"""if\(admin\s*&&\s*!url\.searchParams\.has\('admin_key'\)\)\s*
+                  url\.searchParams\.set\('admin_key',\s*ADMIN_KEY\);""",
+              "if(admin) dproRequireAdminCode();",
+              "admin.html: admin_key URL廃止",
+              re.VERBOSE,
+          )
+          write("admin.html", admin)
+
+          # staff.html
+          staff = read("staff.html")
+          staff = re.sub(
+              r'<span class="badge">.*?staff\.html</span>',
+              '<span class="badge">STEP ESTHE-NEXT-2｜スタッフ当日運用</span>',
+              staff,
+              count=1,
+              flags=re.DOTALL | re.IGNORECASE,
+          )
+          staff = re.sub(
+              r"const\s+VERSION\s*=\s*['\"][^'\"]+['\"];",
+              "const VERSION = 'ESTHE-NEXT-2-STAFF-20260723';",
+              staff,
+              count=1,
+          )
+          staff = regex_once(
+              staff,
+              r"""if\(admin\s*&&\s*!url\.searchParams\.has\('admin_key'\)\)\s*
+                  url\.searchParams\.set\('admin_key',\s*ADMIN_KEY\);""",
+              "if(admin) dproRequireAdminCode();",
+              "staff.html: admin_key URL廃止",
+              re.VERBOSE,
+          )
+          write("staff.html", staff)
+
+          # system-check.html
+          system = read("system-check.html")
+          system = re.sub(
+              r'<div class="badge">.*?system-check\.html</div>',
+              '<div class="badge">STEP ESTHE-NEXT-2｜安全確認</div>',
+              system,
+              count=1,
+              flags=re.DOTALL | re.IGNORECASE,
+          )
+          system = re.sub(
+              r'const\s+STEP\s*=\s*["\'][^"\']+["\'];',
+              'const STEP = "STEP ESTHE-NEXT-2";',
+              system,
+              count=1,
+          )
+          system = re.sub(
+              r'const\s+VERSION\s*=\s*["\'][^"\']+["\'];',
+              'const VERSION = "ESTHE-NEXT-2-SYSTEM-CHECK-20260723";',
+              system,
+              count=1,
+          )
+          system = regex_once(
+              system,
+              r"""const ENDPOINTS = \{\s*
+                health:\s*`\$\{API_BASE\}/api/health`,\s*
+                systemCheck:.*?
+                demoPrepare:.*?
+                adminSettings:.*?
+                phoneNormalizeCheck:.*?
+              \};""",
+              """const ENDPOINTS = {
+                health: `${API_BASE}/api/health`,
+                systemCheck: `${API_BASE}/api/admin/system-check`,
+                demoPrepare: `${API_BASE}/api/admin/demo/prepare`,
+                adminSettings: `${API_BASE}/api/admin/settings`,
+                phoneNormalizeCheck: `${API_BASE}/api/admin/phone-normalize-check`,
+              };""",
+              "system-check.html: ENDPOINTS",
+              re.DOTALL | re.VERBOSE,
+          )
+          system = re.sub(
+              r'\?admin_key=1234',
+              '',
+              system,
+          )
+          system = re.sub(
+              r'<a class="mini primary" href="https://dpro-esthe-relax-line-api\.dpromstk2000\.workers\.dev/api/admin/[^"]+"[^>]*>開く</a>',
+              '<span class="mini">画面内で確認</span>',
+              system,
+              flags=re.IGNORECASE,
+          )
+          system = re.sub(
+              r'<div>実行API</div><div>.*?</div>\s*<div>管理コード</div><div>.*?</div>',
+              '<div>実行方法</div><div>画面内から安全に実行します。</div><div>管理コード</div><div>入力済みの場合のみ実行できます。</div>',
+              system,
+              count=1,
+              flags=re.DOTALL,
+          )
+          system = regex_once(
+              system,
+              r"""async function apiGet\(url,\s*options\s*=\s*\{\}\)\s*\{\s*
+                  const res = await fetch\(url,\s*\{\s*
+                    method:\s*options\.method\s*\|\|\s*"GET",\s*
+                    headers:\s*\{\s*
+                      "Accept":\s*"application/json",\s*
+                      \.\.\.\(options\.headers\s*\|\|\s*\{\}\),\s*
+                    \},\s*
+                    body:\s*options\.body,\s*
+                  \}\);""",
+              """async function apiGet(url, options = {}) {
+              const requestUrl = new URL(url, window.location.href);
+              const isAdmin = requestUrl.pathname.startsWith("/api/admin/");
+              if(isAdmin) dproRequireAdminCode();
+              const res = await fetch(requestUrl.toString(), {
+                method: options.method || "GET",
+                headers: {
+                  "Accept": "application/json",
+                  ...(isAdmin ? {"x-admin-secret": ADMIN_KEY} : {}),
+                  ...(options.headers || {}),
+                },
+                body: options.body,
+              });""",
+              "system-check.html: x-admin-secret",
+              re.DOTALL | re.VERBOSE,
+          )
+          system = re.sub(
+              r'expect:\s*"STEP ESTHE-16"',
+              'expect: "STEP ESTHE-NEXT-2"',
+              system,
+          )
+          write("system-check.html", system)
+
+          # ---------- 全対象の最終整形 ----------
+          version_map: Dict[str, str] = {
+              "index.html": "ESTHE-NEXT-2-PUBLIC-SIMPLE-20260723",
+              "index-brush.html": "ESTHE-NEXT-2-PUBLIC-BRUSH-20260723",
+              "member.html": "ESTHE-NEXT-2-MEMBER-20260723",
+              "owner.html": "ESTHE-NEXT-2-OWNER-TODAY-20260723",
+              "admin.html": "ESTHE-NEXT-2-ADMIN-20260723",
+              "staff.html": "ESTHE-NEXT-2-STAFF-20260723",
+              "system-check.html": "ESTHE-NEXT-2-SYSTEM-CHECK-20260723",
+          }
+
+          for path in ALL_FILES:
+              text = read(path)
+              if STEP_MARKER not in text:
+                  raise RuntimeError(f"{path}: STEPマーカー不足")
+              if version_map[path] not in text:
+                  raise RuntimeError(f"{path}: NEXT-2 VERSION不足")
+              write(path, text)
+
+          # 変更記録を出力
+          now_jst = dt.datetime.now(dt.timezone(dt.timedelta(hours=9))).replace(microsecond=0)
+          change_record = {
+              "schema_version": 1,
+              "system": "DPRO エステ LINE",
+              "step": "ESTHE-NEXT-2",
+              "completed_at_jst": now_jst.isoformat(),
+              "target_files": changed,
+              "changes": {
+                  "public_admin_information_separated": True,
+                  "admin_code_session_storage": True,
+                  "admin_code_clear_button": True,
+                  "admin_query_parameter_removed": True,
+                  "admin_header_authentication": "x-admin-secret",
+                  "owner_today_priority": True,
+                  "additional_initial_api_requests": 0,
+                  "worker_changed": False,
+                  "supabase_changed": False,
+                  "api_changed": False,
+              },
+              "rollback": {
+                  "tag": __import__("os").environ.get("BACKUP_TAG", ""),
+                  "method": "GitHub backup tagから対象HTMLと台帳を復元する",
+              },
+          }
+          (ROOT / ".dpro-next").mkdir(exist_ok=True)
+          (ROOT / ".dpro-next/esthe-next2-change-record.json").write_text(
+              json.dumps(change_record, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+
+          print("Changed files:")
+          for path in changed:
+              print("-", path)
+          PY
+
+      - name: "Run HTML, JavaScript, YAML, ID and business validation"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p .next2_tmp
+
+          python3 <<'PY'
+          from __future__ import annotations
+
+          import json
+          import re
+          import subprocess
+          import sys
+          from collections import Counter
+          from html.parser import HTMLParser
+          from pathlib import Path
+
+          ROOT = Path(".")
+          files = [
+              "index.html",
+              "index-brush.html",
+              "member.html",
+              "owner.html",
+              "admin.html",
+              "staff.html",
+              "system-check.html",
+          ]
+          public_files = ["index.html", "index-brush.html", "member.html"]
+          manager_files = ["owner.html", "admin.html", "staff.html", "system-check.html"]
+          errors = []
+          warnings = []
+          ok = []
+
+          class Parser(HTMLParser):
+              def __init__(self):
+                  super().__init__(convert_charrefs=True)
+                  self.ids = []
+              def handle_starttag(self, tag, attrs):
+                  for key, value in attrs:
+                      if key.lower() == "id" and value:
+                          self.ids.append(value)
+              def handle_startendtag(self, tag, attrs):
+                  self.handle_starttag(tag, attrs)
+
+          for file in files:
+              text = (ROOT / file).read_text(encoding="utf-8")
+              parser = Parser()
+              try:
+                  parser.feed(text)
+                  parser.close()
+              except Exception as exc:
+                  errors.append(f"HTML解析NG: {file}: {exc}")
+                  continue
+
+              if not all(token in text.lower() for token in ["<html", "<head", "<body"]):
+                  errors.append(f"HTML基本構造NG: {file}")
+              else:
+                  ok.append(f"HTML基本構造: {file}")
+
+              duplicates = sorted(key for key, value in Counter(parser.ids).items() if value > 1)
+              if duplicates:
+                  errors.append(f"HTML ID重複: {file}: {', '.join(duplicates)}")
+              else:
+                  ok.append(f"HTML ID重複なし: {file}")
+
+              scripts = re.findall(
+                  r'<script\b(?![^>]*\bsrc=)[^>]*>(.*?)</script\s*>',
+                  text,
+                  flags=re.DOTALL | re.IGNORECASE,
+              )
+              for number, script in enumerate(scripts, start=1):
+                  if not script.strip():
+                      continue
+                  temp = ROOT / ".next2_tmp" / f"{file}-{number}.js"
+                  temp.write_text(script, encoding="utf-8")
+                  proc = subprocess.run(
+                      ["node", "--check", str(temp)],
+                      text=True,
+                      stdout=subprocess.PIPE,
+                      stderr=subprocess.PIPE,
+                      check=False,
+                  )
+                  if proc.returncode != 0:
+                      detail = (proc.stderr or proc.stdout).replace("\n", " ")[:700]
+                      errors.append(f"JavaScript構文NG: {file} script#{number}: {detail}")
+                  else:
+                      ok.append(f"JavaScript構文: {file} script#{number}")
+
+          # 公開画面に管理情報・管理リンクを表示しない
+          public_forbidden = [
+              "管理コード：1234",
+              "管理コード:1234",
+              'href="admin.html"',
+              'href="owner.html"',
+              'href="staff.html"',
+              'href="system-check.html"',
+              "admin_key",
+              "/api/admin/",
+          ]
+          for file in public_files:
+              text = (ROOT / file).read_text(encoding="utf-8")
+              found = [token for token in public_forbidden if token in text]
+              if found:
+                  errors.append(f"公開画面への管理情報混入: {file}: {', '.join(found)}")
+              else:
+                  ok.append(f"公開画面管理情報分離: {file}")
+
+          # 管理画面の認証UIと削除ボタン
+          for file in manager_files:
+              text = (ROOT / file).read_text(encoding="utf-8")
+              required = [
+                  'id="dproAdminAccess"',
+                  'id="dproAdminCode"',
+                  'id="dproAdminSave"',
+                  'id="dproAdminClear"',
+                  "sessionStorage",
+                  "dproRequireAdminCode",
+                  "x-admin-secret",
+              ]
+              missing = [token for token in required if token not in text]
+              if missing:
+                  errors.append(f"管理コードUI不足: {file}: {', '.join(missing)}")
+              else:
+                  ok.append(f"管理コード入力・削除: {file}")
+
+              if "admin_key" in text:
+                  errors.append(f"admin_key URL方式が残っています: {file}")
+              if "管理コード：1234" in text or "管理コード:1234" in text:
+                  errors.append(f"管理コード固定表示が残っています: {file}")
+
+          # owner今日やること
+          owner = (ROOT / "owner.html").read_text(encoding="utf-8")
+          owner_required = [
+              'id="todoSummary"',
+              "todo-priority",
+              "会計待ち",
+              "来店済み・施術待ち",
+              "施術中",
+              "まもなく来店",
+              "期限フォロー",
+              "data-todo-reservation",
+              "data-open-followups",
+          ]
+          missing = [token for token in owner_required if token not in owner]
+          if missing:
+              errors.append("owner今日やること不足: " + ", ".join(missing))
+          else:
+              ok.append("owner今日やること優先表示")
+
+          # 既存機能維持
+          feature_map = {
+              "owner.html": [
+                  "todayList", "loadDayBtn", "reservationList",
+                  "customerList", "customerDetail", "saveNoteBtn",
+                  "ticketList", "followupList", "settingsBox",
+              ],
+              "admin.html": [
+                  "todayList", "reservationList", "phoneMenu",
+                  "phoneStaff", "phoneDate", "createPhoneBtn",
+              ],
+              "staff.html": [
+                  "reservationList", "staffTabs", "statusFilter",
+                  "refreshBtn", "copyTodayBtn",
+              ],
+              "member.html": [
+                  "phoneInput", "reservationList", "ticketList", "historyList",
+              ],
+              "index-brush.html": [
+                  "menuList", "staffList", "slotList",
+                  "viewConsultation", "concerns",
+              ],
+              "index.html": [
+                  "menuList", "staffList", "slotList",
+                  "customerName", "customerPhone", "submitBtn",
+              ],
+              "system-check.html": [
+                  "checks", "btnReload", "btnPrepare",
+                  "phoneNormalizeList", "reflectList",
+              ],
+          }
+          for file, tokens in feature_map.items():
+              text = (ROOT / file).read_text(encoding="utf-8")
+              missing = [token for token in tokens if token not in text]
+              if missing:
+                  errors.append(f"既存機能維持NG: {file}: {', '.join(missing)}")
+              else:
+                  ok.append(f"既存機能維持: {file}")
+
+          # エステ業務ロジック
+          combined = "\n".join((ROOT / file).read_text(encoding="utf-8") for file in files)
+          statuses = [
+              "reserved", "checked_in", "in_treatment",
+              "waiting_payment", "completed", "cancelled",
+          ]
+          missing = [status for status in statuses if status not in combined]
+          if missing:
+              errors.append("進捗ステータス不足: " + ", ".join(missing))
+          else:
+              ok.append("エステ進捗ステータス維持")
+
+          if combined.count("normalizePhone") < 4:
+              errors.append("電話番号正規化の維持確認NG")
+          else:
+              ok.append("電話番号正規化維持")
+
+          if "isPastSlot" not in combined and "過去日は予約できません" not in combined:
+              warnings.append("過去日時防止はWorker側検査を継続")
+          else:
+              ok.append("過去日時防止ロジック維持")
+
+          # 変更範囲
+          diff = subprocess.run(
+              ["git", "diff", "--name-only"],
+              text=True,
+              stdout=subprocess.PIPE,
+              check=True,
+          ).stdout.splitlines()
+          allowed = set(files + [
+              ".dpro-next/esthe-next2-change-record.json",
+              ".dpro-next/esthe-step-state.yml",
+              ".dpro-next/esthe-next2-report.txt",
+              ".dpro-next/esthe-current-baseline.yml",
+          ])
+          unexpected = sorted(path for path in diff if path not in allowed)
+          if unexpected:
+              errors.append("想定外変更ファイル: " + ", ".join(unexpected))
+          else:
+              ok.append("変更範囲正常")
+
+          report = {
+              "step": "ESTHE-NEXT-2",
+              "ok": len(ok),
+              "attention": len(warnings),
+              "ng": len(errors),
+              "ok_items": ok,
+              "attention_items": warnings,
+              "ng_items": errors,
+          }
+          Path(".next2_tmp/validation.json").write_text(
+              json.dumps(report, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+
+          summary = Path(__import__("os").environ["GITHUB_STEP_SUMMARY"])
+          with summary.open("a", encoding="utf-8") as f:
+              f.write("\n### NEXT-2 自動検査\n")
+              f.write(f"- OK: {len(ok)}\n")
+              f.write(f"- 注意: {len(warnings)}\n")
+              f.write(f"- NG: {len(errors)}\n")
+              if warnings:
+                  f.write("\n#### 注意\n")
+                  for item in warnings:
+                      f.write(f"- {item}\n")
+              if errors:
+                  f.write("\n#### NG\n")
+                  for item in errors:
+                      f.write(f"- {item}\n")
+
+          print(json.dumps(report, ensure_ascii=False, indent=2))
+          if errors:
+              sys.exit(1)
+          PY
+
+          ruby -e 'require "yaml"; YAML.parse_file(ARGV[0]); puts "YML syntax OK"' "$WORKFLOW_FILE"
+
+      - name: "Update NEXT completion ledger"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          python3 <<'PY'
+          from __future__ import annotations
+
+          import datetime as dt
+          import json
+          import os
+          from pathlib import Path
+
+          now = dt.datetime.now(dt.timezone(dt.timedelta(hours=9))).replace(microsecond=0)
+          state_path = Path(".dpro-next/esthe-step-state.yml")
+          report_data = json.loads(Path(".next2_tmp/validation.json").read_text(encoding="utf-8"))
+
+          def q(value):
+              return json.dumps(str(value), ensure_ascii=False)
+
+          state = [
+              "schema_version: 1",
+              f"system: {q('DPRO エステ LINE')}",
+              f"current_step: {q(os.environ['CURRENT_STEP_AFTER_SUCCESS'])}",
+              f"next_step: {q(os.environ['NEXT_STEP_AFTER_SUCCESS'])}",
+              f"updated_at_jst: {q(now.isoformat())}",
+              f"source_commit: {q(os.environ['CHANGE_BEFORE_SHA'])}",
+              f"backup_tag: {q(os.environ['BACKUP_TAG'])}",
+              f"result: {q('ATTENTION' if report_data['attention'] else 'OK')}",
+              "changes:",
+              f"  worker: {os.environ['WORKER_CHANGED']}",
+              f"  supabase: {os.environ['SUPABASE_CHANGED']}",
+              f"  api: {os.environ['API_CHANGED']}",
+              "  public_admin_information_separated: true",
+              "  owner_today_priority: true",
+              "  admin_code_clear_button: true",
+              "  admin_auth_transport: \"x-admin-secret\"",
+          ]
+          state_path.write_text("\n".join(state) + "\n", encoding="utf-8")
+
+          report_lines = [
+              "DPRO エステ LINE / ESTHE-NEXT-2 実行結果",
+              f"完了日時JST: {now.isoformat()}",
+              f"変更前Commit: {os.environ['CHANGE_BEFORE_SHA']}",
+              f"バックアップタグ: {os.environ['BACKUP_TAG']}",
+              f"OK: {report_data['ok']}",
+              f"注意: {report_data['attention']}",
+              f"NG: {report_data['ng']}",
+              "",
+              "実施内容:",
+              "- 公開画面から管理コード表示・管理画面リンクを分離",
+              "- 管理コードをsessionStorageへ一時保存",
+              "- 管理コード削除ボタンをowner/admin/staff/system-checkへ設置",
+              "- admin_keyのURL付与を廃止",
+              "- x-admin-secretヘッダーへ統一",
+              "- owner.htmlの今日やることを優先度順へ変更",
+              "- 新しい初期API全件取得は追加していない",
+              "",
+              "変更記録:",
+              "- Worker: 変更なし",
+              "- Supabase: 変更なし",
+              "- API: 変更なし",
+              "",
+              "次STEP: ESTHE-NEXT-3",
+          ]
+          if report_data["attention_items"]:
+              report_lines.extend(["", "注意:"])
+              report_lines.extend(f"- {item}" for item in report_data["attention_items"])
+
+          Path(".dpro-next/esthe-next2-report.txt").write_text(
+              "\n".join(report_lines) + "\n",
+              encoding="utf-8",
+          )
+
+          baseline = Path(".dpro-next/esthe-current-baseline.yml")
+          if baseline.exists():
+              text = baseline.read_text(encoding="utf-8")
+              text += (
+                  "\nnext2_completion:\n"
+                  f"  completed_at_jst: {q(now.isoformat())}\n"
+                  f"  backup_tag: {q(os.environ['BACKUP_TAG'])}\n"
+                  "  worker_changed: false\n"
+                  "  supabase_changed: false\n"
+                  "  api_changed: false\n"
+                  "  public_admin_information_separated: true\n"
+                  "  owner_today_priority: true\n"
+              )
+              baseline.write_text(text, encoding="utf-8")
+          PY
+
+      - name: "Re-run final source validation"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          grep -q 'current_step: "ESTHE-NEXT-2-COMPLETE"' .dpro-next/esthe-step-state.yml
+          grep -q 'next_step: "ESTHE-NEXT-3"' .dpro-next/esthe-step-state.yml
+          grep -q 'id="todoSummary"' owner.html
+          grep -q 'id="dproAdminClear"' owner.html
+          grep -q 'id="dproAdminClear"' admin.html
+          grep -q 'id="dproAdminClear"' staff.html
+          grep -q 'id="dproAdminClear"' system-check.html
+
+          for file in index.html index-brush.html member.html owner.html admin.html staff.html system-check.html; do
+            grep -q "STEP ESTHE-NEXT-2" "$file"
+          done
+
+          for file in owner.html admin.html staff.html system-check.html; do
+            if grep -q "admin_key" "$file"; then
+              echo "::error::admin_keyが残っています: $file"
+              exit 1
+            fi
+            grep -q "x-admin-secret" "$file"
+          done
+
+          for file in index.html index-brush.html member.html; do
+            if grep -Eq '管理コード[：:]1234|href="(admin|owner|staff|system-check)\.html|/api/admin/|admin_key' "$file"; then
+              echo "::error::公開画面に管理情報が残っています: $file"
+              exit 1
+            fi
+          done
+
+      - name: "Upload NEXT-2 validation artifact"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "ESTHE-NEXT-2-R3-validation-${{ github.run_id }}"
+          path: |
+            .next2_tmp/validation.json
+            .dpro-next/esthe-next2-report.txt
+            .dpro-next/esthe-next2-change-record.json
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: "Commit changes, delete workflow and push"
+        if: success()
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          git add \
+            index.html \
+            index-brush.html \
+            member.html \
+            owner.html \
+            admin.html \
+            staff.html \
+            system-check.html \
+            .dpro-next/esthe-step-state.yml \
+            .dpro-next/esthe-next2-report.txt \
+            .dpro-next/esthe-next2-change-record.json \
+            .dpro-next/esthe-current-baseline.yml
+
+          git rm --ignore-unmatch \
+            "$WORKFLOW_FILE" \
+            ".github/workflows/ESTHE-NEXT-2.yml" \
+            ".github/workflows/ESTHE-NEXT-2-R2.yml"
+
+          if git diff --cached --quiet; then
+            echo "::error::Commit対象がありません。"
+            exit 1
+          fi
+
+          git commit -m "DPRO ESTHE NEXT-2-R3 complete: admin separation and owner today"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+          COMPLETE_SHA="$(git rev-parse HEAD)"
+          echo "COMPLETE_SHA=$COMPLETE_SHA" >> "$GITHUB_ENV"
+
+          echo "### 自動Commit・Push" >> "$GITHUB_STEP_SUMMARY"
+          echo "- 完了Commit: \`$COMPLETE_SHA\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- YML自身: 削除済み" >> "$GITHUB_STEP_SUMMARY"
+          echo "- current_step: \`$CURRENT_STEP_AFTER_SUCCESS\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- next_step: \`$NEXT_STEP_AFTER_SUCCESS\`" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: "Confirm GitHub Pages publication"
+        if: success()
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          URLS=(
+            "${PAGES_BASE}/index.html"
+            "${PAGES_BASE}/index-brush.html"
+            "${PAGES_BASE}/member.html"
+            "${PAGES_BASE}/owner.html"
+            "${PAGES_BASE}/admin.html"
+            "${PAGES_BASE}/staff.html"
+            "${PAGES_BASE}/system-check.html"
+          )
+
+          PUBLISHED="false"
+          for attempt in $(seq 1 24); do
+            ALL_OK="true"
+            for url in "${URLS[@]}"; do
+              body="$(curl -L -sS --retry 2 --connect-timeout 8 --max-time 25 \
+                -H 'Cache-Control: no-cache' \
+                "${url}?next2_check=${GITHUB_RUN_ID}_${attempt}" || true)"
+              if [[ "$body" != *"STEP ESTHE-NEXT-2"* ]]; then
+                ALL_OK="false"
+                break
+              fi
+            done
+
+            if [[ "$ALL_OK" == "true" ]]; then
+              PUBLISHED="true"
+              break
+            fi
+
+            sleep 10
+          done
+
+          echo "### GitHub Pages公開確認" >> "$GITHUB_STEP_SUMMARY"
+          if [[ "$PUBLISHED" == "true" ]]; then
+            echo "- 判定: **OK**" >> "$GITHUB_STEP_SUMMARY"
+            echo "- NEXT-2マーカー: 全対象画面で確認" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "- 判定: **注意**" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Pages反映待ちの可能性があります。ソースCommitとActionsは完了しています。" >> "$GITHUB_STEP_SUMMARY"
+          fi
