@@ -1,0 +1,1146 @@
+# DPRO エステ LINE
+# STEP名: ESTHE-NEXT-3
+#
+# 目的:
+# - 予約・来店受付・施術進捗・顧客情報を「1件の予約＝1回来店・施術案件」で統合
+# - 予約カードから必要時だけ顧客詳細を取得し、初期表示を重くしない
+#
+# 対象ファイル:
+# - owner.html
+# - .dpro-next/esthe-step-state.yml
+# - .dpro-next/esthe-current-baseline.yml
+#
+# 実施する変更:
+# - 予約カードに「受付・施術詳細」ボタンを追加
+# - 来店・施術統合パネルを追加
+# - 予約情報、進捗、カウンセリング、前回来店、回数券、カルテメモを統合表示
+# - 統合パネルから既存ステータス変更・顧客カルテ表示へ接続
+# - 顧客詳細はパネルを開いた時だけ取得し、同一予約内ではキャッシュ
+#
+# 既存機能維持:
+# - 今日の予約
+# - 今日やること
+# - 予約一覧
+# - 顧客検索・カルテ
+# - 回数券
+# - フォロー
+# - 文面テンプレート
+# - 店舗設定
+#
+# 変更前バックアップタグ:
+# - backup-esthe-before-next3-YYYYMMDD
+#
+# 前STEP完了確認:
+# - current_step: ESTHE-NEXT-2-COMPLETE
+# - next_step: ESTHE-NEXT-3
+#
+# 自動検査:
+# - HTML / JavaScript / YML構文
+# - HTML ID重複
+# - 既存機能維持
+# - 統合パネル構成
+# - 予約ID・顧客ID・電話番号の関連付け
+# - 進捗ステータス順序
+# - 顧客詳細の遅延取得
+# - 初期API追加なし
+# - Worker既存API互換性
+# - 公開URL反映
+#
+# Worker変更: なし
+# Supabase変更: なし
+# API変更: なし
+#
+# 次のSTEP:
+# - ESTHE-NEXT-4
+#
+# 成功後:
+# - 台帳更新
+# - 自動Commit / Push
+# - このYML自身を削除
+
+name: "DPRO ESTHE NEXT-3 - Reservation Visit Integration"
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/ESTHE-NEXT-3.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: "dpro-esthe-next"
+  cancel-in-progress: false
+
+env:
+  STEP_NAME: "ESTHE-NEXT-3"
+  SYSTEM_NAME: "DPRO エステ LINE"
+  WORKFLOW_FILE: ".github/workflows/ESTHE-NEXT-3.yml"
+  EXPECTED_PREVIOUS_STEP: "ESTHE-NEXT-2-COMPLETE"
+  EXPECTED_CURRENT_NEXT: "ESTHE-NEXT-3"
+  CURRENT_STEP_AFTER_SUCCESS: "ESTHE-NEXT-3-COMPLETE"
+  NEXT_STEP_AFTER_SUCCESS: "ESTHE-NEXT-4"
+  BACKUP_TAG_PREFIX: "backup-esthe-before-next3"
+  API_BASE: "https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev"
+  PAGES_BASE: "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff"
+  SHOP_CODE: "esthe_demo_default"
+  WORKER_CHANGED: "false"
+  SUPABASE_CHANGED: "false"
+  API_CHANGED: "false"
+
+jobs:
+  esthe-next-3:
+    name: "Apply ESTHE NEXT-3 safely"
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: "Checkout repository with history"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: "Configure Git identity"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name "DPRO NEXT Actions"
+          git config user.email "actions@users.noreply.github.com"
+
+      - name: "Confirm ESTHE-NEXT-2 completion"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          STATE_FILE=".dpro-next/esthe-step-state.yml"
+          test -f "$STATE_FILE"
+
+          CURRENT_STEP="$(awk -F': *' '/^current_step:/{gsub(/["'"'"']/, "", $2); print $2; exit}' "$STATE_FILE")"
+          NEXT_STEP="$(awk -F': *' '/^next_step:/{gsub(/["'"'"']/, "", $2); print $2; exit}' "$STATE_FILE")"
+
+          if [[ "$CURRENT_STEP" != "$EXPECTED_PREVIOUS_STEP" ]]; then
+            echo "::error::前STEP未完了です。current_step=$CURRENT_STEP / expected=$EXPECTED_PREVIOUS_STEP"
+            exit 1
+          fi
+
+          if [[ "$NEXT_STEP" != "$EXPECTED_CURRENT_NEXT" ]]; then
+            echo "::error::実行対象STEPが一致しません。next_step=$NEXT_STEP / expected=$EXPECTED_CURRENT_NEXT"
+            exit 1
+          fi
+
+          echo "### 前STEP完了確認" >> "$GITHUB_STEP_SUMMARY"
+          echo "- current_step: \`$CURRENT_STEP\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- next_step: \`$NEXT_STEP\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- 判定: **OK**" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: "Confirm existing Worker APIs"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          JST_DATE="$(TZ=Asia/Tokyo date +%F)"
+          HEALTH_CODE="$(curl -L -sS --retry 3 --connect-timeout 10 --max-time 40 \
+            -o /tmp/esthe-next3-health.json \
+            -w "%{http_code}" \
+            "${API_BASE}/api/health")"
+
+          if [[ ! "$HEALTH_CODE" =~ ^2 ]]; then
+            echo "::error::Worker health確認失敗 HTTP $HEALTH_CODE"
+            cat /tmp/esthe-next3-health.json || true
+            exit 1
+          fi
+
+          DAY_CODE="$(curl -L -sS --retry 3 --connect-timeout 10 --max-time 45 \
+            -H "Accept: application/json" \
+            -H "x-admin-secret: 1234" \
+            -o /tmp/esthe-next3-day.json \
+            -w "%{http_code}" \
+            "${API_BASE}/api/admin/day?shop_code=${SHOP_CODE}&date=${JST_DATE}")"
+
+          if [[ ! "$DAY_CODE" =~ ^2 ]]; then
+            echo "::error::既存のday API確認失敗 HTTP $DAY_CODE"
+            cat /tmp/esthe-next3-day.json || true
+            exit 1
+          fi
+
+          python3 <<'PY'
+          import json
+          from pathlib import Path
+
+          health = json.loads(Path("/tmp/esthe-next3-health.json").read_text(encoding="utf-8"))
+          day = json.loads(Path("/tmp/esthe-next3-day.json").read_text(encoding="utf-8"))
+
+          if health.get("ok") is not True:
+              raise SystemExit("health ok=false")
+          if day.get("ok") is not True:
+              raise SystemExit("day API ok=false")
+          if not isinstance(day.get("reservations", []), list):
+              raise SystemExit("day.reservations is not a list")
+
+          print("Worker health: OK")
+          print("Day API: OK")
+          print("Reservations:", len(day.get("reservations", [])))
+          PY
+
+          echo "### Worker既存API" >> "$GITHUB_STEP_SUMMARY"
+          echo "- health: **OK**" >> "$GITHUB_STEP_SUMMARY"
+          echo "- admin/day: **OK**" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Worker差し替え: **不要**" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: "Create change-before backup tag"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          CHANGE_BEFORE_SHA="$GITHUB_SHA"
+          mapfile -t HEAD_FILES < <(git diff-tree --no-commit-id --name-only -r "$GITHUB_SHA")
+
+          if [[ "${#HEAD_FILES[@]}" -eq 1 && "${HEAD_FILES[0]}" == "$WORKFLOW_FILE" ]]; then
+            CHANGE_BEFORE_SHA="$(git rev-parse "${GITHUB_SHA}^")"
+          fi
+
+          JST_DATE="$(TZ=Asia/Tokyo date +%Y%m%d)"
+          BASE_TAG="${BACKUP_TAG_PREFIX}-${JST_DATE}"
+          BACKUP_TAG="$BASE_TAG"
+
+          if git ls-remote --exit-code --tags origin "refs/tags/$BACKUP_TAG" >/dev/null 2>&1; then
+            BACKUP_TAG="${BASE_TAG}-run-${GITHUB_RUN_ID}"
+          fi
+
+          git tag -a "$BACKUP_TAG" "$CHANGE_BEFORE_SHA" \
+            -m "DPRO ESTHE before NEXT-3: $CHANGE_BEFORE_SHA"
+          git push origin "refs/tags/$BACKUP_TAG"
+
+          {
+            echo "CHANGE_BEFORE_SHA=$CHANGE_BEFORE_SHA"
+            echo "BACKUP_TAG=$BACKUP_TAG"
+          } >> "$GITHUB_ENV"
+
+          echo "### 変更前バックアップ" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Commit: \`$CHANGE_BEFORE_SHA\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Tag: \`$BACKUP_TAG\`" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: "Apply reservation and visit integration"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          python3 <<'PY'
+          from __future__ import annotations
+
+          import datetime as dt
+          import json
+          from pathlib import Path
+
+          ROOT = Path(".")
+          OWNER = ROOT / "owner.html"
+          text = OWNER.read_text(encoding="utf-8")
+
+          def replace_once(source: str, old: str, new: str, label: str) -> str:
+              count = source.count(old)
+              if count != 1:
+                  raise RuntimeError(f"{label}: 置換対象が1件ではありません count={count}")
+              return source.replace(old, new, 1)
+
+          def insert_before_once(source: str, anchor: str, addition: str, label: str) -> str:
+              count = source.count(anchor)
+              if count != 1:
+                  raise RuntimeError(f"{label}: 挿入位置が1件ではありません count={count}")
+              return source.replace(anchor, addition + "\n" + anchor, 1)
+
+          if "<!-- STEP ESTHE-NEXT-2 -->" not in text:
+              raise RuntimeError("owner.html: NEXT-2基準マーカーがありません")
+          if "ESTHE-NEXT-2-OWNER-TODAY-20260723" not in text:
+              raise RuntimeError("owner.html: NEXT-2 VERSIONがありません")
+          if 'id="visitHubLayer"' in text:
+              raise RuntimeError("owner.html: NEXT-3統合パネルが既に存在します")
+
+          text = replace_once(
+              text,
+              "<!-- STEP ESTHE-NEXT-2 -->",
+              "<!-- STEP ESTHE-NEXT-3 -->",
+              "STEPマーカー",
+          )
+          text = replace_once(
+              text,
+              "<title>DPRO Esthe Relaxation｜STEP ESTHE-16｜owner.html</title>",
+              "<title>DPRO Esthe Relaxation｜STEP ESTHE-NEXT-3｜owner.html</title>",
+              "title",
+          )
+          text = replace_once(
+              text,
+              '<div class="badge">STEP ESTHE-NEXT-2｜PCオーナー管理</div>',
+              '<div class="badge">STEP ESTHE-NEXT-3｜予約・来店・施術統合</div>',
+              "badge",
+          )
+          text = replace_once(
+              text,
+              'const VERSION = "ESTHE-NEXT-2-OWNER-TODAY-20260723";',
+              'const VERSION = "ESTHE-NEXT-3-RESERVATION-VISIT-INTEGRATION-20260723";',
+              "VERSION",
+          )
+
+          css = r"""
+          *(DPRO, NEXT-3:, 予約・来店・施術統合パネル, */)
+          .visit-hub-layer{
+            position:fixed;
+            inset:0;
+            z-index:82;
+            display:none;
+            justify-content:flex-end;
+            background:rgba(45,33,31,.48);
+            backdrop-filter:blur(4px);
+          }
+          .visit-hub-layer.show{display:flex}
+          .visit-hub{
+            width:min(720px,100%);
+            height:100%;
+            overflow:auto;
+            background:#fffaf7;
+            border-left:1px solid var(--line);
+            box-shadow:-24px 0 80px rgba(45,33,31,.22);
+          }
+          .visit-hub-head{
+            position:sticky;
+            top:0;
+            z-index:4;
+            display:flex;
+            align-items:flex-start;
+            justify-content:space-between;
+            gap:14px;
+            padding:22px;
+            background:rgba(255,250,247,.96);
+            border-bottom:1px solid var(--line);
+            backdrop-filter:blur(14px);
+          }
+          .visit-hub-head h2{margin:0;font-size:24px;letter-spacing:-.04em}
+          .visit-hub-head p{margin:6px 0 0;color:var(--muted);font-size:13px;font-weight:800;line-height:1.6}
+          .visit-hub-close{
+            flex:0 0 auto;
+            width:44px;
+            height:44px;
+            border:1px solid var(--line);
+            border-radius:999px;
+            background:#fff;
+            color:var(--main);
+            font-size:20px;
+            font-weight:1000;
+            cursor:pointer;
+          }
+          .visit-hub-body{padding:20px 22px 110px}
+          .visit-hub-section{
+            margin-bottom:16px;
+            padding:17px;
+            border:1px solid var(--line);
+            border-radius:20px;
+            background:#fff;
+            box-shadow:0 10px 28px rgba(88,55,46,.06);
+          }
+          .visit-hub-section h3{margin:0 0 10px;font-size:17px;color:var(--main)}
+          .visit-hub-progress{
+            display:grid;
+            grid-template-columns:repeat(5,1fr);
+            gap:7px;
+          }
+          .visit-hub-step{
+            min-height:62px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            text-align:center;
+            border:1px solid var(--line);
+            border-radius:14px;
+            background:var(--soft);
+            color:var(--muted);
+            padding:8px 5px;
+            font-size:11px;
+            line-height:1.4;
+            font-weight:950;
+          }
+          .visit-hub-step.done{background:#e8f8f1;border-color:#bce9d8;color:#087a59}
+          .visit-hub-step.current{background:var(--main);border-color:var(--main);color:#fff}
+          .visit-hub-grid{
+            display:grid;
+            grid-template-columns:130px 1fr;
+            border:1px solid var(--line);
+            border-radius:16px;
+            overflow:hidden;
+          }
+          .visit-hub-grid div{padding:11px 12px;border-bottom:1px solid var(--line);font-size:13px;font-weight:850;line-height:1.55}
+          .visit-hub-grid div:nth-child(odd){background:var(--soft);color:var(--muted)}
+          .visit-hub-grid div:nth-child(even){background:#fff}
+          .visit-hub-grid div:nth-last-child(-n+2){border-bottom:0}
+          .visit-hub-actions{
+            display:flex;
+            gap:8px;
+            flex-wrap:wrap;
+            margin-top:12px;
+          }
+          .visit-hub-loading{
+            padding:28px 16px;
+            text-align:center;
+            color:var(--muted);
+            font-weight:900;
+          }
+          .visit-hub-counts{
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:8px;
+          }
+          .visit-hub-count{
+            padding:12px;
+            border:1px solid var(--line);
+            border-radius:14px;
+            background:var(--soft);
+            text-align:center;
+          }
+          .visit-hub-count strong{display:block;font-size:22px;color:var(--main)}
+          .visit-hub-count span{display:block;margin-top:4px;color:var(--muted);font-size:11px;font-weight:900}
+          @media(max-width:680px){
+            .visit-hub{width:100%}
+            .visit-hub-body{padding:15px 13px 110px}
+            .visit-hub-head{padding:17px 14px}
+            .visit-hub-progress{grid-template-columns:1fr}
+            .visit-hub-step{min-height:42px}
+            .visit-hub-grid{grid-template-columns:105px 1fr}
+          }
+          """
+          text = insert_before_once(
+              text,
+              "</style>",
+              css,
+              "統合パネルCSS",
+          )
+
+          html = r"""
+          <div class="visit-hub-layer" id="visitHubLayer" aria-hidden="true">
+            <section class="visit-hub" role="dialog" aria-modal="true" aria-labelledby="visitHubTitle">
+              <header class="visit-hub-head">
+                <div>
+                  <h2 id="visitHubTitle">受付・施術詳細</h2>
+                  <p id="visitHubLead">予約を中心に、来店から完了までを確認します。</p>
+                </div>
+                <button class="visit-hub-close" id="visitHubClose" type="button" aria-label="閉じる">×</button>
+              </header>
+              <div class="visit-hub-body" id="visitHubBody">
+                <div class="visit-hub-loading">予約を選択してください。</div>
+              </div>
+            </section>
+          </div>
+          """
+          text = insert_before_once(
+              text,
+              '  <div class="toast" id="toast"></div>',
+              html,
+              "統合パネルHTML",
+          )
+
+          text = replace_once(
+              text,
+              '  settingsSection: "basic"\n};',
+              '  settingsSection: "basic",\n'
+              '  integratedVisit: null,\n'
+              '  integratedVisitCache: {}\n'
+              '};',
+              "state統合項目",
+          )
+
+          text = replace_once(
+              text,
+              """      <div class="card-actions">
+                  <button class="mini" data-copy="${source}:${idx}">予約確認文</button>""",
+              """      <div class="card-actions">
+                  <button class="mini primary" type="button" data-visit-hub="${source}:${idx}">受付・施術詳細</button>
+                  <button class="mini" data-copy="${source}:${idx}">予約確認文</button>""",
+              "予約カード統合ボタン",
+          )
+
+          functions = r"""
+          function reservationBySource(source, index){
+            const list = source === "day" ? (state.day?.reservations || []) : state.reservations;
+            return list[Number(index)] || null;
+          }
+
+          function visitProgressHtml(status){
+            const steps = [
+              ["reserved","予約"],
+              ["checked_in","来店"],
+              ["in_treatment","施術"],
+              ["waiting_payment","会計"],
+              ["completed","完了"]
+            ];
+            const current = steps.findIndex(([key]) => key === status);
+            return steps.map(([key,label], index) => {
+              const className = index < current ? "done" : index === current ? "current" : "";
+              return `<div class="visit-hub-step ${className}">${escapeHtml(label)}</div>`;
+            }).join("");
+          }
+
+          function latestPreviousReservation(detail, currentReservationId){
+            return (detail?.reservations || [])
+              .filter(item => String(item.id || "") !== String(currentReservationId || ""))
+              .filter(item => item.status === "completed")
+              .sort((a,b) => new Date(b.start_at || 0) - new Date(a.start_at || 0))[0] || null;
+          }
+
+          function visitConsultationHtml(detail){
+            const item = (detail?.consultations || [])[0];
+            return item
+              ? consultationRowsHtml(item)
+              : `<div class="notice">カウンセリング記録はありません。</div>`;
+          }
+
+          function visitNotesHtml(detail){
+            const notes = (detail?.notes || []).slice(0,3);
+            if(!notes.length) return `<div class="notice">カルテメモはありません。</div>`;
+            return notes.map(note => `
+              <div class="mini-card">
+                <b>${escapeHtml(note.note_title || "カルテメモ")}</b>
+                <div class="card-meta">${escapeHtml(note.note_body || "-").slice(0,220)}</div>
+              </div>
+            `).join("");
+          }
+
+          function renderIntegratedVisit(){
+            const hub = state.integratedVisit;
+            const body = $("visitHubBody");
+            if(!hub?.reservation){
+              body.innerHTML = `<div class="visit-hub-loading">予約情報がありません。</div>`;
+              return;
+            }
+
+            const r = hub.reservation;
+            const detail = hub.detail || {};
+            const p = isoParts(r.start_at);
+            const previous = latestPreviousReservation(detail, r.id);
+            const activeTickets = (detail.tickets || []).filter(ticket =>
+              ticket.status === "active" && Number(ticket.remaining_count || 0) > 0
+            );
+            const customer = detail.customer || {};
+            const detailError = hub.detailError
+              ? `<div class="notice warn">顧客詳細の取得に失敗しました：${escapeHtml(hub.detailError)}</div>`
+              : "";
+
+            $("visitHubTitle").textContent = `${r.customer_name || "お客様"}｜受付・施術詳細`;
+            $("visitHubLead").textContent = `${p.date ? dateText(p.date) : "-"} ${p.time || ""} / ${r.menu_name || "-"}`;
+
+            body.innerHTML = `
+              ${detailError}
+              <section class="visit-hub-section">
+                <h3>現在の進捗</h3>
+                <div class="visit-hub-progress">${visitProgressHtml(r.status)}</div>
+                <div class="visit-hub-actions">
+                  <button class="mini" type="button" data-integrated-status="checked_in">来店済み</button>
+                  <button class="mini warn" type="button" data-integrated-status="in_treatment">施術開始</button>
+                  <button class="mini" type="button" data-integrated-status="waiting_payment">会計待ち</button>
+                  <button class="mini green" type="button" data-integrated-status="completed">完了</button>
+                </div>
+              </section>
+
+              <section class="visit-hub-section">
+                <h3>今回の予約・受付</h3>
+                <div class="visit-hub-grid">
+                  <div>予約番号</div><div>${escapeHtml(r.reservation_code || "-")}</div>
+                  <div>日時</div><div>${escapeHtml(p.date ? `${dateText(p.date)} ${p.time}` : "-")}</div>
+                  <div>メニュー</div><div>${escapeHtml(r.menu_name || "-")}</div>
+                  <div>担当</div><div>${escapeHtml(r.staff_name || "指名なし")}</div>
+                  <div>電話</div><div>${escapeHtml(r.customer_phone || r.phone || customer.phone || "-")}</div>
+                  <div>要望</div><div>${escapeHtml(r.request_note || "-")}</div>
+                  <div>状態</div><div>${escapeHtml(statusLabel(r.status))}</div>
+                </div>
+              </section>
+
+              <section class="visit-hub-section">
+                <h3>顧客情報のつながり</h3>
+                <div class="visit-hub-counts">
+                  <div class="visit-hub-count"><strong>${Number(customer.visit_count || 0)}</strong><span>来店回数</span></div>
+                  <div class="visit-hub-count"><strong>${(detail.reservations || []).length}</strong><span>予約履歴</span></div>
+                  <div class="visit-hub-count"><strong>${activeTickets.length}</strong><span>有効回数券</span></div>
+                </div>
+                <div class="visit-hub-actions">
+                  <button class="mini primary" type="button" data-integrated-customer="1">顧客カルテを開く</button>
+                </div>
+              </section>
+
+              <section class="visit-hub-section">
+                <h3>最新カウンセリング</h3>
+                ${visitConsultationHtml(detail)}
+              </section>
+
+              <section class="visit-hub-section">
+                <h3>前回来店</h3>
+                ${previous ? `
+                  <div class="visit-hub-grid">
+                    <div>日時</div><div>${escapeHtml(dtText(previous.start_at))}</div>
+                    <div>メニュー</div><div>${escapeHtml(previous.menu_name || "-")}</div>
+                    <div>担当</div><div>${escapeHtml(previous.staff_name || "指名なし")}</div>
+                    <div>状態</div><div>${escapeHtml(statusLabel(previous.status))}</div>
+                  </div>
+                ` : `<div class="notice">完了済みの前回来店はありません。</div>`}
+              </section>
+
+              <section class="visit-hub-section">
+                <h3>回数券</h3>
+                ${activeTickets.length ? activeTickets.slice(0,3).map(ticket => `
+                  <div class="mini-card">
+                    <b>${escapeHtml(ticket.ticket_name || "回数券")}</b>
+                    <div class="card-meta">残り ${escapeHtml(ticket.remaining_count ?? "-")}/${escapeHtml(ticket.total_count ?? "-")}回 / 有効期限 ${escapeHtml(ticket.expires_at || "-")}</div>
+                  </div>
+                `).join("") : `<div class="notice">利用可能な回数券はありません。</div>`}
+              </section>
+
+              <section class="visit-hub-section">
+                <h3>直近カルテメモ</h3>
+                <div class="list">${visitNotesHtml(detail)}</div>
+              </section>
+            `;
+          }
+
+          async function openIntegratedVisit(source, index){
+            const r = reservationBySource(source, index);
+            if(!r) return;
+
+            state.integratedVisit = {
+              source,
+              index:Number(index),
+              reservation:r,
+              detail:null,
+              detailError:""
+            };
+
+            $("visitHubLayer").classList.add("show");
+            $("visitHubLayer").setAttribute("aria-hidden", "false");
+            $("visitHubBody").innerHTML = `<div class="visit-hub-loading">予約・顧客情報を読み込み中です。</div>`;
+
+            const cacheKey = String(r.customer_id || normalizePhone(r.customer_phone || r.phone || ""));
+            if(cacheKey && state.integratedVisitCache[cacheKey]){
+              state.integratedVisit.detail = state.integratedVisitCache[cacheKey];
+              renderIntegratedVisit();
+              return;
+            }
+
+            try{
+              const query = r.customer_id
+                ? `customer_id=${encodeURIComponent(r.customer_id)}`
+                : `phone=${encodeURIComponent(normalizePhone(r.customer_phone || r.phone || ""))}`;
+              const detail = await api(`/api/admin/customers/detail?${query}`);
+              state.integratedVisit.detail = detail;
+              if(cacheKey) state.integratedVisitCache[cacheKey] = detail;
+            }catch(error){
+              state.integratedVisit.detailError = error.message || "詳細取得エラー";
+            }
+
+            renderIntegratedVisit();
+          }
+
+          function closeIntegratedVisit(){
+            $("visitHubLayer").classList.remove("show");
+            $("visitHubLayer").setAttribute("aria-hidden", "true");
+          }
+
+          async function openIntegratedCustomer(){
+            const hub = state.integratedVisit;
+            if(!hub?.reservation) return;
+
+            const detail = hub.detail;
+            closeIntegratedVisit();
+            setTab("customers");
+
+            if(detail?.customer){
+              state.customerDetail = detail;
+              state.selectedCustomerId = detail.customer.id || hub.reservation.customer_id || null;
+              renderCustomerDetail();
+              return;
+            }
+
+            if(hub.reservation.customer_id){
+              await loadCustomerDetailByCustomer({id:hub.reservation.customer_id});
+              return;
+            }
+
+            const phone = normalizePhone(hub.reservation.customer_phone || hub.reservation.phone || "");
+            if(phone){
+              $("customerQuery").value = phone;
+              await searchCustomers();
+              if(state.customers[0]) await loadCustomerDetailByCustomer(state.customers[0]);
+            }
+          }
+
+          """
+          text = replace_once(
+              text,
+              "function renderToday(){",
+              functions + "\nfunction renderToday(){",
+              "統合パネルJavaScript",
+          )
+
+          event_handler = r"""
+            const visitHub = e.target.closest("[data-visit-hub]");
+            if(visitHub){
+              const [source, index] = visitHub.dataset.visitHub.split(":");
+              await openIntegratedVisit(source, Number(index));
+              return;
+            }
+
+            const integratedStatus = e.target.closest("[data-integrated-status]");
+            if(integratedStatus){
+              const hub = state.integratedVisit;
+              if(!hub) return;
+              const statusValue = integratedStatus.dataset.integratedStatus;
+              closeIntegratedVisit();
+              updateStatus(hub.source, hub.index, statusValue);
+              return;
+            }
+
+            const integratedCustomer = e.target.closest("[data-integrated-customer]");
+            if(integratedCustomer){
+              await openIntegratedCustomer();
+              return;
+            }
+
+          """
+          text = replace_once(
+              text,
+              """  const status = e.target.closest("[data-status]");""",
+              event_handler + """  const status = e.target.closest("[data-status]");""",
+              "統合パネルイベント",
+          )
+
+          listeners = r"""
+          $("visitHubClose").addEventListener("click", closeIntegratedVisit);
+          $("visitHubLayer").addEventListener("click", (event) => {
+            if(event.target.id === "visitHubLayer") closeIntegratedVisit();
+          });
+          document.addEventListener("keydown", (event) => {
+            if(event.key === "Escape" && $("visitHubLayer").classList.contains("show")){
+              closeIntegratedVisit();
+            }
+          });
+
+          """
+          text = replace_once(
+              text,
+              '$("todayDateDisplay").addEventListener("click", () => {',
+              listeners + '$("todayDateDisplay").addEventListener("click", () => {',
+              "統合パネル閉じる操作",
+          )
+
+          OWNER.write_text(text.rstrip() + "\n", encoding="utf-8")
+
+          now = dt.datetime.now(dt.timezone(dt.timedelta(hours=9))).replace(microsecond=0)
+          record = {
+              "schema_version": 1,
+              "system": "DPRO エステ LINE",
+              "step": "ESTHE-NEXT-3",
+              "completed_at_jst": now.isoformat(),
+              "business_unit": "1件の予約＝1回来店・施術案件",
+              "target_files": ["owner.html"],
+              "features": {
+                  "reservation_visit_integration": True,
+                  "reservation_id_relation": True,
+                  "customer_id_or_phone_relation": True,
+                  "consultation_summary": True,
+                  "previous_visit_summary": True,
+                  "active_ticket_summary": True,
+                  "karte_note_summary": True,
+                  "lazy_customer_detail_fetch": True,
+                  "detail_cache": True,
+                  "additional_initial_api_requests": 0,
+              },
+              "changes": {
+                  "worker": False,
+                  "supabase": False,
+                  "api": False,
+              },
+              "rollback": {
+                  "tag": __import__("os").environ.get("BACKUP_TAG", ""),
+                  "method": "バックアップタグからowner.htmlと台帳を復元する",
+              },
+          }
+          Path(".dpro-next/esthe-next3-change-record.json").write_text(
+              json.dumps(record, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: "Run syntax, ID, feature and business validation"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p .next3_tmp
+
+          python3 <<'PY'
+          from __future__ import annotations
+
+          import json
+          import re
+          import subprocess
+          import sys
+          from collections import Counter
+          from html.parser import HTMLParser
+          from pathlib import Path
+
+          path = Path("owner.html")
+          text = path.read_text(encoding="utf-8")
+          errors = []
+          warnings = []
+          ok = []
+
+          class Parser(HTMLParser):
+              def __init__(self):
+                  super().__init__(convert_charrefs=True)
+                  self.ids = []
+              def handle_starttag(self, tag, attrs):
+                  for key, value in attrs:
+                      if key.lower() == "id" and value:
+                          self.ids.append(value)
+              def handle_startendtag(self, tag, attrs):
+                  self.handle_starttag(tag, attrs)
+
+          parser = Parser()
+          try:
+              parser.feed(text)
+              parser.close()
+              ok.append("HTML解析")
+          except Exception as exc:
+              errors.append(f"HTML解析NG: {exc}")
+
+          duplicates = sorted(key for key, count in Counter(parser.ids).items() if count > 1)
+          if duplicates:
+              errors.append("HTML ID重複: " + ", ".join(duplicates))
+          else:
+              ok.append("HTML ID重複なし")
+
+          scripts = re.findall(
+              r'<script\b(?![^>]*\bsrc=)[^>]*>(.*?)</script\s*>',
+              text,
+              flags=re.DOTALL | re.IGNORECASE,
+          )
+          for number, script in enumerate(scripts, 1):
+              temp = Path(".next3_tmp") / f"owner-inline-{number}.js"
+              temp.write_text(script, encoding="utf-8")
+              proc = subprocess.run(
+                  ["node", "--check", str(temp)],
+                  text=True,
+                  stdout=subprocess.PIPE,
+                  stderr=subprocess.PIPE,
+                  check=False,
+              )
+              if proc.returncode:
+                  errors.append(
+                      f"JavaScript構文NG script#{number}: "
+                      + (proc.stderr or proc.stdout).replace("\n", " ")[:700]
+                  )
+              else:
+                  ok.append(f"JavaScript構文 script#{number}")
+
+          required = [
+              "<!-- STEP ESTHE-NEXT-3 -->",
+              "ESTHE-NEXT-3-RESERVATION-VISIT-INTEGRATION-20260723",
+              'id="visitHubLayer"',
+              'id="visitHubBody"',
+              'data-visit-hub="${source}:${idx}"',
+              "function reservationBySource(",
+              "function openIntegratedVisit(",
+              "function renderIntegratedVisit(",
+              "function openIntegratedCustomer(",
+              "/api/admin/customers/detail?",
+              "integratedVisitCache",
+              "visitProgressHtml",
+              "latestPreviousReservation",
+              "visitConsultationHtml",
+              "visitNotesHtml",
+          ]
+          missing = [token for token in required if token not in text]
+          if missing:
+              errors.append("NEXT-3統合機能不足: " + ", ".join(missing))
+          else:
+              ok.append("予約・来店・施術統合機能")
+
+          existing = [
+              "todayList",
+              "todoSummary",
+              "reservationList",
+              "customerList",
+              "customerDetail",
+              "saveNoteBtn",
+              "ticketList",
+              "followupList",
+              "templateList",
+              "settingsBox",
+              "/api/admin/reservations/status",
+              "normalizePhone",
+              "dproAdminClear",
+              "x-admin-secret",
+          ]
+          missing_existing = [token for token in existing if token not in text]
+          if missing_existing:
+              errors.append("既存機能維持NG: " + ", ".join(missing_existing))
+          else:
+              ok.append("既存主要機能維持")
+
+          statuses = ["reserved", "checked_in", "in_treatment", "waiting_payment", "completed"]
+          positions = [text.find(f'["{status}"') for status in statuses]
+          if any(position < 0 for position in positions) or positions != sorted(positions):
+              errors.append("進捗ステータス順序NG")
+          else:
+              ok.append("進捗ステータス順序")
+
+          # 顧客詳細取得が初期init/loadAll内に追加されていないことを確認
+          init_match = re.search(r"async function init\(\)\{(.*?)\n\}", text, flags=re.DOTALL)
+          load_all_match = re.search(r"async function loadAll\(\)\{(.*?)\n\}", text, flags=re.DOTALL)
+          initial_blocks = "\n".join(
+              match.group(1) for match in [init_match, load_all_match] if match
+          )
+          if "/api/admin/customers/detail" in initial_blocks or "openIntegratedVisit(" in initial_blocks:
+              errors.append("初期表示に顧客詳細取得が追加されています")
+          else:
+              ok.append("顧客詳細の遅延取得")
+
+          if text.count("/api/admin/customers/detail?") < 2:
+              # 既存カルテ取得＋NEXT-3取得の2箇所を期待
+              warnings.append("customers/detailパスの出現数が想定より少ないため目視確認")
+          else:
+              ok.append("既存顧客詳細APIを再利用")
+
+          diff = subprocess.run(
+              ["git", "diff", "--name-only"],
+              text=True,
+              stdout=subprocess.PIPE,
+              check=True,
+          ).stdout.splitlines()
+          allowed = {
+              "owner.html",
+              ".dpro-next/esthe-next3-change-record.json",
+              ".dpro-next/esthe-step-state.yml",
+              ".dpro-next/esthe-current-baseline.yml",
+              ".dpro-next/esthe-next3-report.txt",
+          }
+          unexpected = sorted(item for item in diff if item not in allowed)
+          if unexpected:
+              errors.append("想定外変更ファイル: " + ", ".join(unexpected))
+          else:
+              ok.append("変更範囲正常")
+
+          if path.stat().st_size > 900_000:
+              errors.append(f"owner.html容量過大: {path.stat().st_size} bytes")
+          elif path.stat().st_size > 500_000:
+              warnings.append(f"owner.html容量注意: {path.stat().st_size} bytes")
+          else:
+              ok.append(f"owner.html容量: {path.stat().st_size} bytes")
+
+          report = {
+              "step": "ESTHE-NEXT-3",
+              "ok": len(ok),
+              "attention": len(warnings),
+              "ng": len(errors),
+              "ok_items": ok,
+              "attention_items": warnings,
+              "ng_items": errors,
+          }
+          Path(".next3_tmp/validation.json").write_text(
+              json.dumps(report, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+
+          summary = Path(__import__("os").environ["GITHUB_STEP_SUMMARY"])
+          with summary.open("a", encoding="utf-8") as file:
+              file.write("\n### NEXT-3 自動検査\n")
+              file.write(f"- OK: {len(ok)}\n")
+              file.write(f"- 注意: {len(warnings)}\n")
+              file.write(f"- NG: {len(errors)}\n")
+              if warnings:
+                  file.write("\n#### 注意\n")
+                  for item in warnings:
+                      file.write(f"- {item}\n")
+              if errors:
+                  file.write("\n#### NG\n")
+                  for item in errors:
+                      file.write(f"- {item}\n")
+
+          print(json.dumps(report, ensure_ascii=False, indent=2))
+          if errors:
+              sys.exit(1)
+          PY
+
+          ruby -e 'require "yaml"; YAML.parse_file(ARGV[0]); puts "YML syntax OK"' "$WORKFLOW_FILE"
+
+      - name: "Update NEXT completion ledger"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          python3 <<'PY'
+          import datetime as dt
+          import json
+          import os
+          from pathlib import Path
+
+          now = dt.datetime.now(dt.timezone(dt.timedelta(hours=9))).replace(microsecond=0)
+          result = json.loads(Path(".next3_tmp/validation.json").read_text(encoding="utf-8"))
+
+          def q(value):
+              return json.dumps(str(value), ensure_ascii=False)
+
+          state_lines = [
+              "schema_version: 1",
+              f"system: {q('DPRO エステ LINE')}",
+              f"current_step: {q(os.environ['CURRENT_STEP_AFTER_SUCCESS'])}",
+              f"next_step: {q(os.environ['NEXT_STEP_AFTER_SUCCESS'])}",
+              f"updated_at_jst: {q(now.isoformat())}",
+              f"source_commit: {q(os.environ['CHANGE_BEFORE_SHA'])}",
+              f"backup_tag: {q(os.environ['BACKUP_TAG'])}",
+              f"result: {q('ATTENTION' if result['attention'] else 'OK')}",
+              "changes:",
+              "  worker: false",
+              "  supabase: false",
+              "  api: false",
+              "  business_unit: \"1件の予約＝1回来店・施術案件\"",
+              "  reservation_visit_integration: true",
+              "  customer_detail_lazy_fetch: true",
+              "  additional_initial_api_requests: 0",
+          ]
+          Path(".dpro-next/esthe-step-state.yml").write_text(
+              "\n".join(state_lines) + "\n",
+              encoding="utf-8",
+          )
+
+          report_lines = [
+              "DPRO エステ LINE / ESTHE-NEXT-3 実行結果",
+              f"完了日時JST: {now.isoformat()}",
+              f"変更前Commit: {os.environ['CHANGE_BEFORE_SHA']}",
+              f"バックアップタグ: {os.environ['BACKUP_TAG']}",
+              f"OK: {result['ok']}",
+              f"注意: {result['attention']}",
+              f"NG: {result['ng']}",
+              "",
+              "統合単位:",
+              "- 1件の予約＝1回来店・施術案件",
+              "",
+              "実施内容:",
+              "- 予約カードから受付・施術詳細を開く",
+              "- 予約・来店・施術進捗を1画面で確認",
+              "- 顧客・カウンセリング・前回来店・回数券・カルテを関連表示",
+              "- 顧客詳細は詳細を開いた時だけ取得",
+              "- 同一顧客の詳細は画面内キャッシュ",
+              "- 初期API取得数は増加なし",
+              "",
+              "変更記録:",
+              "- Worker: 変更なし",
+              "- Supabase: 変更なし",
+              "- API: 変更なし",
+              "",
+              "次STEP: ESTHE-NEXT-4",
+          ]
+          if result["attention_items"]:
+              report_lines.extend(["", "注意:"])
+              report_lines.extend(f"- {item}" for item in result["attention_items"])
+
+          Path(".dpro-next/esthe-next3-report.txt").write_text(
+              "\n".join(report_lines) + "\n",
+              encoding="utf-8",
+          )
+
+          baseline = Path(".dpro-next/esthe-current-baseline.yml")
+          if baseline.exists():
+              with baseline.open("a", encoding="utf-8") as file:
+                  file.write("\nnext3_completion:\n")
+                  file.write(f"  completed_at_jst: {q(now.isoformat())}\n")
+                  file.write(f"  backup_tag: {q(os.environ['BACKUP_TAG'])}\n")
+                  file.write("  business_unit: \"1件の予約＝1回来店・施術案件\"\n")
+                  file.write("  reservation_visit_integration: true\n")
+                  file.write("  lazy_customer_detail_fetch: true\n")
+                  file.write("  additional_initial_api_requests: 0\n")
+                  file.write("  worker_changed: false\n")
+                  file.write("  supabase_changed: false\n")
+                  file.write("  api_changed: false\n")
+          PY
+
+      - name: "Final completion validation"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          grep -q 'current_step: "ESTHE-NEXT-3-COMPLETE"' .dpro-next/esthe-step-state.yml
+          grep -q 'next_step: "ESTHE-NEXT-4"' .dpro-next/esthe-step-state.yml
+          grep -q '<!-- STEP ESTHE-NEXT-3 -->' owner.html
+          grep -q 'id="visitHubLayer"' owner.html
+          grep -q 'data-visit-hub="${source}:${idx}"' owner.html
+          grep -q 'function openIntegratedVisit' owner.html
+          grep -q 'function openIntegratedCustomer' owner.html
+          grep -q 'additional_initial_api_requests: 0' .dpro-next/esthe-step-state.yml
+
+      - name: "Upload NEXT-3 validation artifact"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "ESTHE-NEXT-3-validation-${{ github.run_id }}"
+          path: |
+            .next3_tmp/validation.json
+            .dpro-next/esthe-next3-report.txt
+            .dpro-next/esthe-next3-change-record.json
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: "Commit changes, delete workflow and push"
+        if: success()
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          git add \
+            owner.html \
+            .dpro-next/esthe-step-state.yml \
+            .dpro-next/esthe-current-baseline.yml \
+            .dpro-next/esthe-next3-report.txt \
+            .dpro-next/esthe-next3-change-record.json
+
+          git rm --ignore-unmatch "$WORKFLOW_FILE"
+
+          if git diff --cached --quiet; then
+            echo "::error::Commit対象がありません。"
+            exit 1
+          fi
+
+          git commit -m "DPRO ESTHE NEXT-3 complete: reservation and visit integration"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+          echo "### 自動Commit・Push" >> "$GITHUB_STEP_SUMMARY"
+          echo "- 完了Commit: \`$(git rev-parse HEAD)\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- YML自身: 削除済み" >> "$GITHUB_STEP_SUMMARY"
+          echo "- current_step: \`$CURRENT_STEP_AFTER_SUCCESS\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- next_step: \`$NEXT_STEP_AFTER_SUCCESS\`" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: "Confirm GitHub Pages publication"
+        if: success()
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          PUBLISHED="false"
+          for attempt in $(seq 1 24); do
+            BODY="$(curl -L -sS --retry 2 --connect-timeout 8 --max-time 25 \
+              -H "Cache-Control: no-cache" \
+              "${PAGES_BASE}/owner.html?next3_check=${GITHUB_RUN_ID}_${attempt}" || true)"
+
+            if [[ "$BODY" == *"STEP ESTHE-NEXT-3"* && "$BODY" == *'id="visitHubLayer"'* ]]; then
+              PUBLISHED="true"
+              break
+            fi
+            sleep 10
+          done
+
+          echo "### GitHub Pages公開確認" >> "$GITHUB_STEP_SUMMARY"
+          if [[ "$PUBLISHED" == "true" ]]; then
+            echo "- 判定: **OK**" >> "$GITHUB_STEP_SUMMARY"
+            echo "- owner.html NEXT-3統合パネル: 確認" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "- 判定: **注意**" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Pages反映待ちの可能性があります。ソースCommitは完了しています。" >> "$GITHUB_STEP_SUMMARY"
+          fi
