@@ -73,3 +73,16 @@ next3_completion:
   worker_changed: false
   supabase_changed: false
   api_changed: false
+
+next4_completion:
+  completed_at_jst: "2026-07-23T21:32:08+09:00"
+  backup_tag: "backup-esthe-before-next4-20260723"
+  treatment_progress_board: true
+  progress_columns: 5
+  next3_detail_link: true
+  existing_status_update_link: true
+  additional_initial_api_requests: 0
+  drag_and_drop: false
+  worker_changed: false
+  supabase_changed: false
+  api_changed: false

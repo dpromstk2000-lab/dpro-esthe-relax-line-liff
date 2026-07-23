@@ -1,10 +1,10 @@
 <!doctype html>
-<!-- STEP ESTHE-NEXT-3 -->
+<!-- STEP ESTHE-NEXT-4 -->
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DPRO Esthe Relaxation｜STEP ESTHE-NEXT-3｜owner.html</title>
+  <title>DPRO Esthe Relaxation｜STEP ESTHE-NEXT-4｜owner.html</title>
   <style>
     :root{
       --bg:#fffaf7;
@@ -457,12 +457,210 @@
   .visit-hub-grid{grid-template-columns:105px 1fr}
 }
 
+
+/* DPRO NEXT-4: 当日業務進捗ボード */
+.progress-board-panel{
+  margin-bottom:18px;
+  padding:20px;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:rgba(255,255,255,.96);
+  box-shadow:var(--shadow);
+}
+.progress-board-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:14px;
+}
+.progress-board-head h2{
+  margin:0 0 5px;
+  font-size:23px;
+  letter-spacing:-.035em;
+}
+.progress-board-head p{
+  margin:0;
+  color:var(--muted);
+  font-size:13px;
+  font-weight:800;
+  line-height:1.65;
+}
+.progress-board-summary{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.progress-summary-pill{
+  display:inline-flex;
+  align-items:center;
+  min-height:34px;
+  padding:7px 10px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:var(--soft);
+  color:var(--main);
+  font-size:11px;
+  font-weight:950;
+  white-space:nowrap;
+}
+.progress-summary-pill.attention{
+  background:#fff3e4;
+  border-color:#edc998;
+  color:#8d5908;
+}
+.progress-board-scroll{
+  overflow-x:auto;
+  padding:1px 1px 8px;
+  scrollbar-width:thin;
+}
+.progress-board{
+  min-width:1050px;
+  display:grid;
+  grid-template-columns:repeat(5,minmax(190px,1fr));
+  gap:10px;
+}
+.progress-column{
+  min-width:0;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:var(--soft);
+  overflow:hidden;
+}
+.progress-column[data-board-status="checked_in"]{background:#fff8e9}
+.progress-column[data-board-status="in_treatment"]{background:#f0faf6}
+.progress-column[data-board-status="waiting_payment"]{background:#fff1ed}
+.progress-column[data-board-status="completed"]{background:#eff6f2}
+.progress-column-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  min-height:58px;
+  padding:12px;
+  border-bottom:1px solid var(--line);
+  background:rgba(255,255,255,.8);
+}
+.progress-column-title{
+  font-size:13px;
+  font-weight:1000;
+  line-height:1.35;
+  color:var(--main);
+}
+.progress-column-count{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:30px;
+  height:30px;
+  border-radius:999px;
+  background:#fff;
+  border:1px solid var(--line);
+  color:var(--main);
+  font-size:12px;
+  font-weight:1000;
+}
+.progress-column-list{
+  display:grid;
+  gap:8px;
+  padding:9px;
+  max-height:570px;
+  overflow:auto;
+}
+.progress-board-card{
+  border:1px solid var(--line);
+  border-left:5px solid var(--main2);
+  border-radius:15px;
+  padding:11px;
+  background:#fff;
+  box-shadow:0 7px 20px rgba(88,55,46,.06);
+}
+.progress-board-card.overdue{
+  border-left-color:var(--danger);
+  background:#fff7f7;
+}
+.progress-board-card.soon{
+  border-left-color:var(--warn);
+  background:#fffaf0;
+}
+.progress-board-card.attention{
+  border-left-color:var(--gold);
+}
+.progress-board-time{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:6px;
+}
+.progress-board-time strong{
+  color:var(--main);
+  font-size:17px;
+  line-height:1;
+}
+.progress-board-customer{
+  font-size:14px;
+  font-weight:1000;
+  line-height:1.4;
+}
+.progress-board-meta{
+  margin-top:4px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:850;
+  line-height:1.55;
+}
+.progress-board-alert{
+  display:inline-flex;
+  align-items:center;
+  margin-top:7px;
+  border-radius:999px;
+  padding:5px 8px;
+  background:var(--soft);
+  color:var(--main);
+  font-size:10px;
+  font-weight:950;
+}
+.progress-board-alert.overdue{background:#fff0f0;color:#ad3737}
+.progress-board-alert.soon{background:#fff4dc;color:#8d600d}
+.progress-board-alert.active{background:#e8f8f1;color:#087a59}
+.progress-board-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  margin-top:9px;
+}
+.progress-board-actions .mini{
+  width:100%;
+  min-height:38px;
+  padding:7px 8px;
+}
+.progress-board-empty{
+  min-height:96px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:14px 8px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:900;
+  line-height:1.6;
+}
+@media(max-width:760px){
+  .progress-board-panel{padding:15px 12px}
+  .progress-board-head{display:grid}
+  .progress-board-summary{justify-content:flex-start}
+  .progress-board{min-width:920px}
+}
+
 </style>
 </head>
 <body>
   <main class="wrap">
     <section class="hero">
-      <div class="badge">STEP ESTHE-NEXT-3｜予約・来店・施術統合</div>
+      <div class="badge">STEP ESTHE-NEXT-4｜施術進捗・ステータス見える化</div>
       <h1>DPRO Esthe Relaxation</h1>
       <p>本日の予約、予約一覧、顧客カルテ、回数券、未対応フォロー、文面テンプレートをまとめて確認できるPC用の本格管理画面です。</p>
       <div class="hero-meta">
@@ -519,6 +717,19 @@
     </section>
 
     <section id="tabToday">
+
+<section class="progress-board-panel" aria-labelledby="progressBoardTitle">
+  <div class="progress-board-head">
+    <div>
+      <h2 id="progressBoardTitle">本日の施術進捗</h2>
+      <p>予約から完了までを横並びで確認します。詳細確認と次の状態への更新だけに絞った軽量ボードです。</p>
+    </div>
+    <div class="progress-board-summary" id="progressBoardSummary"></div>
+  </div>
+  <div class="progress-board-scroll">
+    <div class="progress-board" id="progressBoard"></div>
+  </div>
+</section>
       <div class="grid">
         <div>
           <div class="panel">
@@ -729,7 +940,7 @@
   <div class="toast" id="toast"></div>
 
 <script>
-const VERSION = "ESTHE-NEXT-3-RESERVATION-VISIT-INTEGRATION-20260723";
+const VERSION = "ESTHE-NEXT-4-TREATMENT-PROGRESS-BOARD-20260723";
 const API_BASE = "https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev";
 const SHOP_CODE = "esthe_demo_default";
 const ADMIN_STORAGE_KEY = "dpro_esthe_admin_secret";
@@ -1230,11 +1441,149 @@ async function openIntegratedCustomer(){
 }
 
 
+
+const progressBoardColumns = [
+  {status:"reserved", label:"予約・来店待ち", nextStatus:"checked_in", nextLabel:"来店受付"},
+  {status:"checked_in", label:"来店済み・施術待ち", nextStatus:"in_treatment", nextLabel:"施術開始"},
+  {status:"in_treatment", label:"施術中", nextStatus:"waiting_payment", nextLabel:"会計待ちへ"},
+  {status:"waiting_payment", label:"会計待ち", nextStatus:"completed", nextLabel:"完了"},
+  {status:"completed", label:"完了", nextStatus:"", nextLabel:""}
+];
+
+function boardNowMinutes(){
+  const parts = new Intl.DateTimeFormat("ja-JP", {
+    timeZone:"Asia/Tokyo",
+    hour:"2-digit",
+    minute:"2-digit",
+    hour12:false
+  }).formatToParts(new Date()).reduce((result, part) => {
+    result[part.type] = part.value;
+    return result;
+  }, {});
+  return Number(parts.hour || 0) * 60 + Number(parts.minute || 0);
+}
+
+function boardReservationTiming(r){
+  const p = isoParts(r.start_at);
+  const [hour, minute] = String(p.time || "00:00").split(":").map(Number);
+  const startMinutes = (Number(hour) || 0) * 60 + (Number(minute) || 0);
+  const diff = startMinutes - boardNowMinutes();
+  const isActualToday = state.today === jstDate();
+
+  if(r.status === "reserved" && isActualToday && diff < -5){
+    return {className:"overdue", label:"予約時刻を経過"};
+  }
+  if(r.status === "reserved" && isActualToday && diff >= -5 && diff <= 30){
+    return {className:"soon", label:diff <= 0 ? "来店確認" : `あと${diff}分`};
+  }
+  if(r.status === "checked_in"){
+    return {className:"attention", label:"施術開始待ち"};
+  }
+  if(r.status === "in_treatment"){
+    return {className:"active", label:"施術対応中"};
+  }
+  if(r.status === "waiting_payment"){
+    return {className:"overdue", label:"会計対応"};
+  }
+  if(r.status === "completed"){
+    return {className:"active", label:"対応完了"};
+  }
+  return {className:"", label:"予約確認"};
+}
+
+function progressBoardCardHtml(r, index, column){
+  const p = isoParts(r.start_at);
+  const timing = boardReservationTiming(r);
+  return `
+    <article class="progress-board-card ${escapeHtml(timing.className)}">
+      <div class="progress-board-time">
+        <strong>${escapeHtml(p.time || "-")}</strong>
+        <span class="pill ${statusClass(r.status)}">${escapeHtml(statusLabel(r.status))}</span>
+      </div>
+      <div class="progress-board-customer">${escapeHtml(r.customer_name || "お客様")}</div>
+      <div class="progress-board-meta">${escapeHtml(r.menu_name || "-")}</div>
+      <div class="progress-board-meta">担当：${escapeHtml(r.staff_name || "指名なし")}</div>
+      <span class="progress-board-alert ${escapeHtml(timing.className)}">${escapeHtml(timing.label)}</span>
+      <div class="progress-board-actions">
+        <button class="mini" type="button" data-board-detail="${index}">詳細</button>
+        ${column.nextStatus
+          ? `<button class="mini primary" type="button" data-board-next="${index}:${escapeHtml(column.nextStatus)}">${escapeHtml(column.nextLabel)}</button>`
+          : `<button class="mini green" type="button" disabled>完了済み</button>`
+        }
+      </div>
+    </article>
+  `;
+}
+
+function renderProgressBoard(rows){
+  const board = $("progressBoard");
+  const summary = $("progressBoardSummary");
+  if(!board || !summary) return;
+
+  const indexedRows = rows.map((reservation, index) => ({reservation, index}));
+  const cancelledCount = indexedRows.filter(({reservation}) =>
+    ["cancelled","no_show"].includes(reservation.status)
+  ).length;
+  const activeCount = indexedRows.filter(({reservation}) =>
+    ["checked_in","in_treatment","waiting_payment"].includes(reservation.status)
+  ).length;
+  const waitingPaymentCount = indexedRows.filter(({reservation}) =>
+    reservation.status === "waiting_payment"
+  ).length;
+  const completedCount = indexedRows.filter(({reservation}) =>
+    reservation.status === "completed"
+  ).length;
+
+  summary.innerHTML = `
+    <span class="progress-summary-pill">進行中 ${activeCount}件</span>
+    <span class="progress-summary-pill ${waitingPaymentCount ? "attention" : ""}">会計待ち ${waitingPaymentCount}件</span>
+    <span class="progress-summary-pill">完了 ${completedCount}件</span>
+    <span class="progress-summary-pill">取消等 ${cancelledCount}件</span>
+  `;
+
+  board.innerHTML = progressBoardColumns.map(column => {
+    const items = indexedRows
+      .filter(({reservation}) => reservation.status === column.status)
+      .sort((a,b) => new Date(a.reservation.start_at || 0) - new Date(b.reservation.start_at || 0));
+
+    return `
+      <section class="progress-column" data-board-status="${escapeHtml(column.status)}">
+        <header class="progress-column-head">
+          <div class="progress-column-title">${escapeHtml(column.label)}</div>
+          <span class="progress-column-count">${items.length}</span>
+        </header>
+        <div class="progress-column-list">
+          ${items.length
+            ? items.map(({reservation,index}) => progressBoardCardHtml(reservation,index,column)).join("")
+            : `<div class="progress-board-empty">現在、この段階の予約はありません。</div>`
+          }
+        </div>
+      </section>
+    `;
+  }).join("");
+
+  board.querySelectorAll("[data-board-detail]").forEach(button => {
+    button.addEventListener("click", async () => {
+      await openIntegratedVisit("day", Number(button.dataset.boardDetail));
+    });
+  });
+
+  board.querySelectorAll("[data-board-next]").forEach(button => {
+    button.addEventListener("click", () => {
+      const [index, nextStatus] = button.dataset.boardNext.split(":");
+      updateStatus("day", Number(index), nextStatus);
+    });
+  });
+}
+
+
 function renderToday(){
   const rows = state.day?.reservations || [];
   $("todayList").innerHTML = rows.length
     ? rows.map((r,i)=>renderReservationCard(r,i,"day")).join("")
     : `<div class="notice">この日の予約はありません。</div>`;
+
+  renderProgressBoard(rows);
 
   const followups = (state.day?.followups || []).filter(f => f.status !== "done");
   const nowParts = new Intl.DateTimeFormat("ja-JP", {
