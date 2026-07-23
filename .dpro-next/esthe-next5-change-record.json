@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "system": "DPRO エステ LINE",
+  "step": "ESTHE-NEXT-5",
+  "completed_at_jst": "2026-07-23T22:14:03+09:00",
+  "target_files": [
+    "owner.html",
+    "member.html",
+    "index-brush.html"
+  ],
+  "features": {
+    "booking_consent_visible": true,
+    "treatment_price_duration_confirmation": true,
+    "pre_treatment_checklist": true,
+    "persistent_confirmation_via_existing_karte_api": true,
+    "reservation_relation_by_code_and_id": true,
+    "treatment_start_guard": true,
+    "individual_customer_message_copy": true,
+    "bulk_auto_line_delivery": false,
+    "member_price_duration_display": true,
+    "additional_initial_api_requests": 0,
+    "lazy_public_settings_in_owner": true
+  },
+  "changes": {
+    "worker": false,
+    "supabase": false,
+    "api": false
+  },
+  "rollback": {
+    "tag": "backup-esthe-before-next5-r2-20260723",
+    "method": "バックアップタグからowner.html・member.html・index-brush.htmlと台帳を復元する"
+  }
+}

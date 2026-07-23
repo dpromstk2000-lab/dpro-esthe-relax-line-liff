@@ -86,3 +86,18 @@ next4_completion:
   worker_changed: false
   supabase_changed: false
   api_changed: false
+
+next5_completion:
+  completed_at_jst: "2026-07-23T22:14:07+09:00"
+  backup_tag: "backup-esthe-before-next5-r2-20260723"
+  treatment_confirmation: true
+  booking_consent_visible: true
+  persistent_confirmation_via_karte: true
+  reservation_relation: true
+  treatment_start_guard: true
+  individual_customer_message_copy: true
+  bulk_auto_line_delivery: false
+  additional_initial_api_requests: 0
+  worker_changed: false
+  supabase_changed: false
+  api_changed: false

@@ -1,10 +1,10 @@
 <!doctype html>
-<!-- STEP ESTHE-NEXT-4 -->
+<!-- STEP ESTHE-NEXT-5 -->
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DPRO Esthe Relaxation｜STEP ESTHE-NEXT-4｜owner.html</title>
+  <title>DPRO Esthe Relaxation｜STEP ESTHE-NEXT-5｜owner.html</title>
   <style>
     :root{
       --bg:#fffaf7;
@@ -655,12 +655,106 @@
   .progress-board{min-width:920px}
 }
 
+
+          /* DPRO NEXT-5: 施術内容・料金・同意確認 */
+          .preconfirm-status-grid{
+            display:grid;
+            grid-template-columns:repeat(2,1fr);
+            gap:9px;
+            margin-bottom:12px;
+          }
+          .preconfirm-status{
+            border:1px solid var(--line);
+            border-radius:15px;
+            background:var(--soft);
+            padding:12px;
+          }
+          .preconfirm-status strong{
+            display:block;
+            color:var(--main);
+            font-size:15px;
+            line-height:1.35;
+          }
+          .preconfirm-status span{
+            display:block;
+            margin-top:5px;
+            color:var(--muted);
+            font-size:11px;
+            font-weight:850;
+            line-height:1.55;
+          }
+          .preconfirm-status.ok{
+            background:#eaf8f2;
+            border-color:#bce9d8;
+          }
+          .preconfirm-status.ok strong{color:#087a59}
+          .preconfirm-status.warn{
+            background:#fff8e8;
+            border-color:#f0d6a4;
+          }
+          .preconfirm-status.warn strong{color:#8b5c0b}
+          .preconfirm-checks{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:8px;
+            margin-top:12px;
+          }
+          .preconfirm-check{
+            display:flex;
+            gap:9px;
+            align-items:flex-start;
+            min-height:52px;
+            padding:10px;
+            border:1px solid var(--line);
+            border-radius:14px;
+            background:#fff;
+            color:var(--text);
+            font-size:12px;
+            font-weight:900;
+            line-height:1.55;
+          }
+          .preconfirm-check input{
+            width:auto;
+            margin-top:3px;
+            accent-color:var(--main);
+          }
+          .preconfirm-note{
+            width:100%;
+            min-height:74px;
+            margin-top:10px;
+            padding:11px 12px;
+            border:1px solid var(--line);
+            border-radius:14px;
+            background:#fff;
+            color:var(--text);
+            font:inherit;
+            font-size:13px;
+            font-weight:800;
+            line-height:1.6;
+            resize:vertical;
+          }
+          .preconfirm-saved{
+            margin-top:10px;
+            padding:11px 12px;
+            border:1px solid #bce9d8;
+            border-radius:14px;
+            background:#eaf8f2;
+            color:#087a59;
+            font-size:12px;
+            font-weight:900;
+            line-height:1.6;
+          }
+          @media(max-width:680px){
+            .preconfirm-status-grid,
+            .preconfirm-checks{grid-template-columns:1fr}
+          }
+          
 </style>
 </head>
 <body>
   <main class="wrap">
     <section class="hero">
-      <div class="badge">STEP ESTHE-NEXT-4｜施術進捗・ステータス見える化</div>
+      <div class="badge">STEP ESTHE-NEXT-5｜施術内容・料金・同意確認</div>
       <h1>DPRO Esthe Relaxation</h1>
       <p>本日の予約、予約一覧、顧客カルテ、回数券、未対応フォロー、文面テンプレートをまとめて確認できるPC用の本格管理画面です。</p>
       <div class="hero-meta">
@@ -940,7 +1034,7 @@
   <div class="toast" id="toast"></div>
 
 <script>
-const VERSION = "ESTHE-NEXT-4-TREATMENT-PROGRESS-BOARD-20260723";
+const VERSION = "ESTHE-NEXT-5-TREATMENT-CONFIRMATION-20260723";
 const API_BASE = "https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev";
 const SHOP_CODE = "esthe_demo_default";
 const ADMIN_STORAGE_KEY = "dpro_esthe_admin_secret";
@@ -962,7 +1056,8 @@ const state = {
   selectedCustomerId: null,
   settingsSection: "basic",
   integratedVisit: null,
-  integratedVisitCache: {}
+  integratedVisitCache: {},
+  menuCatalog: []
 };
 
 const $ = (id) => document.getElementById(id);
@@ -1275,6 +1370,203 @@ function visitNotesHtml(detail){
   `).join("");
 }
 
+
+          function yenText(value){
+            const amount = Number(value);
+            return Number.isFinite(amount) ? `${amount.toLocaleString("ja-JP")}円` : "当日確認";
+          }
+
+          function menuForReservation(r){
+            const menus = state.menuCatalog || [];
+            const menuId = String(r?.menu_id || r?.menu?.id || "");
+            const menuName = String(r?.menu_name || r?.menu?.menu_name || "");
+            return menus.find(menu =>
+              (menuId && String(menu.id || "") === menuId) ||
+              (menuName && String(menu.menu_name || "") === menuName)
+            ) || r?.menu || null;
+          }
+
+          function reservationPriceInfo(r){
+            const menu = menuForReservation(r) || {};
+            const price = r?.price_yen ?? r?.menu_price_yen ?? menu.price_yen;
+            const duration = r?.duration_minutes ?? r?.menu_duration_minutes ?? menu.duration_minutes;
+            return {
+              price,
+              duration,
+              priceText: Number.isFinite(Number(price)) ? yenText(price) : "当日確認",
+              durationText: Number.isFinite(Number(duration)) ? `${Number(duration)}分` : "当日確認"
+            };
+          }
+
+          function latestConsultation(detail){
+            return (detail?.consultations || [])
+              .slice()
+              .sort((a,b) =>
+                new Date(b.answered_at || b.created_at || 0) -
+                new Date(a.answered_at || a.created_at || 0)
+              )[0] || null;
+          }
+
+          function reservationConsentChecked(detail){
+            const consultation = latestConsultation(detail);
+            if(!consultation) return false;
+            const answers = parseConsultationAnswers(consultation);
+            const raw = consultation.consent_checked ??
+              consultation.consent ??
+              answers.consent_checked ??
+              answers.consent;
+            return raw === true || raw === 1 || raw === "1" || raw === "true";
+          }
+
+          function preTreatmentConfirmationTitle(r){
+            const key = r?.reservation_code || r?.id || "予約";
+            return `施術前確認｜${key}`;
+          }
+
+          function findPreTreatmentConfirmation(detail, r){
+            const title = preTreatmentConfirmationTitle(r);
+            const relationKey = String(r?.reservation_code || r?.id || "");
+            return (detail?.notes || []).find(note => {
+              if(String(note.note_title || "") === title) return true;
+              const typeMatch = String(note.note_type || "") === "pre_treatment_confirmation";
+              const bodyMatch = relationKey && String(note.note_body || "").includes(relationKey);
+              return typeMatch && bodyMatch;
+            }) || null;
+          }
+
+          async function loadMenuCatalogIfNeeded(){
+            if((state.menuCatalog || []).length) return;
+            const existing = state.settings?.menus;
+            if(Array.isArray(existing) && existing.length){
+              state.menuCatalog = existing;
+              return;
+            }
+            try{
+              const settings = await api("/api/public/settings");
+              state.menuCatalog = settings.menus || [];
+            }catch(error){
+              state.menuCatalog = [];
+            }
+          }
+
+          function preTreatmentCustomerText(r){
+            const p = isoParts(r.start_at);
+            const info = reservationPriceInfo(r);
+            return [
+              `${r.customer_name || "お客様"}様`,
+              "",
+              "施術内容のご確認です。",
+              `日時：${p.date ? dateText(p.date) : "-"} ${p.time || ""}`,
+              `メニュー：${r.menu_name || "-"}`,
+              `料金目安：${info.priceText}`,
+              `所要時間目安：${info.durationText}`,
+              `担当：${r.staff_name || "指名なし"}`,
+              `予約番号：${r.reservation_code || "-"}`,
+              "",
+              "当日の体調・肌状態により、メニュー変更や施術を控える場合があります。",
+              "回数券・追加内容・当日の変更がある場合は、最終金額を店頭で確認します。",
+              "内容を確認してから施術を開始します。"
+            ].join("\n");
+          }
+
+          function copyPreTreatmentCustomerText(){
+            const r = state.integratedVisit?.reservation;
+            if(!r) return;
+            const text = preTreatmentCustomerText(r);
+            navigator.clipboard?.writeText(text)
+              .then(() => showToast("お客様確認文をコピーしました。"))
+              .catch(() => showToast("確認文をコピーできませんでした。"));
+          }
+
+          async function savePreTreatmentConfirmation(){
+            const hub = state.integratedVisit;
+            const r = hub?.reservation;
+            const detail = hub?.detail || {};
+            const customer = detail.customer || {};
+            if(!r || !customer.id){
+              showToast("顧客詳細を確認してから保存してください。");
+              return;
+            }
+
+            const requiredIds = [
+              "preconfirmMenu",
+              "preconfirmPrice",
+              "preconfirmSafety",
+              "preconfirmCustomer"
+            ];
+            const missing = requiredIds.filter(id => !$(id)?.checked);
+            if(missing.length){
+              showToast("4つの確認項目をすべて確認してください。");
+              return;
+            }
+
+            const p = isoParts(r.start_at);
+            const info = reservationPriceInfo(r);
+            const bookingConsent = reservationConsentChecked(detail);
+            const note = $("preconfirmNote")?.value.trim() || "";
+            const title = preTreatmentConfirmationTitle(r);
+            const body = [
+              "[DPRO_PRE_TREATMENT_CONFIRMATION]",
+              `予約番号：${r.reservation_code || "-"}`,
+              `予約ID：${r.id || "-"}`,
+              `日時：${p.date ? dateText(p.date) : "-"} ${p.time || ""}`,
+              `メニュー：${r.menu_name || "-"}`,
+              `標準料金：${info.priceText}`,
+              `所要時間：${info.durationText}`,
+              `予約時同意：${bookingConsent ? "同意済み" : "当日確認"}`,
+              "店舗確認：メニュー説明済み／料金説明済み／注意事項確認済み／お客様本人確認済み",
+              `補足：${note || "-"}`,
+              `記録画面：${VERSION}`
+            ].join("\n");
+
+            try{
+              await api("/api/admin/karte/save", {
+                method:"POST",
+                body:{
+                  customer_id:customer.id,
+                  note_title:title,
+                  note_body:body,
+                  note_type:"pre_treatment_confirmation",
+                  created_by:"owner",
+                  is_demo:true
+                }
+              });
+
+              const query = r.customer_id
+                ? `customer_id=${encodeURIComponent(r.customer_id)}`
+                : `phone=${encodeURIComponent(normalizePhone(r.customer_phone || r.phone || customer.phone || ""))}`;
+              const refreshed = await api(`/api/admin/customers/detail?${query}`);
+              hub.detail = refreshed;
+              const cacheKey = String(r.customer_id || normalizePhone(r.customer_phone || r.phone || customer.phone || ""));
+              if(cacheKey) state.integratedVisitCache[cacheKey] = refreshed;
+              showToast("施術前確認を顧客カルテへ保存しました。");
+              renderIntegratedVisit();
+            }catch(error){
+              showToast("施術前確認の保存に失敗しました。");
+              setMessage("ng", "施術前確認の保存に失敗しました：" + error.message);
+            }
+          }
+
+          async function requestTreatmentStart(source, index){
+            await openIntegratedVisit(source, index);
+            const hub = state.integratedVisit;
+            if(!hub?.reservation) return;
+
+            const saved = findPreTreatmentConfirmation(hub.detail, hub.reservation);
+            if(saved){
+              closeIntegratedVisit();
+              await updateStatus(source, index, "in_treatment", true);
+              return;
+            }
+
+            showToast("施術前確認を保存してから施術を開始してください。");
+            setTimeout(() => {
+              document.getElementById("preTreatmentConfirmSection")
+                ?.scrollIntoView({behavior:"smooth", block:"start"});
+            }, 80);
+          }
+
+          
 function renderIntegratedVisit(){
   const hub = state.integratedVisit;
   const body = $("visitHubBody");
@@ -1294,6 +1586,10 @@ function renderIntegratedVisit(){
   const detailError = hub.detailError
     ? `<div class="notice warn">顧客詳細の取得に失敗しました：${escapeHtml(hub.detailError)}</div>`
     : "";
+  const priceInfo = reservationPriceInfo(r);
+  const bookingConsent = reservationConsentChecked(detail);
+  const confirmationNote = findPreTreatmentConfirmation(detail, r);
+  const confirmationSaved = Boolean(confirmationNote);
 
   $("visitHubTitle").textContent = `${r.customer_name || "お客様"}｜受付・施術詳細`;
   $("visitHubLead").textContent = `${p.date ? dateText(p.date) : "-"} ${p.time || ""} / ${r.menu_name || "-"}`;
@@ -1324,7 +1620,43 @@ function renderIntegratedVisit(){
       </div>
     </section>
 
-    <section class="visit-hub-section">
+
+    <section class="visit-hub-section" id="preTreatmentConfirmSection">
+      <h3>施術内容・料金・同意確認</h3>
+      <div class="preconfirm-status-grid">
+        <div class="preconfirm-status ${bookingConsent ? "ok" : "warn"}">
+          <strong>${bookingConsent ? "予約時同意あり" : "予約時同意は当日確認"}</strong>
+          <span>${bookingConsent ? "予約画面で施術前確認事項へ同意済みです。" : "電話・店頭予約等は、お客様本人へ当日確認してください。"}</span>
+        </div>
+        <div class="preconfirm-status ${confirmationSaved ? "ok" : "warn"}">
+          <strong>${confirmationSaved ? "店舗確認を保存済み" : "店舗確認は未保存"}</strong>
+          <span>${confirmationSaved ? escapeHtml(confirmationNote.note_title || "施術前確認記録") : "4項目を確認し、顧客カルテへ記録してください。"}</span>
+        </div>
+      </div>
+      <div class="visit-hub-grid">
+        <div>施術内容</div><div>${escapeHtml(r.menu_name || "-")}</div>
+        <div>標準料金</div><div>${escapeHtml(priceInfo.priceText)}</div>
+        <div>所要時間</div><div>${escapeHtml(priceInfo.durationText)}</div>
+        <div>支払確認</div><div>${activeTickets.length ? "回数券利用候補あり／会計時に最終確認" : "店頭会計時に最終確認"}</div>
+      </div>
+      <div class="notice warn">
+        標準料金を表示しています。回数券、追加内容、当日のメニュー変更がある場合は、施術前または会計時に最終金額を確認してください。
+      </div>
+      <div class="preconfirm-checks">
+        <label class="preconfirm-check"><input id="preconfirmMenu" type="checkbox" ${confirmationSaved ? "checked" : ""}>施術メニューと内容を説明しました</label>
+        <label class="preconfirm-check"><input id="preconfirmPrice" type="checkbox" ${confirmationSaved ? "checked" : ""}>料金・回数券利用を確認しました</label>
+        <label class="preconfirm-check"><input id="preconfirmSafety" type="checkbox" ${confirmationSaved ? "checked" : ""}>体調・肌状態・注意事項を確認しました</label>
+        <label class="preconfirm-check"><input id="preconfirmCustomer" type="checkbox" ${confirmationSaved ? "checked" : ""}>お客様本人の同意を確認しました</label>
+      </div>
+      <textarea class="preconfirm-note" id="preconfirmNote" placeholder="当日の変更点や補足がある場合だけ入力してください。"></textarea>
+      ${confirmationSaved ? `<div class="preconfirm-saved">保存済み：${escapeHtml(confirmationNote.created_at || confirmationNote.updated_at || "日時記録あり")}</div>` : ""}
+      <div class="visit-hub-actions">
+        <button class="mini" type="button" data-preconfirm-copy="1">お客様確認文をコピー</button>
+        <button class="mini primary" type="button" data-preconfirm-save="1">${confirmationSaved ? "再確認を保存" : "確認記録を保存"}</button>
+      </div>
+    </section>
+
+              <section class="visit-hub-section">
       <h3>顧客情報のつながり</h3>
       <div class="visit-hub-counts">
         <div class="visit-hub-count"><strong>${Number(customer.visit_count || 0)}</strong><span>来店回数</span></div>
@@ -1385,6 +1717,8 @@ async function openIntegratedVisit(source, index){
   $("visitHubLayer").classList.add("show");
   $("visitHubLayer").setAttribute("aria-hidden", "false");
   $("visitHubBody").innerHTML = `<div class="visit-hub-loading">予約・顧客情報を読み込み中です。</div>`;
+
+  await loadMenuCatalogIfNeeded();
 
   const cacheKey = String(r.customer_id || normalizePhone(r.customer_phone || r.phone || ""));
   if(cacheKey && state.integratedVisitCache[cacheKey]){
@@ -1734,10 +2068,14 @@ async function loadReservations(){
   }
 }
 
-async function updateStatus(source, idx, status){
+async function updateStatus(source, idx, status, preTreatmentConfirmed=false){
   const list = source === "day" ? (state.day?.reservations || []) : state.reservations;
   const r = list[idx];
   if(!r) return;
+  if(status === "in_treatment" && !preTreatmentConfirmed){
+    await requestTreatmentStart(source, idx);
+    return;
+  }
   const p = isoParts(r.start_at);
   openModal(
     `${statusLabel(status)}に変更しますか？`,
@@ -1860,6 +2198,8 @@ function consultationRowsHtml(a){
   const request = ans.request_note || ans.note || ans.requests || a?.request_note || "-";
   const version = ans.version || a?.version || "-";
   const answeredAt = a?.answered_at || a?.created_at || "-";
+  const consentRaw = a?.consent_checked ?? a?.consent ?? ans.consent_checked ?? ans.consent;
+  const consentChecked = consentRaw === true || consentRaw === 1 || consentRaw === "1" || consentRaw === "true";
 
   return `
     <div class="summary-row">
@@ -1871,6 +2211,7 @@ function consultationRowsHtml(a){
       <div>妊娠中・通院中</div><div>${escapeHtml(pregnancy)}</div>
       <div>注意事項</div><div>${escapeHtml(allergy)}</div>
       <div>ご要望</div><div>${escapeHtml(request)}</div>
+      <div>施術前同意</div><div>${consentChecked ? "同意済み" : "当日確認"}</div>
       <div>入力画面</div><div>${escapeHtml(version)}</div>
     </div>
   `;
@@ -2558,6 +2899,18 @@ document.addEventListener("click", async (e) => {
   if(visitHub){
     const [source, index] = visitHub.dataset.visitHub.split(":");
     await openIntegratedVisit(source, Number(index));
+    return;
+  }
+
+  const preconfirmCopy = e.target.closest("[data-preconfirm-copy]");
+  if(preconfirmCopy){
+    copyPreTreatmentCustomerText();
+    return;
+  }
+
+  const preconfirmSave = e.target.closest("[data-preconfirm-save]");
+  if(preconfirmSave){
+    await savePreTreatmentConfirmation();
     return;
   }
 
