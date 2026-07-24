@@ -1,0 +1,310 @@
+# DPRO エステ LINE
+# STEP名: ESTHE-NEXT-10A-R3
+#
+# 目的:
+# - R2で完成・Commit済みの操作体験シートを再生成しない
+# - GitHub Pagesの公開切替を正しく待機
+# - PDF・PNGの公開バイトがCommit済みSHA256と一致するまで待機
+# - 公開PDF内QR6件を再読取
+#
+# R2失敗原因:
+# - HTTP 200だけで公開完了と判定
+# - Pages切替前の旧PDFを取得してSHA256不一致
+#
+# R3修正:
+# - HTTP 200かつPDF SHA256一致かつPNG SHA256一致で完了
+# - 最大10分、10秒間隔で再確認
+# - no-cacheヘッダーとキャッシュ回避クエリを使用
+#
+# 前STEP:
+# - current_step: ESTHE-NEXT-10A-R2-COMPLETE
+# - next_step: ESTHE-NEXT-10B-PRODUCT-SITE
+#
+# 次STEP:
+# - ESTHE-NEXT-10B-PRODUCT-SITE
+#
+# Worker変更: なし
+# Supabase変更: なし
+# API変更: なし
+# PDF・PNG再生成: なし
+#
+# 成功後:
+# - 公開検査記録を保存
+# - 完成台帳をR3-COMPLETEへ更新
+# - 自動Commit / Push
+# - R3 YML自身を削除
+
+name: "DPRO ESTHE NEXT-10A-R3 - Publication Verification Retry"
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/ESTHE-NEXT-10A-R3.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: "dpro-esthe-next"
+  cancel-in-progress: false
+
+env:
+  WORKFLOW_FILE: ".github/workflows/ESTHE-NEXT-10A-R3.yml"
+  EXPECTED_PREVIOUS_STEP: "ESTHE-NEXT-10A-R2-COMPLETE"
+  EXPECTED_NEXT_STEP: "ESTHE-NEXT-10B-PRODUCT-SITE"
+  BACKUP_TAG_PREFIX: "backup-esthe-before-next10a-r3"
+  PAGES_BASE: "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff"
+
+jobs:
+  esthe-next-10a-r3:
+    name: "Verify exact published ESTHE operation sheet"
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: "Checkout repository with history"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: "Configure Git identity"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name "DPRO NEXT Actions"
+          git config user.email "actions@users.noreply.github.com"
+
+      - name: "Confirm R2 completion and committed assets"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          STATE=".dpro-next/esthe-step-state.yml"
+          META="deliverables/esthe-next-10/operation-sheet-validation.json"
+          LAYOUT="deliverables/esthe-next-10/operation-sheet-layout-r2-validation.json"
+
+          test -f "$STATE"
+          test -f "$META"
+          test -f "$LAYOUT"
+
+          CURRENT_STEP="$(awk -F': *' '/^current_step:/{gsub(/["'"'"']/, "", $2); print $2; exit}' "$STATE")"
+          NEXT_STEP="$(awk -F': *' '/^next_step:/{gsub(/["'"'"']/, "", $2); print $2; exit}' "$STATE")"
+
+          [[ "$CURRENT_STEP" == "$EXPECTED_PREVIOUS_STEP" ]] || {
+            echo "::error::current_step不一致 $CURRENT_STEP"; exit 1;
+          }
+          [[ "$NEXT_STEP" == "$EXPECTED_NEXT_STEP" ]] || {
+            echo "::error::next_step不一致 $NEXT_STEP"; exit 1;
+          }
+
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+
+          meta=json.loads(
+              Path("deliverables/esthe-next-10/operation-sheet-validation.json")
+              .read_text(encoding="utf-8")
+          )
+          layout=json.loads(
+              Path("deliverables/esthe-next-10/operation-sheet-layout-r2-validation.json")
+              .read_text(encoding="utf-8")
+          )
+
+          pdf=Path(meta["pdf"])
+          png=Path(meta["png"])
+          assert pdf.is_file() and png.is_file()
+          assert hashlib.sha256(pdf.read_bytes()).hexdigest()==meta["sha256"]["pdf"]
+          assert hashlib.sha256(png.read_bytes()).hexdigest()==meta["sha256"]["png"]
+          assert meta["step"]=="ESTHE-NEXT-10A-R2"
+          assert meta["a4_portrait"] is True
+          assert meta["page_count"]==1
+          assert meta["qr_all_pass"] is True
+          assert layout["layout_reference"]=="DPRO_KSH_NEXT"
+          assert len(layout["expected_urls"])==6
+          print("R2 committed assets and SHA256: PASS")
+          PY
+
+      - name: "Create change-before backup tag"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          CHANGE_BEFORE_SHA="$GITHUB_SHA"
+          mapfile -t HEAD_FILES < <(git diff-tree --no-commit-id --name-only -r "$GITHUB_SHA")
+          if [[ "${#HEAD_FILES[@]}" -eq 1 && "${HEAD_FILES[0]}" == "$WORKFLOW_FILE" ]]; then
+            CHANGE_BEFORE_SHA="$(git rev-parse "${GITHUB_SHA}^")"
+          fi
+
+          JST_DATE="$(TZ=Asia/Tokyo date +%Y%m%d)"
+          BASE_TAG="${BACKUP_TAG_PREFIX}-${JST_DATE}"
+          BACKUP_TAG="$BASE_TAG"
+          if git ls-remote --exit-code --tags origin "refs/tags/$BACKUP_TAG" >/dev/null 2>&1; then
+            BACKUP_TAG="${BASE_TAG}-run-${GITHUB_RUN_ID}"
+          fi
+
+          git tag -a "$BACKUP_TAG" "$CHANGE_BEFORE_SHA"             -m "DPRO ESTHE before NEXT-10A-R3: $CHANGE_BEFORE_SHA"
+          git push origin "refs/tags/$BACKUP_TAG"
+
+          echo "CHANGE_BEFORE_SHA=$CHANGE_BEFORE_SHA" >> "$GITHUB_ENV"
+          echo "BACKUP_TAG=$BACKUP_TAG" >> "$GITHUB_ENV"
+
+      - name: "Read expected publication metadata"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+
+          meta=json.loads(
+              Path("deliverables/esthe-next-10/operation-sheet-validation.json")
+              .read_text(encoding="utf-8")
+          )
+          with open(os.environ["GITHUB_ENV"],"a",encoding="utf-8") as f:
+              f.write(f"PDF_REL={meta['pdf']}\n")
+              f.write(f"PNG_REL={meta['png']}\n")
+              f.write(f"EXPECTED_PDF_SHA={meta['sha256']['pdf']}\n")
+              f.write(f"EXPECTED_PNG_SHA={meta['sha256']['png']}\n")
+          PY
+
+      - name: "Wait until published PDF and PNG exactly match"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          PDF_URL="$PAGES_BASE/${PDF_REL}"
+          PNG_URL="$PAGES_BASE/${PNG_REL}"
+          MATCHED="false"
+          : > /tmp/esthe-next10a-r3-publication-wait.log
+
+          for attempt in $(seq 1 60); do
+            CACHE_KEY="${EXPECTED_PDF_SHA}-${GITHUB_RUN_ID}-${attempt}"
+            PDF_CODE="$(curl -L -sS --compressed --retry 2               --connect-timeout 8 --max-time 35               -H "Cache-Control: no-cache, no-store, max-age=0"               -H "Pragma: no-cache"               -o /tmp/esthe-next10a-r3-public.pdf               -w "%{http_code}"               "$PDF_URL?publication_sha=$CACHE_KEY" || true)"
+
+            PNG_CODE="$(curl -L -sS --compressed --retry 2               --connect-timeout 8 --max-time 35               -H "Cache-Control: no-cache, no-store, max-age=0"               -H "Pragma: no-cache"               -o /tmp/esthe-next10a-r3-public.png               -w "%{http_code}"               "$PNG_URL?publication_sha=$CACHE_KEY" || true)"
+
+            PDF_SHA="$(sha256sum /tmp/esthe-next10a-r3-public.pdf 2>/dev/null | awk '{print $1}' || true)"
+            PNG_SHA="$(sha256sum /tmp/esthe-next10a-r3-public.png 2>/dev/null | awk '{print $1}' || true)"
+            PDF_BYTES="$(stat -c '%s' /tmp/esthe-next10a-r3-public.pdf 2>/dev/null || echo 0)"
+            PNG_BYTES="$(stat -c '%s' /tmp/esthe-next10a-r3-public.png 2>/dev/null || echo 0)"
+
+            printf 'attempt=%s pdf_http=%s pdf_sha=%s pdf_bytes=%s png_http=%s png_sha=%s png_bytes=%s\n'               "$attempt" "$PDF_CODE" "$PDF_SHA" "$PDF_BYTES"               "$PNG_CODE" "$PNG_SHA" "$PNG_BYTES"               | tee -a /tmp/esthe-next10a-r3-publication-wait.log
+
+            if [[ "$PDF_CODE" == "200"               && "$PNG_CODE" == "200"               && "$PDF_SHA" == "$EXPECTED_PDF_SHA"               && "$PNG_SHA" == "$EXPECTED_PNG_SHA" ]]; then
+              MATCHED="true"
+              echo "PUBLICATION_ATTEMPT=$attempt" >> "$GITHUB_ENV"
+              break
+            fi
+
+            sleep 10
+          done
+
+          if [[ "$MATCHED" != "true" ]]; then
+            echo "::error::GitHub Pages公開ファイルがCommit済みSHA256へ切り替わりませんでした"
+            echo "Expected PDF: $EXPECTED_PDF_SHA"
+            echo "Actual PDF:   $(sha256sum /tmp/esthe-next10a-r3-public.pdf 2>/dev/null | awk '{print $1}' || true)"
+            echo "Expected PNG: $EXPECTED_PNG_SHA"
+            echo "Actual PNG:   $(sha256sum /tmp/esthe-next10a-r3-public.png 2>/dev/null | awk '{print $1}' || true)"
+            exit 1
+          fi
+
+      - name: "Install public PDF verification dependencies"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          sudo apt-get update
+          sudo apt-get install -y libzbar0
+          python3 -m pip install --upgrade pip
+          python3 -m pip install             pillow pymupdf opencv-python-headless pyzbar
+
+      - name: "Verify published PDF PNG and six QR codes"
+        shell: bash
+        env:
+          PUBLIC_PDF_PATH: "/tmp/esthe-next10a-r3-public.pdf"
+          PUBLIC_PNG_PATH: "/tmp/esthe-next10a-r3-public.png"
+          PUBLIC_REPORT_PATH: ".dpro-next/esthe-next10a-r3-publication-validation.json"
+        run: |
+          set -Eeuo pipefail
+          python3 -c 'import base64;exec(compile(base64.b64decode("CmZyb20gX19mdXR1cmVfXyBpbXBvcnQgYW5ub3RhdGlvbnMKCmltcG9ydCBoYXNobGliCmltcG9ydCBqc29uCmltcG9ydCBvcwpmcm9tIHBhdGhsaWIgaW1wb3J0IFBhdGgKCmltcG9ydCBjdjIKaW1wb3J0IGZpdHoKZnJvbSBQSUwgaW1wb3J0IEltYWdlCgpST09UID0gUGF0aCgiZGVsaXZlcmFibGVzL2VzdGhlLW5leHQtMTAiKQpNRVRBX1BBVEggPSBST09UIC8gIm9wZXJhdGlvbi1zaGVldC12YWxpZGF0aW9uLmpzb24iCkxBWU9VVF9QQVRIID0gUk9PVCAvICJvcGVyYXRpb24tc2hlZXQtbGF5b3V0LXIyLXZhbGlkYXRpb24uanNvbiIKUFVCTElDX1BERiA9IFBhdGgob3MuZW52aXJvblsiUFVCTElDX1BERl9QQVRIIl0pClBVQkxJQ19QTkcgPSBQYXRoKG9zLmVudmlyb25bIlBVQkxJQ19QTkdfUEFUSCJdKQpSRVBPUlRfUEFUSCA9IFBhdGgob3MuZW52aXJvblsiUFVCTElDX1JFUE9SVF9QQVRIIl0pCgptZXRhID0ganNvbi5sb2FkcyhNRVRBX1BBVEgucmVhZF90ZXh0KGVuY29kaW5nPSJ1dGYtOCIpKQpsYXlvdXQgPSBqc29uLmxvYWRzKExBWU9VVF9QQVRILnJlYWRfdGV4dChlbmNvZGluZz0idXRmLTgiKSkKZXhwZWN0ZWRfdXJscyA9IGxheW91dFsiZXhwZWN0ZWRfdXJscyJdCmJveGVzID0gbGF5b3V0WyJxcl9ib3hlc19wZGZfcG9pbnRzIl0KCmRlZiBzaGEyNTYocGF0aDogUGF0aCkgLT4gc3RyOgogICAgcmV0dXJuIGhhc2hsaWIuc2hhMjU2KHBhdGgucmVhZF9ieXRlcygpKS5oZXhkaWdlc3QoKQoKZGVmIGRlY29kZV9xcihwYXRoOiBQYXRoKSAtPiBzdHI6CiAgICBpbWFnZSA9IGN2Mi5pbXJlYWQoc3RyKHBhdGgpKQogICAgaWYgaW1hZ2UgaXMgTm9uZToKICAgICAgICByZXR1cm4gIiIKICAgIGRldGVjdG9yID0gY3YyLlFSQ29kZURldGVjdG9yKCkKICAgIHZhbHVlLCBfLCBfID0gZGV0ZWN0b3IuZGV0ZWN0QW5kRGVjb2RlKGltYWdlKQogICAgaWYgdmFsdWU6CiAgICAgICAgcmV0dXJuIHZhbHVlCgogICAgZ3JheSA9IGN2Mi5jdnRDb2xvcihpbWFnZSwgY3YyLkNPTE9SX0JHUjJHUkFZKQogICAgZm9yIHNjYWxlIGluICgxLjUsIDIuMCwgMy4wLCA0LjApOgogICAgICAgIGVubGFyZ2VkID0gY3YyLnJlc2l6ZSgKICAgICAgICAgICAgZ3JheSwKICAgICAgICAgICAgTm9uZSwKICAgICAgICAgICAgZng9c2NhbGUsCiAgICAgICAgICAgIGZ5PXNjYWxlLAogICAgICAgICAgICBpbnRlcnBvbGF0aW9uPWN2Mi5JTlRFUl9ORUFSRVNULAogICAgICAgICkKICAgICAgICB2YWx1ZSwgXywgXyA9IGRldGVjdG9yLmRldGVjdEFuZERlY29kZShlbmxhcmdlZCkKICAgICAgICBpZiB2YWx1ZToKICAgICAgICAgICAgcmV0dXJuIHZhbHVlCgogICAgdHJ5OgogICAgICAgIGZyb20gcHl6YmFyLnB5emJhciBpbXBvcnQgZGVjb2RlCiAgICAgICAgcmVzdWx0cyA9IGRlY29kZShJbWFnZS5vcGVuKHBhdGgpKQogICAgICAgIGlmIHJlc3VsdHM6CiAgICAgICAgICAgIHJldHVybiByZXN1bHRzWzBdLmRhdGEuZGVjb2RlKCJ1dGYtOCIpCiAgICBleGNlcHQgRXhjZXB0aW9uOgogICAgICAgIHBhc3MKICAgIHJldHVybiAiIgoKcGRmX3NoYSA9IHNoYTI1NihQVUJMSUNfUERGKQpwbmdfc2hhID0gc2hhMjU2KFBVQkxJQ19QTkcpCmlmIHBkZl9zaGEgIT0gbWV0YVsic2hhMjU2Il1bInBkZiJdOgogICAgcmFpc2UgU3lzdGVtRXhpdCgKICAgICAgICBmIlB1YmxpYyBQREYgU0hBMjU2IG1pc21hdGNoOiBleHBlY3RlZD17bWV0YVsnc2hhMjU2J11bJ3BkZiddfSBhY3R1YWw9e3BkZl9zaGF9IgogICAgKQppZiBwbmdfc2hhICE9IG1ldGFbInNoYTI1NiJdWyJwbmciXToKICAgIHJhaXNlIFN5c3RlbUV4aXQoCiAgICAgICAgZiJQdWJsaWMgUE5HIFNIQTI1NiBtaXNtYXRjaDogZXhwZWN0ZWQ9e21ldGFbJ3NoYTI1NiddWydwbmcnXX0gYWN0dWFsPXtwbmdfc2hhfSIKICAgICkKCmRvY3VtZW50ID0gZml0ei5vcGVuKFBVQkxJQ19QREYpCmlmIGRvY3VtZW50LnBhZ2VfY291bnQgIT0gMToKICAgIHJhaXNlIFN5c3RlbUV4aXQoZiJQdWJsaWMgUERGIHBhZ2UgY291bnQgaXMge2RvY3VtZW50LnBhZ2VfY291bnR9LCBleHBlY3RlZCAxIikKCnBhZ2UgPSBkb2N1bWVudFswXQpwYWdlX3dpZHRoID0gZmxvYXQocGFnZS5yZWN0LndpZHRoKQpwYWdlX2hlaWdodCA9IGZsb2F0KHBhZ2UucmVjdC5oZWlnaHQpCmlmIG5vdCAoNTk0IDw9IHBhZ2Vfd2lkdGggPD0gNTk3IGFuZCA4NDAgPD0gcGFnZV9oZWlnaHQgPD0gODQzKToKICAgIHJhaXNlIFN5c3RlbUV4aXQoCiAgICAgICAgZiJQdWJsaWMgUERGIGlzIG5vdCBBNCBwb3J0cmFpdDoge3BhZ2Vfd2lkdGh9IHgge3BhZ2VfaGVpZ2h0fSIKICAgICkKCnBpeG1hcCA9IHBhZ2UuZ2V0X3BpeG1hcCgKICAgIG1hdHJpeD1maXR6Lk1hdHJpeCgzMDAgLyA3MiwgMzAwIC8gNzIpLAogICAgYWxwaGE9RmFsc2UsCikKcmVuZGVyX3BhdGggPSBQYXRoKCIvdG1wL2VzdGhlLW5leHQxMGEtcjMtcHVibGljLXJlbmRlci5wbmciKQpwaXhtYXAuc2F2ZShyZW5kZXJfcGF0aCkKZG9jdW1lbnQuY2xvc2UoKQoKcmVuZGVyID0gY3YyLmltcmVhZChzdHIocmVuZGVyX3BhdGgpKQppZiByZW5kZXIgaXMgTm9uZToKICAgIHJhaXNlIFN5c3RlbUV4aXQoIkNvdWxkIG5vdCByZW5kZXIgcHVibGljIFBERiIpCnNjYWxlID0gMzAwIC8gNzIKcXJfcmVzdWx0cyA9IFtdCgpmb3IgbGFiZWwsIGJveCBpbiBib3hlcy5pdGVtcygpOgogICAgeCwgeSwgd2lkdGgsIGhlaWdodCA9IG1hcChmbG9hdCwgYm94KQogICAgbGVmdCA9IG1heCgwLCBpbnQoKHggLSA2KSAqIHNjYWxlKSkKICAgIHJpZ2h0ID0gbWluKHJlbmRlci5zaGFwZVsxXSwgaW50KCh4ICsgd2lkdGggKyA2KSAqIHNjYWxlKSkKICAgIHRvcCA9IG1heCgwLCBpbnQoKHBhZ2VfaGVpZ2h0IC0gKHkgKyBoZWlnaHQpIC0gNikgKiBzY2FsZSkpCiAgICBib3R0b20gPSBtaW4ocmVuZGVyLnNoYXBlWzBdLCBpbnQoKHBhZ2VfaGVpZ2h0IC0geSArIDYpICogc2NhbGUpKQogICAgY3JvcCA9IHJlbmRlclt0b3A6Ym90dG9tLCBsZWZ0OnJpZ2h0XQogICAgY3JvcF9wYXRoID0gUGF0aChmIi90bXAvZXN0aGUtbmV4dDEwYS1yMy1xci17bGVuKHFyX3Jlc3VsdHMpfS5wbmciKQogICAgY3YyLmltd3JpdGUoc3RyKGNyb3BfcGF0aCksIGNyb3ApCiAgICBkZWNvZGVkID0gZGVjb2RlX3FyKGNyb3BfcGF0aCkKICAgIGNyb3BfcGF0aC51bmxpbmsobWlzc2luZ19vaz1UcnVlKQogICAgcXJfcmVzdWx0cy5hcHBlbmQoCiAgICAgICAgewogICAgICAgICAgICAibGFiZWwiOiBsYWJlbCwKICAgICAgICAgICAgImV4cGVjdGVkIjogZXhwZWN0ZWRfdXJsc1tsYWJlbF0sCiAgICAgICAgICAgICJkZWNvZGVkIjogZGVjb2RlZCwKICAgICAgICAgICAgInBhc3MiOiBkZWNvZGVkID09IGV4cGVjdGVkX3VybHNbbGFiZWxdLAogICAgICAgIH0KICAgICkKCnJlbmRlcl9wYXRoLnVubGluayhtaXNzaW5nX29rPVRydWUpCmlmIG5vdCBhbGwoaXRlbVsicGFzcyJdIGZvciBpdGVtIGluIHFyX3Jlc3VsdHMpOgogICAgcmFpc2UgU3lzdGVtRXhpdCgKICAgICAgICAiUHVibGljIGZpbmFsIFBERiBRUiBtaXNtYXRjaDogIgogICAgICAgICsganNvbi5kdW1wcyhxcl9yZXN1bHRzLCBlbnN1cmVfYXNjaWk9RmFsc2UpCiAgICApCgpwbmcgPSBJbWFnZS5vcGVuKFBVQkxJQ19QTkcpCmlmIHBuZy53aWR0aCA8IDE1MDAgb3IgcG5nLmhlaWdodCA8IDIyMDA6CiAgICByYWlzZSBTeXN0ZW1FeGl0KGYiUHVibGljIFBORyByZXNvbHV0aW9uIHRvbyBzbWFsbDoge3BuZy5zaXplfSIpCgpyZXBvcnQgPSB7CiAgICAic3RlcCI6ICJFU1RIRS1ORVhULTEwQS1SMyIsCiAgICAicHVycG9zZSI6ICJHaXRIdWIgUGFnZXMgcHVibGljYXRpb24gcmV0cnkgYW5kIGV4YWN0LWJ5dGUgdmVyaWZpY2F0aW9uIiwKICAgICJsYXlvdXRfcmVmZXJlbmNlIjogbGF5b3V0WyJsYXlvdXRfcmVmZXJlbmNlIl0sCiAgICAicHVibGljX3BkZiI6IHsKICAgICAgICAic2hhMjU2IjogcGRmX3NoYSwKICAgICAgICAiZXhwZWN0ZWRfc2hhMjU2IjogbWV0YVsic2hhMjU2Il1bInBkZiJdLAogICAgICAgICJieXRlcyI6IFBVQkxJQ19QREYuc3RhdCgpLnN0X3NpemUsCiAgICAgICAgInBhZ2VfY291bnQiOiAxLAogICAgICAgICJhNF9wb3J0cmFpdCI6IFRydWUsCiAgICB9LAogICAgInB1YmxpY19wbmciOiB7CiAgICAgICAgInNoYTI1NiI6IHBuZ19zaGEsCiAgICAgICAgImV4cGVjdGVkX3NoYTI1NiI6IG1ldGFbInNoYTI1NiJdWyJwbmciXSwKICAgICAgICAiYnl0ZXMiOiBQVUJMSUNfUE5HLnN0YXQoKS5zdF9zaXplLAogICAgICAgICJ3aWR0aCI6IHBuZy53aWR0aCwKICAgICAgICAiaGVpZ2h0IjogcG5nLmhlaWdodCwKICAgIH0sCiAgICAicXJfcmVzdWx0cyI6IHFyX3Jlc3VsdHMsCiAgICAicXJfY291bnQiOiBsZW4ocXJfcmVzdWx0cyksCiAgICAiYWxsX3FyX3Bhc3MiOiBUcnVlLAogICAgImFsbF9wYXNzIjogVHJ1ZSwKfQpSRVBPUlRfUEFUSC5wYXJlbnQubWtkaXIocGFyZW50cz1UcnVlLCBleGlzdF9vaz1UcnVlKQpSRVBPUlRfUEFUSC53cml0ZV90ZXh0KAogICAganNvbi5kdW1wcyhyZXBvcnQsIGVuc3VyZV9hc2NpaT1GYWxzZSwgaW5kZW50PTIpICsgIlxuIiwKICAgIGVuY29kaW5nPSJ1dGYtOCIsCikKcHJpbnQoanNvbi5kdW1wcyhyZXBvcnQsIGVuc3VyZV9hc2NpaT1GYWxzZSwgaW5kZW50PTIpKQo="),"<ESTHE-NEXT-10A-R3-verify>","exec"))'
+
+      - name: "Update R3 completion ledger"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 -c 'import base64;exec(compile(base64.b64decode("CmZyb20gX19mdXR1cmVfXyBpbXBvcnQgYW5ub3RhdGlvbnMKCmltcG9ydCBkYXRldGltZSBhcyBkdAppbXBvcnQganNvbgppbXBvcnQgb3MKZnJvbSBwYXRobGliIGltcG9ydCBQYXRoCgpub3cgPSBkdC5kYXRldGltZS5ub3coCiAgICBkdC50aW1lem9uZShkdC50aW1lZGVsdGEoaG91cnM9OSkpCikucmVwbGFjZShtaWNyb3NlY29uZD0wKQoKcHVibGljYXRpb24gPSBqc29uLmxvYWRzKAogICAgUGF0aCgiLmRwcm8tbmV4dC9lc3RoZS1uZXh0MTBhLXIzLXB1YmxpY2F0aW9uLXZhbGlkYXRpb24uanNvbiIpCiAgICAucmVhZF90ZXh0KGVuY29kaW5nPSJ1dGYtOCIpCikKbWV0YSA9IGpzb24ubG9hZHMoCiAgICBQYXRoKCJkZWxpdmVyYWJsZXMvZXN0aGUtbmV4dC0xMC9vcGVyYXRpb24tc2hlZXQtdmFsaWRhdGlvbi5qc29uIikKICAgIC5yZWFkX3RleHQoZW5jb2Rpbmc9InV0Zi04IikKKQoKZGVmIHEodmFsdWUpOgogICAgcmV0dXJuIGpzb24uZHVtcHMoc3RyKHZhbHVlKSwgZW5zdXJlX2FzY2lpPUZhbHNlKQoKc3RhdGVfbGluZXMgPSBbCiAgICAic2NoZW1hX3ZlcnNpb246IDEiLAogICAgZiJzeXN0ZW06IHtxKCdEUFJPIOOCqOOCueODhiBMSU5FJyl9IiwKICAgIGYiY3VycmVudF9zdGVwOiB7cSgnRVNUSEUtTkVYVC0xMEEtUjMtQ09NUExFVEUnKX0iLAogICAgZiJuZXh0X3N0ZXA6IHtxKCdFU1RIRS1ORVhULTEwQi1QUk9EVUNULVNJVEUnKX0iLAogICAgZiJ1cGRhdGVkX2F0X2pzdDoge3Eobm93Lmlzb2Zvcm1hdCgpKX0iLAogICAgZiJzb3VyY2VfY29tbWl0OiB7cShvcy5lbnZpcm9uWydDSEFOR0VfQkVGT1JFX1NIQSddKX0iLAogICAgZiJiYWNrdXBfdGFnOiB7cShvcy5lbnZpcm9uWydCQUNLVVBfVEFHJ10pfSIsCiAgICBmInJlc3VsdDoge3EoJ09LJyl9IiwKICAgICJjaGFuZ2VzOiIsCiAgICAiICB3b3JrZXI6IGZhbHNlIiwKICAgICIgIHN1cGFiYXNlOiBmYWxzZSIsCiAgICAiICBhcGk6IGZhbHNlIiwKICAgICIgIG9wZXJhdGlvbl9zaGVldF9sYXlvdXRfcmVmZXJlbmNlOiBEUFJPX0tTSF9ORVhUIiwKICAgICIgIG9wZXJhdGlvbl9zaGVldF9yZXBsYWNlZDogdHJ1ZSIsCiAgICAiICBwdWJsaWNhdGlvbl9yZXRyeV9jb21wbGV0ZWQ6IHRydWUiLAogICAgIiAgcHVibGljX3BkZl9zaGEyNTZfbWF0Y2g6IHRydWUiLAogICAgIiAgcHVibGljX3BuZ19zaGEyNTZfbWF0Y2g6IHRydWUiLAogICAgIiAgcHVibGljX3BkZl9xcl9kZWNvZGVfcGFzczogdHJ1ZSIsCiAgICAiICBwdWJsaWNfcXJfY291bnQ6IDYiLAogICAgIiAgcHJvZHVjdF9zaXRlX3VwZGF0ZTogcGVuZGluZ19uZXh0MTBiIiwKXQpQYXRoKCIuZHByby1uZXh0L2VzdGhlLXN0ZXAtc3RhdGUueW1sIikud3JpdGVfdGV4dCgKICAgICJcbiIuam9pbihzdGF0ZV9saW5lcykgKyAiXG4iLAogICAgZW5jb2Rpbmc9InV0Zi04IiwKKQoKcmVwb3J0X2xpbmVzID0gWwogICAgIkRQUk8g44Ko44K544OGIExJTkUgLyBFU1RIRS1ORVhULTEwQS1SMyDlrp/ooYzntZDmnpwiLAogICAgZiLlrozkuobml6XmmYJKU1Q6IHtub3cuaXNvZm9ybWF0KCl9IiwKICAgIGYi5aSJ5pu05YmNQ29tbWl0OiB7b3MuZW52aXJvblsnQ0hBTkdFX0JFRk9SRV9TSEEnXX0iLAogICAgZiLjg5Djg4Pjgq/jgqLjg4Pjg5fjgr/jgrA6IHtvcy5lbnZpcm9uWydCQUNLVVBfVEFHJ119IiwKICAgICIiLAogICAgIlIy5aSx5pWX5Y6f5ZugOiIsCiAgICAiLSBHaXRIdWIgUGFnZXPjgYxIVFRQIDIwMOOCkui/lOOBl+OBn+aZgueCueOBp+W+heapn+OCkue1guS6hiIsCiAgICAiLSDlhazplovliIfmm7/liY3jga7ml6dQREbjgpLlj5blvpfjgZdTSEEyNTbkuI3kuIDoh7QiLAogICAgIiIsCiAgICAiUjPkv67mraM6IiwKICAgICItIEhUVFAgMjAw44Gg44GR44Gn44Gv5a6M5LqG5omx44GE44Gr44GX44Gq44GEIiwKICAgICItIFBERuOBqFBOR+OBrlNIQTI1NuOBjOS4oeaWueS4gOiHtOOBmeOCi+OBvuOBp+acgOWkpzEw5YiG5b6F5qmfIiwKICAgICItIENhY2hlLUNvbnRyb2wgbm8tY2FjaGXjg7tQcmFnbWEgbm8tY2FjaGXjg7tVUkzjgq/jgqjjg6rjgpLkvbXnlKgiLAogICAgIi0g5YWs6ZaLUERG5YaFUVI25Lu244KS5YaN6Kqt5Y+W44GX44GmVVJM5a6M5YWo5LiA6Ie044KS56K66KqNIiwKICAgICIiLAogICAgIuWFrOmWi+aknOafuzoiLAogICAgZiItIFBERiBTSEEyNTY6IHtwdWJsaWNhdGlvblsncHVibGljX3BkZiddWydzaGEyNTYnXX0iLAogICAgZiItIFBORyBTSEEyNTY6IHtwdWJsaWNhdGlvblsncHVibGljX3BuZyddWydzaGEyNTYnXX0iLAogICAgIi0g5YWs6ZaLUERGIEE057imMeODmuODvOOCuDogUEFTUyIsCiAgICAiLSDlhazplotQTkfop6Plg4/luqY6IFBBU1MiLAogICAgZiItIOWFrOmWi1BERuWGhVFSOiB7cHVibGljYXRpb25bJ3FyX2NvdW50J119IC8ge3B1YmxpY2F0aW9uWydxcl9jb3VudCddfSBQQVNTIiwKICAgICIiLAogICAgIuWkieabtOiomOmMsjoiLAogICAgIi0g5pON5L2c5L2T6aiT44K344O844OI5pys5L2TOiBSMuWujOaIkOeJiOOCkue2reaMgSIsCiAgICAiLSBXb3JrZXI6IOWkieabtOOBquOBlyIsCiAgICAiLSBTdXBhYmFzZTog5aSJ5pu044Gq44GXIiwKICAgICItIEFQSTog5aSJ5pu044Gq44GXIiwKICAgICIiLAogICAgIuasoVNURVA6IEVTVEhFLU5FWFQtMTBCLVBST0RVQ1QtU0lURSIsCl0KUGF0aCgiLmRwcm8tbmV4dC9lc3RoZS1uZXh0MTBhLXIzLXJlcG9ydC50eHQiKS53cml0ZV90ZXh0KAogICAgIlxuIi5qb2luKHJlcG9ydF9saW5lcykgKyAiXG4iLAogICAgZW5jb2Rpbmc9InV0Zi04IiwKKQoKYmFzZWxpbmUgPSBQYXRoKCIuZHByby1uZXh0L2VzdGhlLWN1cnJlbnQtYmFzZWxpbmUueW1sIikKaWYgYmFzZWxpbmUuZXhpc3RzKCk6CiAgICB3aXRoIGJhc2VsaW5lLm9wZW4oImEiLCBlbmNvZGluZz0idXRmLTgiKSBhcyBmaWxlOgogICAgICAgIGZpbGUud3JpdGUoIlxubmV4dDEwYV9yM19jb21wbGV0aW9uOlxuIikKICAgICAgICBmaWxlLndyaXRlKGYiICBjb21wbGV0ZWRfYXRfanN0OiB7cShub3cuaXNvZm9ybWF0KCkpfVxuIikKICAgICAgICBmaWxlLndyaXRlKGYiICBiYWNrdXBfdGFnOiB7cShvcy5lbnZpcm9uWydCQUNLVVBfVEFHJ10pfVxuIikKICAgICAgICBmaWxlLndyaXRlKCIgIHB1cnBvc2U6IHB1YmxpY2F0aW9uX3ZlcmlmaWNhdGlvbl9yZXRyeVxuIikKICAgICAgICBmaWxlLndyaXRlKCIgIGxheW91dF9yZWZlcmVuY2U6IERQUk9fS1NIX05FWFRcbiIpCiAgICAgICAgZmlsZS53cml0ZShmIiAgcHVibGljX3BkZl9zaGEyNTY6IHtxKHB1YmxpY2F0aW9uWydwdWJsaWNfcGRmJ11bJ3NoYTI1NiddKX1cbiIpCiAgICAgICAgZmlsZS53cml0ZShmIiAgcHVibGljX3BuZ19zaGEyNTY6IHtxKHB1YmxpY2F0aW9uWydwdWJsaWNfcG5nJ11bJ3NoYTI1NiddKX1cbiIpCiAgICAgICAgZmlsZS53cml0ZSgiICBwdWJsaWNfcGRmX3NoYTI1Nl9tYXRjaDogdHJ1ZVxuIikKICAgICAgICBmaWxlLndyaXRlKCIgIHB1YmxpY19wbmdfc2hhMjU2X21hdGNoOiB0cnVlXG4iKQogICAgICAgIGZpbGUud3JpdGUoIiAgcHVibGljX3BkZl9xcl9kZWNvZGVfcGFzczogdHJ1ZVxuIikKICAgICAgICBmaWxlLndyaXRlKCIgIHB1YmxpY19xcl9jb3VudDogNlxuIikKICAgICAgICBmaWxlLndyaXRlKCIgIHByb2R1Y3Rfc2l0ZV91cGRhdGU6IHBlbmRpbmdfbmV4dDEwYlxuIikKICAgICAgICBmaWxlLndyaXRlKCIgIHdvcmtlcl9jaGFuZ2VkOiBmYWxzZVxuIikKICAgICAgICBmaWxlLndyaXRlKCIgIHN1cGFiYXNlX2NoYW5nZWQ6IGZhbHNlXG4iKQogICAgICAgIGZpbGUud3JpdGUoIiAgYXBpX2NoYW5nZWQ6IGZhbHNlXG4iKQo="),"<ESTHE-NEXT-10A-R3-ledger>","exec"))'
+
+          grep -q 'current_step: "ESTHE-NEXT-10A-R3-COMPLETE"'             .dpro-next/esthe-step-state.yml
+          grep -q 'next_step: "ESTHE-NEXT-10B-PRODUCT-SITE"'             .dpro-next/esthe-step-state.yml
+          grep -q 'public_pdf_sha256_match: true'             .dpro-next/esthe-step-state.yml
+          grep -q 'public_png_sha256_match: true'             .dpro-next/esthe-step-state.yml
+          grep -q 'public_pdf_qr_decode_pass: true'             .dpro-next/esthe-step-state.yml
+
+      - name: "Upload R3 publication verification artifact"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "ESTHE-NEXT-10A-R3-publication-${{ github.run_id }}"
+          path: |
+            .dpro-next/esthe-next10a-r3-publication-validation.json
+            .dpro-next/esthe-next10a-r3-report.txt
+            /tmp/esthe-next10a-r3-publication-wait.log
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: "Commit publication record, delete workflow and push"
+        if: success()
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git add             .dpro-next/esthe-step-state.yml             .dpro-next/esthe-current-baseline.yml             .dpro-next/esthe-next10a-r3-publication-validation.json             .dpro-next/esthe-next10a-r3-report.txt
+
+          git rm --ignore-unmatch             "$WORKFLOW_FILE"             ".github/workflows/ESTHE-NEXT-10A-R2.yml"             ".github/workflows/ESTHE-NEXT-10A.yml"
+
+          git diff --cached --quiet && {
+            echo "::error::Commit対象がありません"; exit 1;
+          }
+
+          git commit -m "DPRO ESTHE NEXT-10A-R3 complete: publication verified"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      - name: "Final post-commit exact publication confirmation"
+        if: success()
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          PDF_URL="$PAGES_BASE/${PDF_REL}"
+          PNG_URL="$PAGES_BASE/${PNG_REL}"
+          FINAL_MATCH="false"
+
+          for attempt in $(seq 1 36); do
+            CACHE_KEY="final-${EXPECTED_PDF_SHA}-${GITHUB_RUN_ID}-${attempt}"
+
+            PDF_CODE="$(curl -L -sS --compressed --retry 2               --connect-timeout 8 --max-time 35               -H "Cache-Control: no-cache, no-store, max-age=0"               -H "Pragma: no-cache"               -o /tmp/esthe-next10a-r3-final.pdf               -w "%{http_code}"               "$PDF_URL?publication_sha=$CACHE_KEY" || true)"
+
+            PNG_CODE="$(curl -L -sS --compressed --retry 2               --connect-timeout 8 --max-time 35               -H "Cache-Control: no-cache, no-store, max-age=0"               -H "Pragma: no-cache"               -o /tmp/esthe-next10a-r3-final.png               -w "%{http_code}"               "$PNG_URL?publication_sha=$CACHE_KEY" || true)"
+
+            PDF_SHA="$(sha256sum /tmp/esthe-next10a-r3-final.pdf 2>/dev/null | awk '{print $1}' || true)"
+            PNG_SHA="$(sha256sum /tmp/esthe-next10a-r3-final.png 2>/dev/null | awk '{print $1}' || true)"
+
+            if [[ "$PDF_CODE" == "200"               && "$PNG_CODE" == "200"               && "$PDF_SHA" == "$EXPECTED_PDF_SHA"               && "$PNG_SHA" == "$EXPECTED_PNG_SHA" ]]; then
+              FINAL_MATCH="true"
+              break
+            fi
+
+            sleep 10
+          done
+
+          [[ "$FINAL_MATCH" == "true" ]] || {
+            echo "::error::最終Commit後の公開SHA256確認に失敗しました"
+            exit 1
+          }
+
+          echo "### NEXT-10A-R3公開確認" >> "$GITHUB_STEP_SUMMARY"
+          echo "- R2操作体験シート本体: **変更なし・正常**" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Pages切替待機回数: **${PUBLICATION_ATTEMPT}**" >> "$GITHUB_STEP_SUMMARY"
+          echo "- 公開PDF SHA256: **一致**" >> "$GITHUB_STEP_SUMMARY"
+          echo "- 公開PNG SHA256: **一致**" >> "$GITHUB_STEP_SUMMARY"
+          echo "- 公開PDF内QR: **6 / 6 PASS**" >> "$GITHUB_STEP_SUMMARY"
+          echo "- 次STEP: **ESTHE-NEXT-10B-PRODUCT-SITE**" >> "$GITHUB_STEP_SUMMARY"
