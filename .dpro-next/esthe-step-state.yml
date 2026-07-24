@@ -1,10 +1,10 @@
 schema_version: 1
 system: "DPRO エステ LINE"
-current_step: "ESTHE-NEXT-10A-R2-COMPLETE"
+current_step: "ESTHE-NEXT-10A-R3-COMPLETE"
 next_step: "ESTHE-NEXT-10B-PRODUCT-SITE"
-updated_at_jst: "2026-07-24T15:47:32+09:00"
-source_commit: "38e243b47eeca66d41829355df37b1253bcf362f"
-backup_tag: "backup-esthe-before-next10a-r2-20260724"
+updated_at_jst: "2026-07-24T15:58:44+09:00"
+source_commit: "1e0fb31a7e2a60847d91d7c87a534bb0a896b437"
+backup_tag: "backup-esthe-before-next10a-r3-20260724"
 result: "OK"
 changes:
   worker: false
@@ -12,13 +12,9 @@ changes:
   api: false
   operation_sheet_layout_reference: DPRO_KSH_NEXT
   operation_sheet_replaced: true
-  top_qr_cards: 5
-  five_minute_route_items: 5
-  large_real_screens: 2
-  benefit_cards: 3
-  operation_sheet_a4_portrait_one_page: true
-  real_screen_captures_refreshed: true
-  screenshot_noise_guard: true
-  final_pdf_qr_decode_pass: true
-  qr_count: 6
+  publication_retry_completed: true
+  public_pdf_sha256_match: true
+  public_png_sha256_match: true
+  public_pdf_qr_decode_pass: true
+  public_qr_count: 6
   product_site_update: pending_next10b

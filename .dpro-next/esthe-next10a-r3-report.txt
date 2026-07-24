@@ -1,0 +1,29 @@
+DPRO エステ LINE / ESTHE-NEXT-10A-R3 実行結果
+完了日時JST: 2026-07-24T15:58:44+09:00
+変更前Commit: 1e0fb31a7e2a60847d91d7c87a534bb0a896b437
+バックアップタグ: backup-esthe-before-next10a-r3-20260724
+
+R2失敗原因:
+- GitHub PagesがHTTP 200を返した時点で待機を終了
+- 公開切替前の旧PDFを取得しSHA256不一致
+
+R3修正:
+- HTTP 200だけでは完了扱いにしない
+- PDFとPNGのSHA256が両方一致するまで最大10分待機
+- Cache-Control no-cache・Pragma no-cache・URLクエリを併用
+- 公開PDF内QR6件を再読取してURL完全一致を確認
+
+公開検査:
+- PDF SHA256: ae2b2e1ced05d5eda5558bedb82c86dc4f68650e3ab92bb19dfa175f23f69fde
+- PNG SHA256: bbc8ef31221766d53d0c0b379c131fb0c2fb433d51c150843071cc4dc4f98afb
+- 公開PDF A4縦1ページ: PASS
+- 公開PNG解像度: PASS
+- 公開PDF内QR: 6 / 6 PASS
+
+変更記録:
+- 操作体験シート本体: R2完成版を維持
+- Worker: 変更なし
+- Supabase: 変更なし
+- API: 変更なし
+
+次STEP: ESTHE-NEXT-10B-PRODUCT-SITE

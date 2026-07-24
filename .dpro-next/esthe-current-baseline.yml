@@ -202,3 +202,19 @@ next10a_r2_completion:
   worker_changed: false
   supabase_changed: false
   api_changed: false
+
+next10a_r3_completion:
+  completed_at_jst: "2026-07-24T15:58:44+09:00"
+  backup_tag: "backup-esthe-before-next10a-r3-20260724"
+  purpose: publication_verification_retry
+  layout_reference: DPRO_KSH_NEXT
+  public_pdf_sha256: "ae2b2e1ced05d5eda5558bedb82c86dc4f68650e3ab92bb19dfa175f23f69fde"
+  public_png_sha256: "bbc8ef31221766d53d0c0b379c131fb0c2fb433d51c150843071cc4dc4f98afb"
+  public_pdf_sha256_match: true
+  public_png_sha256_match: true
+  public_pdf_qr_decode_pass: true
+  public_qr_count: 6
+  product_site_update: pending_next10b
+  worker_changed: false
+  supabase_changed: false
+  api_changed: false
