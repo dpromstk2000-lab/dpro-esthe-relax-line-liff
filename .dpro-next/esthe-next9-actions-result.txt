@@ -1,0 +1,5 @@
+DPRO エステ LINE / ESTHE-NEXT-9 Actions静的検査
+生成日時JST: 2026-07-24T14:29:38+09:00
+OK: 48
+注意: 3
+NG: 0

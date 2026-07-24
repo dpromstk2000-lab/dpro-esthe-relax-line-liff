@@ -1,0 +1,384 @@
+{
+  "schema_version": 1,
+  "system": "DPRO エステ LINE",
+  "step": "ESTHE-NEXT-9",
+  "generated_at_jst": "2026-07-24T14:29:38+09:00",
+  "summary": {
+    "ok": 48,
+    "attention": 3,
+    "ng": 0
+  },
+  "items": [
+    {
+      "category": "静的検査",
+      "name": "index-brush.html採用STEP",
+      "status": "OK",
+      "detail": "期待：STEP ESTHE-NEXT-7",
+      "ms": null
+    },
+    {
+      "category": "静的検査",
+      "name": "index-brush.html HTML構文",
+      "status": "OK",
+      "detail": "HTMLParserで解析完了",
+      "ms": null
+    },
+    {
+      "category": "静的検査",
+      "name": "index-brush.html ID重複",
+      "status": "OK",
+      "detail": "重複なし",
+      "ms": null
+    },
+    {
+      "category": "静的検査",
+      "name": "index-brush.html JavaScript構文",
+      "status": "OK",
+      "detail": "1スクリプト正常",
+      "ms": null
+    },
+    {
+      "category": "性能",
+      "name": "index-brush.html ファイル容量",
+      "status": "OK",
+      "detail": "61,876 bytes",
+      "ms": null
+    },
+    {
+      "category": "静的検査",
+      "name": "owner.html採用STEP",
+      "status": "OK",
+      "detail": "期待：STEP ESTHE-NEXT-8",
+      "ms": null
+    },
+    {
+      "category": "静的検査",
+      "name": "owner.html HTML構文",
+      "status": "OK",
+      "detail": "HTMLParserで解析完了",
+      "ms": null
+    },
+    {
+      "category": "静的検査",
+      "name": "owner.html ID重複",
+      "status": "OK",
+      "detail": "重複なし",
+      "ms": null
+    },
+    {
+      "category": "静的検査",
+      "name": "owner.html JavaScript構文",
+      "status": "OK",
+      "detail": "1スクリプト正常",
+      "ms": null
+    },
+    {
+      "category": "性能",
+      "name": "owner.html ファイル容量",
+      "status": "OK",
+      "detail": "139,507 bytes",
+      "ms": null
+    },
+    {
+      "category": "静的検査",
+      "name": "owner-ipad.html採用STEP",
+      "status": "OK",
+      "detail": "期待：STEP ESTHE-NEXT-6",
+      "ms": null
+    },
+    {
+      "category": "静的検査",
+      "name": "owner-ipad.html HTML構文",
+      "status": "OK",
+      "detail": "HTMLParserで解析完了",
+      "ms": null
+    },
+    {
+      "category": "静的検査",
+      "name": "owner-ipad.html ID重複",
+      "status": "OK",
+      "detail": "重複なし",
+      "ms": null
+    },
+    {
+      "category": "静的検査",
+      "name": "owner-ipad.html JavaScript構文",
+      "status": "OK",
+      "detail": "1スクリプト正常",
+      "ms": null
+    },
+    {
+      "category": "性能",
+      "name": "owner-ipad.html ファイル容量",
+      "status": "OK",
+      "detail": "129,934 bytes",
+      "ms": null
+    },
+    {
+      "category": "静的検査",
+      "name": "staff.html採用STEP",
+      "status": "OK",
+      "detail": "期待：STEP ESTHE-NEXT-6",
+      "ms": null
+    },
+    {
+      "category": "静的検査",
+      "name": "staff.html HTML構文",
+      "status": "OK",
+      "detail": "HTMLParserで解析完了",
+      "ms": null
+    },
+    {
+      "category": "静的検査",
+      "name": "staff.html ID重複",
+      "status": "OK",
+      "detail": "重複なし",
+      "ms": null
+    },
+    {
+      "category": "静的検査",
+      "name": "staff.html JavaScript構文",
+      "status": "OK",
+      "detail": "1スクリプト正常",
+      "ms": null
+    },
+    {
+      "category": "性能",
+      "name": "staff.html ファイル容量",
+      "status": "OK",
+      "detail": "47,689 bytes",
+      "ms": null
+    },
+    {
+      "category": "静的検査",
+      "name": "member.html採用STEP",
+      "status": "OK",
+      "detail": "期待：STEP ESTHE-NEXT-7",
+      "ms": null
+    },
+    {
+      "category": "静的検査",
+      "name": "member.html HTML構文",
+      "status": "OK",
+      "detail": "HTMLParserで解析完了",
+      "ms": null
+    },
+    {
+      "category": "静的検査",
+      "name": "member.html ID重複",
+      "status": "OK",
+      "detail": "重複なし",
+      "ms": null
+    },
+    {
+      "category": "静的検査",
+      "name": "member.html JavaScript構文",
+      "status": "OK",
+      "detail": "1スクリプト正常",
+      "ms": null
+    },
+    {
+      "category": "性能",
+      "name": "member.html ファイル容量",
+      "status": "OK",
+      "detail": "53,999 bytes",
+      "ms": null
+    },
+    {
+      "category": "静的検査",
+      "name": "system-check.html採用STEP",
+      "status": "OK",
+      "detail": "期待：STEP ESTHE-NEXT-9",
+      "ms": null
+    },
+    {
+      "category": "静的検査",
+      "name": "system-check.html HTML構文",
+      "status": "OK",
+      "detail": "HTMLParserで解析完了",
+      "ms": null
+    },
+    {
+      "category": "静的検査",
+      "name": "system-check.html ID重複",
+      "status": "OK",
+      "detail": "重複なし",
+      "ms": null
+    },
+    {
+      "category": "静的検査",
+      "name": "system-check.html JavaScript構文",
+      "status": "OK",
+      "detail": "1スクリプト正常",
+      "ms": null
+    },
+    {
+      "category": "性能",
+      "name": "system-check.html ファイル容量",
+      "status": "OK",
+      "detail": "26,143 bytes",
+      "ms": null
+    },
+    {
+      "category": "セキュリティ",
+      "name": "index-brush.html 管理情報混入",
+      "status": "OK",
+      "detail": "管理API・管理コード情報なし",
+      "ms": null
+    },
+    {
+      "category": "セキュリティ",
+      "name": "member.html 管理情報混入",
+      "status": "OK",
+      "detail": "管理API・管理コード情報なし",
+      "ms": null
+    },
+    {
+      "category": "セキュリティ",
+      "name": "owner.html 管理コード削除",
+      "status": "OK",
+      "detail": "削除ボタンあり",
+      "ms": null
+    },
+    {
+      "category": "セキュリティ",
+      "name": "owner-ipad.html 管理コード削除",
+      "status": "OK",
+      "detail": "削除ボタンあり",
+      "ms": null
+    },
+    {
+      "category": "セキュリティ",
+      "name": "staff.html 管理コード削除",
+      "status": "OK",
+      "detail": "削除ボタンあり",
+      "ms": null
+    },
+    {
+      "category": "セキュリティ",
+      "name": "system-check.html 管理コード削除",
+      "status": "OK",
+      "detail": "削除ボタンあり",
+      "ms": null
+    },
+    {
+      "category": "主要業務ロジック",
+      "name": "予約の過去日時防止",
+      "status": "OK",
+      "detail": "実装確認済み",
+      "ms": null
+    },
+    {
+      "category": "主要業務ロジック",
+      "name": "電話番号正規化・予約",
+      "status": "OK",
+      "detail": "実装確認済み",
+      "ms": null
+    },
+    {
+      "category": "主要業務ロジック",
+      "name": "施術前同意",
+      "status": "OK",
+      "detail": "実装確認済み",
+      "ms": null
+    },
+    {
+      "category": "主要業務ロジック",
+      "name": "受付から完了の進捗",
+      "status": "OK",
+      "detail": "実装確認済み",
+      "ms": null
+    },
+    {
+      "category": "主要業務ロジック",
+      "name": "施術前確認記録",
+      "status": "OK",
+      "detail": "実装確認済み",
+      "ms": null
+    },
+    {
+      "category": "主要業務ロジック",
+      "name": "再来店フォロー",
+      "status": "OK",
+      "detail": "実装確認済み",
+      "ms": null
+    },
+    {
+      "category": "主要業務ロジック",
+      "name": "iPad当日運用",
+      "status": "OK",
+      "detail": "実装確認済み",
+      "ms": null
+    },
+    {
+      "category": "主要業務ロジック",
+      "name": "スタッフ施術開始ガード",
+      "status": "OK",
+      "detail": "実装確認済み",
+      "ms": null
+    },
+    {
+      "category": "主要業務ロジック",
+      "name": "会員履歴・前回と同じ予約",
+      "status": "OK",
+      "detail": "実装確認済み",
+      "ms": null
+    },
+    {
+      "category": "主要業務ロジック",
+      "name": "再予約の同意再確認",
+      "status": "OK",
+      "detail": "実装確認済み",
+      "ms": null
+    },
+    {
+      "category": "主要業務ロジック",
+      "name": "Worker重複防止",
+      "status": "注意",
+      "detail": "Worker内蔵検査に明示キーなし。画面・静的検査で確認",
+      "ms": null
+    },
+    {
+      "category": "主要業務ロジック",
+      "name": "Worker過去日時防止",
+      "status": "注意",
+      "detail": "Worker内蔵検査に明示キーなし。画面・静的検査で確認",
+      "ms": null
+    },
+    {
+      "category": "主要業務ロジック",
+      "name": "Worker電話番号正規化",
+      "status": "OK",
+      "detail": "1項目OK",
+      "ms": null
+    },
+    {
+      "category": "主要業務ロジック",
+      "name": "Worker公開・権限ガード",
+      "status": "注意",
+      "detail": "Worker内蔵検査に明示キーなし。画面・静的検査で確認",
+      "ms": null
+    },
+    {
+      "category": "セキュリティ",
+      "name": "誤った管理コード拒否",
+      "status": "OK",
+      "detail": "HTTP 401",
+      "ms": null
+    }
+  ],
+  "worker_system_check_keys": [
+    "api",
+    "db",
+    "shop",
+    "business_hours",
+    "menus",
+    "staff",
+    "rooms",
+    "templates",
+    "phone_normalization",
+    "demo_customers",
+    "demo_reservations",
+    "demo_followups"
+  ]
+}

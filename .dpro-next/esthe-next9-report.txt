@@ -1,0 +1,27 @@
+DPRO エステ LINE / ESTHE-NEXT-9 実行結果
+完了日時JST: 2026-07-24T14:29:39+09:00
+変更前Commit: 8563d0231348f2510996599dffde1e29570e2fb4
+バックアップタグ: backup-esthe-before-next9-20260724
+静的検査OK: 48
+静的検査注意: 3
+静的検査NG: 0
+
+実施内容:
+- system-checkをDPRO NEXT-9最終検査画面へ更新
+- Actions静的検査と公開環境ライブ検査を統合
+- Worker・Supabase・主要APIを検査
+- PC・iPad・スタッフ・LINE会員・予約画面を検査
+- HTML・JavaScript・HTML ID重複を検査
+- ファイル容量と画面応答時間を検査
+- 誤った管理コードの拒否を検査
+- 公開画面への管理情報混入を検査
+- 電話番号正規化・過去日時・重複防止を検査
+- 結果をOK・注意・NGで表示しコピー可能
+- DEMOデータ準備を維持
+
+変更記録:
+- Worker: 変更なし
+- Supabase: 変更なし
+- API: 変更なし
+
+次STEP: ESTHE-NEXT-10

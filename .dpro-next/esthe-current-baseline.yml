@@ -152,3 +152,19 @@ next8_completion:
   worker_changed: false
   supabase_changed: false
   api_changed: false
+
+next9_completion:
+  completed_at_jst: "2026-07-24T14:29:39+09:00"
+  backup_tag: "backup-esthe-before-next9-20260724"
+  system_check_next9: true
+  actions_static_report: true
+  live_worker_db_api_check: true
+  owner_pc_ipad_staff_member_check: true
+  html_javascript_id_check: true
+  file_size_check: true
+  load_time_check: true
+  wrong_admin_code_rejection: true
+  public_admin_info_leak_check: true
+  worker_changed: false
+  supabase_changed: false
+  api_changed: false

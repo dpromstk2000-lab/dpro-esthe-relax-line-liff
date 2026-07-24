@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "system": "DPRO エステ LINE",
+  "step": "ESTHE-NEXT-9",
+  "completed_at_jst": "2026-07-24T14:29:37+09:00",
+  "target_files": [
+    "system-check.html",
+    "esthe-next9-static-report.json"
+  ],
+  "features": {
+    "combined_actions_and_live_check": true,
+    "ok_attention_ng_display": true,
+    "copyable_result": true,
+    "worker_check": true,
+    "supabase_check": true,
+    "owner_pc_check": true,
+    "owner_ipad_check": true,
+    "staff_check": true,
+    "member_check": true,
+    "html_js_id_static_check": true,
+    "file_size_check": true,
+    "page_load_time_check": true,
+    "wrong_admin_code_rejection": true,
+    "public_admin_info_leak_check": true,
+    "phone_normalization_check": true,
+    "past_datetime_guard_check": true,
+    "duplicate_guard_check": true,
+    "demo_prepare": true
+  },
+  "changes": {
+    "worker": false,
+    "supabase": false,
+    "api": false
+  },
+  "rollback": {
+    "tag": "backup-esthe-before-next9-20260724",
+    "method": "バックアップタグからsystem-check.htmlとNEXT-9台帳を復元する"
+  }
+}

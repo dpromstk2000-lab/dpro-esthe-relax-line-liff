@@ -1,1557 +1,512 @@
 <!doctype html>
-<!-- STEP ESTHE-NEXT-2 -->
+<!-- STEP ESTHE-NEXT-9 -->
 <html lang="ja">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>DPRO Esthe Relaxation｜system-check｜STEP ESTHE-16</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DPRO Esthe Relaxation｜STEP ESTHE-NEXT-9｜system-check</title>
   <style>
-    :root {
-      --bg: #fffaf7;
-      --bg2: #f5ebe5;
-      --card: #ffffff;
-      --main: #805246;
-      --main2: #9f6a5b;
-      --accent: #0f8a6a;
-      --danger: #c94444;
-      --warn: #b7791f;
-      --text: #2d211f;
-      --muted: #7e6861;
-      --line: #ead7cf;
-      --soft: #fbf1ec;
-      --shadow: 0 24px 70px rgba(91, 61, 52, 0.14);
-      --radius: 22px;
+    :root{
+      --bg:#fffaf7;--card:#fff;--soft:#fbf0eb;--soft2:#f5e2d8;
+      --main:#7c4f44;--main2:#a46e5f;--gold:#b88647;
+      --ok:#087a59;--ok-bg:#eaf8f2;--warn:#8b5c0b;--warn-bg:#fff6df;
+      --ng:#ad3434;--ng-bg:#fff0f0;--text:#2d211f;--muted:#7e6861;
+      --line:#ead7cf;--shadow:0 18px 56px rgba(91,61,52,.12);--radius:22px;
     }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family:
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-      color: var(--text);
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text)}
+    body{
       background:
-        radial-gradient(circle at 15% 8%, rgba(197, 150, 128, 0.22), transparent 34%),
-        radial-gradient(circle at 90% 4%, rgba(128, 82, 70, 0.14), transparent 32%),
-        linear-gradient(180deg, #fffaf7 0%, #fff 48%, #fffaf7 100%);
-      min-height: 100vh;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    button,
-    input,
-    select {
-      font-family: inherit;
-    }
-
-    .wrap {
-      width: min(1180px, calc(100% - 28px));
-      margin: 28px auto 110px;
-    }
-
-    .hero {
-      position: relative;
-      overflow: hidden;
-      border-radius: 28px;
-      padding: 30px 34px;
-      color: white;
-      background:
-        radial-gradient(circle at 94% 92%, rgba(255,255,255,0.2) 0 24%, transparent 25%),
-        linear-gradient(135deg, #6e433a, #a16d5d);
-      box-shadow: var(--shadow);
-    }
-
-    .hero::after {
-      content: "";
-      position: absolute;
-      right: -34px;
-      top: -40px;
-      width: 260px;
-      height: 260px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.14);
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      border: 1px solid rgba(255,255,255,0.35);
-      background: rgba(255,255,255,0.12);
-      color: white;
-      padding: 7px 12px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-      backdrop-filter: blur(8px);
-    }
-
-    .hero h1 {
-      margin: 16px 0 8px;
-      font-size: clamp(30px, 4vw, 48px);
-      letter-spacing: -0.04em;
-      line-height: 1;
-    }
-
-    .hero p {
-      position: relative;
-      z-index: 2;
-      margin: 0;
-      color: rgba(255,255,255,0.92);
-      font-size: 16px;
-      font-weight: 650;
-    }
-
-    .hero-meta {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 18px;
-      font-size: 13px;
-      font-weight: 800;
-    }
-
-    .top-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin: 22px 0;
-    }
-
-    .btn {
-      border: 1px solid var(--line);
-      background: white;
-      color: var(--main);
-      border-radius: 999px;
-      padding: 12px 16px;
-      font-weight: 900;
-      cursor: pointer;
-      transition: 0.15s ease;
-      box-shadow: 0 8px 24px rgba(91, 61, 52, 0.08);
-    }
-
-    .btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 12px 28px rgba(91, 61, 52, 0.12);
-    }
-
-    .btn.primary {
-      background: var(--main);
-      color: white;
-      border-color: var(--main);
-    }
-
-    .btn.success {
-      background: var(--accent);
-      color: white;
-      border-color: var(--accent);
-    }
-
-    .btn.danger {
-      background: var(--danger);
-      color: white;
-      border-color: var(--danger);
-    }
-
-    .btn.ghost {
-      background: rgba(255,255,255,0.62);
-    }
-
-    .btn:disabled {
-      opacity: 0.55;
-      cursor: wait;
-      transform: none;
-    }
-
-    .notice {
-      margin: 14px 0;
-      padding: 14px 16px;
-      border-radius: 16px;
-      border: 1px solid var(--line);
-      background: white;
-      color: var(--muted);
-      font-weight: 800;
-      display: none;
-      box-shadow: 0 12px 34px rgba(91, 61, 52, 0.08);
-    }
-
-    .notice.show {
-      display: block;
-    }
-
-    .notice.ok {
-      border-color: #bee8d9;
-      background: #eefaf5;
-      color: #067255;
-    }
-
-    .notice.ng {
-      border-color: #f3caca;
-      background: #fff0f0;
-      color: #b03636;
-    }
-
-    .notice.warn {
-      border-color: #f1d8ab;
-      background: #fff8e8;
-      color: #8b5c0b;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1.45fr 0.9fr;
-      gap: 18px;
-      align-items: start;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .metric {
-      background: rgba(255,255,255,0.9);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 16px;
-      box-shadow: 0 12px 34px rgba(91, 61, 52, 0.07);
-      min-height: 98px;
-    }
-
-    .metric strong {
-      display: block;
-      color: var(--main);
-      font-size: 30px;
-      line-height: 1;
-      letter-spacing: -0.04em;
-    }
-
-    .metric span {
-      display: block;
-      color: var(--muted);
-      margin-top: 8px;
-      font-size: 12px;
-      font-weight: 850;
-    }
-
-    .panel {
-      background: rgba(255,255,255,0.94);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 22px;
-      box-shadow: var(--shadow);
-      margin-bottom: 18px;
-    }
-
-    .panel h2 {
-      margin: 0 0 6px;
-      font-size: 22px;
-      letter-spacing: -0.03em;
-    }
-
-    .panel .sub {
-      margin: 0 0 18px;
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 750;
-      line-height: 1.65;
-    }
-
-    .check-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-
-    .check {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      border: 1px solid var(--line);
-      background: var(--soft);
-      border-radius: 16px;
-      padding: 13px;
-      min-height: 62px;
-    }
-
-    .dot {
-      width: 24px;
-      height: 24px;
-      border-radius: 999px;
-      display: grid;
-      place-items: center;
-      font-size: 14px;
-      font-weight: 1000;
-      flex: 0 0 auto;
-      background: #f2e6e0;
-      color: var(--muted);
-    }
-
-    .check.ok .dot {
-      background: #e2f8ee;
-      color: #077a58;
-    }
-
-    .check.ng .dot {
-      background: #ffe6e6;
-      color: var(--danger);
-    }
-
-    .check-title {
-      font-weight: 950;
-      font-size: 13px;
-    }
-
-    .check-text {
-      margin-top: 2px;
-      color: var(--muted);
-      font-size: 11px;
-      font-weight: 750;
-    }
-
-    .url-list {
-      display: grid;
-      gap: 10px;
-    }
-
-    .url-card {
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      background: var(--soft);
-      padding: 12px;
-      overflow: hidden;
-    }
-
-    .url-card b {
-      display: block;
-      color: var(--main);
-      font-size: 12px;
-      margin-bottom: 5px;
-    }
-
-    .url-card code {
-      display: block;
-      color: var(--text);
-      word-break: break-all;
-      white-space: normal;
-      font-size: 12px;
-      font-weight: 850;
-      line-height: 1.45;
-    }
-
-    .url-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 10px;
-    }
-
-    .mini {
-      border: 1px solid var(--line);
-      background: white;
-      color: var(--main);
-      border-radius: 999px;
-      padding: 7px 10px;
-      font-size: 11px;
-      font-weight: 950;
-      cursor: pointer;
-    }
-
-    .mini.primary {
-      background: var(--main);
-      color: white;
-      border-color: var(--main);
-    }
-
-    .status-row {
-      display: grid;
-      grid-template-columns: 160px 1fr;
-      gap: 0;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      overflow: hidden;
-      margin-top: 12px;
-    }
-
-    .status-row div {
-      padding: 12px 14px;
-      border-bottom: 1px solid var(--line);
-      font-size: 13px;
-      font-weight: 800;
-      min-height: 44px;
-    }
-
-    .status-row div:nth-child(odd) {
-      background: var(--soft);
-      color: var(--muted);
-    }
-
-    .status-row div:nth-child(even) {
-      background: white;
-      color: var(--text);
-    }
-
-    .status-row div:nth-last-child(-n+2) {
-      border-bottom: 0;
-    }
-
-    .manual-list {
-      display: grid;
-      gap: 10px;
-    }
-
-    .manual-item {
-      display: grid;
-      grid-template-columns: 34px 1fr auto;
-      gap: 12px;
-      align-items: center;
-      border: 1px solid var(--line);
-      background: white;
-      border-radius: 16px;
-      padding: 12px;
-    }
-
-    .manual-num {
-      width: 34px;
-      height: 34px;
-      border-radius: 999px;
-      background: var(--soft);
-      color: var(--main);
-      display: grid;
-      place-items: center;
-      font-weight: 1000;
-    }
-
-    .manual-title {
-      font-weight: 950;
-      font-size: 14px;
-    }
-
-    .manual-text {
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 750;
-      margin-top: 3px;
-      line-height: 1.5;
-    }
-
-    .log {
-      max-height: 280px;
-      overflow: auto;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      background: #2d211f;
-      color: #fff7f2;
-      padding: 14px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 12px;
-      line-height: 1.65;
-      white-space: pre-wrap;
-    }
-
-    .bottom-bar {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(255,250,247,0.92);
-      border-top: 1px solid var(--line);
-      backdrop-filter: blur(16px);
-      z-index: 30;
-    }
-
-    .bottom-inner {
-      width: min(1180px, calc(100% - 28px));
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      justify-content: space-between;
-      padding: 13px 0;
-    }
-
-    .bottom-status {
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 850;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(45, 33, 31, 0.56);
-      z-index: 80;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-    }
-
-    .modal-backdrop.show {
-      display: flex;
-    }
-
-    .modal {
-      width: min(560px, 100%);
-      background: white;
-      border-radius: 22px;
-      padding: 22px;
-      box-shadow: 0 26px 100px rgba(0,0,0,0.24);
-      border: 1px solid var(--line);
-    }
-
-    .modal h3 {
-      margin: 0 0 8px;
-      font-size: 22px;
-      letter-spacing: -0.03em;
-    }
-
-    .modal p {
-      margin: 0 0 18px;
-      color: var(--muted);
-      font-weight: 750;
-      line-height: 1.6;
-      font-size: 13px;
-    }
-
-    .modal-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 18px;
-    }
-
-    .toast {
-      position: fixed;
-      right: 18px;
-      bottom: 82px;
-      background: #2d211f;
-      color: white;
-      border-radius: 16px;
-      padding: 13px 16px;
-      font-weight: 900;
-      box-shadow: 0 18px 44px rgba(0,0,0,0.22);
-      z-index: 100;
-      display: none;
-      max-width: 420px;
-    }
-
-    .toast.show {
-      display: block;
-    }
-
-    @media (max-width: 980px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
-
-      .cards {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .check-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 640px) {
-      .wrap {
-        width: min(100% - 18px, 1180px);
-        margin-top: 12px;
-      }
-
-      .hero {
-        padding: 22px 20px;
-        border-radius: 22px;
-      }
-
-      .hero h1 {
-        font-size: 32px;
-      }
-
-      .grid {
-        gap: 12px;
-      }
-
-      .cards {
-        grid-template-columns: 1fr;
-      }
-
-      .check-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .panel {
-        padding: 16px;
-      }
-
-      .manual-item {
-        grid-template-columns: 30px 1fr;
-      }
-
-      .manual-item .mini {
-        grid-column: 1 / -1;
-      }
-
-      .status-row {
-        grid-template-columns: 120px 1fr;
-      }
-
-      .bottom-inner {
-        align-items: stretch;
-        flex-direction: column;
-      }
-
-      .bottom-inner .btn {
-        width: 100%;
-      }
-
-      .modal-actions {
-        grid-template-columns: 1fr;
-      }
-    }
-  
-/* STEP ESTHE-7: Windows/Chromeのdate入力で曜日が空欄表示になる対策 */
-.dateFieldV7{
-  position:relative;
-  width:100%;
-}
-.dateFieldV7 > input[type="date"]{
-  position:absolute !important;
-  inset:0 !important;
-  width:100% !important;
-  height:100% !important;
-  opacity:0.01 !important;
-  z-index:2 !important;
-  cursor:pointer !important;
-}
-.dateFieldV7 > .dateDisplayV7{
-  width:100% !important;
-  min-height:48px !important;
-  border:1px solid var(--line) !important;
-  background:#fff !important;
-  color:var(--text, var(--ink, #2d2522)) !important;
-  border-radius:14px !important;
-  padding:12px 42px 12px 13px !important;
-  text-align:left !important;
-  font:inherit !important;
-  font-weight:900 !important;
-  box-shadow:none !important;
-  cursor:pointer !important;
-  justify-content:flex-start !important;
-}
-.dateFieldV7 > .dateDisplayV7:focus{
-  outline:none !important;
-  border-color:var(--main) !important;
-  box-shadow:0 0 0 4px rgba(123,75,62,.10) !important;
-}
-.dateFieldV7::after{
-  content:"📅";
-  position:absolute;
-  right:13px;
-  top:50%;
-  transform:translateY(-50%);
-  z-index:1;
-  pointer-events:none;
-  opacity:.72;
-  font-size:15px;
-}
-
-  
-/* DPRO NEXT-2: 管理コード入力・削除 */
-.dpro-admin-access{
-  margin:0 0 18px;
-  padding:16px 18px;
-  border:1px solid var(--line);
-  border-radius:20px;
-  background:rgba(255,255,255,.96);
-  box-shadow:0 10px 28px rgba(88,55,46,.07);
-}
-.dpro-admin-head{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  flex-wrap:wrap;
-}
-.dpro-admin-title{font-size:16px;font-weight:1000;color:var(--main)}
-.dpro-admin-status{
-  display:inline-flex;
-  align-items:center;
-  min-height:30px;
-  padding:6px 10px;
-  border-radius:999px;
-  background:#fff6df;
-  border:1px solid #efd49e;
-  color:#8d600d;
-  font-size:12px;
-  font-weight:950;
-}
-.dpro-admin-status.ok{
-  background:#e8f8f1;
-  border-color:#bce9d8;
-  color:#087a59;
-}
-.dpro-admin-controls{
-  display:grid;
-  grid-template-columns:minmax(180px,1fr) auto auto;
-  gap:9px;
-  margin-top:12px;
-}
-.dpro-admin-controls input{
-  width:100%;
-  min-height:46px;
-  border:1px solid var(--line);
-  border-radius:14px;
-  background:#fff;
-  color:var(--text,var(--ink,#2d211f));
-  padding:11px 13px;
-  font-size:16px;
-  font-weight:900;
-}
-.dpro-admin-button{
-  min-height:46px;
-  border:1px solid var(--line);
-  border-radius:14px;
-  padding:10px 15px;
-  background:var(--main);
-  color:#fff;
-  font-weight:950;
-  cursor:pointer;
-}
-.dpro-admin-button.clear{
-  background:#fff;
-  color:var(--danger,var(--bad,#b33a3a));
-}
-.dpro-admin-help{
-  margin:9px 0 0;
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.65;
-  font-weight:750;
-}
-@media(max-width:680px){
-  .dpro-admin-controls{grid-template-columns:1fr}
-  .dpro-admin-button{width:100%}
-}
-
-</style>
+        radial-gradient(circle at 8% 0,rgba(184,134,71,.14),transparent 30%),
+        radial-gradient(circle at 98% 10%,rgba(124,79,68,.13),transparent 32%),
+        linear-gradient(180deg,var(--bg),#fff 48%,var(--bg));
+      padding-bottom:96px;
+    }
+    button,input{font:inherit}
+    button,a{touch-action:manipulation}
+    a{text-decoration:none;color:inherit}
+    .wrap{width:min(1240px,calc(100% - 28px));margin:24px auto}
+    .hero{
+      position:relative;overflow:hidden;padding:28px 30px;border-radius:28px;
+      color:#fff;background:linear-gradient(135deg,#633e36,#9b6658);
+      box-shadow:var(--shadow)
+    }
+    .hero:after{
+      content:"";position:absolute;width:260px;height:260px;border-radius:999px;
+      right:-70px;top:-90px;background:rgba(255,255,255,.12)
+    }
+    .badge{
+      position:relative;z-index:1;display:inline-flex;padding:7px 12px;
+      border:1px solid rgba(255,255,255,.36);border-radius:999px;
+      background:rgba(255,255,255,.11);font-size:12px;font-weight:900
+    }
+    h1{position:relative;z-index:1;margin:15px 0 8px;font-size:clamp(31px,5vw,50px);line-height:1;letter-spacing:-.045em}
+    .hero p{position:relative;z-index:1;margin:0;max-width:900px;color:rgba(255,255,255,.92);font-size:15px;font-weight:750;line-height:1.7}
+    .hero-meta{position:relative;z-index:1;display:flex;gap:10px;flex-wrap:wrap;margin-top:17px;font-size:12px;font-weight:850}
+    .toolbar{display:flex;gap:9px;flex-wrap:wrap;margin:18px 0}
+    .btn{
+      min-height:46px;padding:11px 16px;border:1px solid var(--line);border-radius:15px;
+      background:#fff;color:var(--main);font-weight:950;cursor:pointer;
+      box-shadow:0 8px 24px rgba(91,61,52,.07)
+    }
+    .btn.primary{background:var(--main);border-color:var(--main);color:#fff}
+    .btn.success{background:var(--ok);border-color:var(--ok);color:#fff}
+    .btn.warn{background:var(--warn-bg);border-color:#e8ce96;color:var(--warn)}
+    .btn:disabled{opacity:.55;cursor:wait}
+    .admin-access,.panel{
+      border:1px solid var(--line);border-radius:var(--radius);background:rgba(255,255,255,.95);
+      box-shadow:var(--shadow)
+    }
+    .admin-access{padding:16px 18px;margin-bottom:16px}
+    .admin-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+    .admin-title{font-size:16px;font-weight:1000;color:var(--main)}
+    .admin-status{padding:6px 10px;border-radius:999px;background:var(--warn-bg);color:var(--warn);font-size:11px;font-weight:950}
+    .admin-status.ok{background:var(--ok-bg);color:var(--ok)}
+    .admin-controls{display:grid;grid-template-columns:minmax(180px,1fr) auto auto;gap:8px;margin-top:11px}
+    .admin-controls input{min-height:46px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;font-size:16px;font-weight:900}
+    .help{margin:8px 0 0;color:var(--muted);font-size:11px;font-weight:800;line-height:1.65}
+    .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:16px}
+    .metric{padding:16px;border:1px solid var(--line);border-radius:18px;background:#fff;box-shadow:0 10px 30px rgba(91,61,52,.07)}
+    .metric strong{display:block;font-size:31px;line-height:1;color:var(--main);letter-spacing:-.04em}
+    .metric span{display:block;margin-top:7px;color:var(--muted);font-size:11px;font-weight:900}
+    .metric.ok strong{color:var(--ok)}.metric.warn strong{color:var(--warn)}.metric.ng strong{color:var(--ng)}
+    .layout{display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start}
+    .panel{padding:19px;margin-bottom:16px}
+    .panel h2{margin:0;font-size:22px;letter-spacing:-.035em}
+    .sub{margin:5px 0 15px;color:var(--muted);font-size:12px;font-weight:800;line-height:1.65}
+    .group{margin-top:17px}
+    .group:first-child{margin-top:0}
+    .group-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+    .group-title h3{margin:0;font-size:16px}
+    .group-count{font-size:11px;font-weight:900;color:var(--muted)}
+    .result-list{display:grid;gap:7px}
+    .result{
+      display:grid;grid-template-columns:74px minmax(150px,.75fr) 1.5fr auto;
+      gap:10px;align-items:center;padding:11px 12px;border:1px solid var(--line);
+      border-radius:15px;background:var(--soft)
+    }
+    .status{display:inline-flex;justify-content:center;padding:6px 8px;border-radius:999px;font-size:10px;font-weight:1000}
+    .status.OK{background:var(--ok-bg);color:var(--ok)}
+    .status.注意{background:var(--warn-bg);color:var(--warn)}
+    .status.NG{background:var(--ng-bg);color:var(--ng)}
+    .result-name{font-size:12px;font-weight:1000}
+    .result-detail{color:var(--muted);font-size:11px;font-weight:800;line-height:1.55;word-break:break-word}
+    .result-ms{color:var(--muted);font-size:10px;font-weight:900;white-space:nowrap}
+    .url-list{display:grid;gap:8px}
+    .url-card{padding:11px;border:1px solid var(--line);border-radius:14px;background:var(--soft)}
+    .url-card b{display:block;font-size:12px;color:var(--main)}
+    .url-card code{display:block;margin-top:4px;font-size:10px;font-weight:800;word-break:break-all}
+    .url-actions{display:flex;gap:6px;margin-top:8px}
+    .mini{min-height:34px;padding:7px 10px;border:1px solid var(--line);border-radius:11px;background:#fff;color:var(--main);font-size:10px;font-weight:950;cursor:pointer}
+    .log{max-height:310px;overflow:auto;padding:12px;border-radius:14px;background:#2d211f;color:#fff7f2;white-space:pre-wrap;font:11px/1.65 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+    .notice{display:none;margin-bottom:14px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;font-size:12px;font-weight:900}
+    .notice.show{display:block}.notice.ok{background:var(--ok-bg);color:var(--ok)}.notice.warn{background:var(--warn-bg);color:var(--warn)}.notice.ng{background:var(--ng-bg);color:var(--ng)}
+    .bottom{
+      position:fixed;left:0;right:0;bottom:0;z-index:30;border-top:1px solid var(--line);
+      background:rgba(255,250,247,.93);backdrop-filter:blur(14px)
+    }
+    .bottom-inner{width:min(1240px,calc(100% - 28px));margin:auto;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0}
+    .bottom-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:11px;font-weight:900}
+    @media(max-width:960px){.layout{grid-template-columns:1fr}.summary{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:700px){
+      .wrap{width:min(100% - 18px,1240px);margin-top:10px}.hero{padding:21px 18px;border-radius:22px}
+      .admin-controls{grid-template-columns:1fr}.summary{grid-template-columns:1fr 1fr}
+      .result{grid-template-columns:65px 1fr}.result-detail,.result-ms{grid-column:2}
+      .toolbar{display:grid;grid-template-columns:1fr 1fr}.toolbar .btn{width:100%}
+      .bottom-inner{align-items:stretch;flex-direction:column}.bottom .btn{width:100%}
+    }
+  </style>
 </head>
 <body>
   <main class="wrap">
     <section class="hero">
-      <div class="badge">STEP ESTHE-NEXT-2｜安全確認</div>
+      <div class="badge">STEP ESTHE-NEXT-9｜性能・セキュリティ・最終system-check</div>
       <h1>DPRO Esthe Relaxation</h1>
-      <p>エステ・リラクゼーションLINEの最終確認画面です。API・DB・最新採用ファイル・店舗設定反映・営業前デモ準備をまとめて確認できます。</p>
+      <p>Worker、Supabase、主要API、PC、iPad、スタッフ、LINE会員、静的構文、容量、安全ガードを一括検査します。</p>
       <div class="hero-meta">
-        <span>API接続：<span id="heroApi">確認中</span></span>
-        <span>本日：<span id="heroToday">-</span></span>
-        <span>Worker：dpro-esthe-relax-line-api</span><span>採用：STEP ESTHE-16</span>
+        <span>Worker：dpro-esthe-relax-line-api</span>
+        <span>検査画面：system-check.html</span>
+        <span>結果：OK・注意・NG</span>
       </div>
     </section>
 
-    <div class="top-actions">
-      <button class="btn primary" id="btnReload">最新状態を確認</button>
-      <button class="btn success" id="btnPrepare">営業前デモ準備</button>
-      <a class="btn ghost" href="index-brush.html" target="_blank" rel="noopener">ブラッシュアップ予約</a>
-      <a class="btn ghost" href="index.html" target="_blank" rel="noopener">シンプル予約</a>
-      <a class="btn ghost" href="owner.html" target="_blank" rel="noopener">PC管理画面</a>
-      <a class="btn ghost" href="staff.html" target="_blank" rel="noopener">スタッフ画面</a>
-      <a class="btn ghost" href="member.html" target="_blank" rel="noopener">お客様マイページ</a>
+    <div class="toolbar">
+      <button class="btn primary" id="runAllBtn" type="button">一括検査を実行</button>
+      <button class="btn success" id="prepareBtn" type="button">営業前デモ準備</button>
+      <button class="btn" id="copyBtn" type="button">検査結果をコピー</button>
+      <a class="btn" href="owner.html" target="_blank" rel="noopener">PC管理画面</a>
     </div>
 
-<section class="dpro-admin-access" id="dproAdminAccess" aria-label="管理コード">
-  <div class="dpro-admin-head">
-    <div class="dpro-admin-title">管理画面の接続</div>
-    <span class="dpro-admin-status" id="dproAdminStatus">管理コード未入力</span>
-  </div>
-  <div class="dpro-admin-controls">
-    <input id="dproAdminCode" type="password" inputmode="numeric"
-      autocomplete="current-password" placeholder="管理コードを入力">
-    <button class="dpro-admin-button" id="dproAdminSave" type="button">管理コードを設定</button>
-    <button class="dpro-admin-button clear" id="dproAdminClear" type="button">管理コードを削除</button>
-  </div>
-  <p class="dpro-admin-help">
-    管理コードはこのタブの一時領域だけに保存します。共有端末では操作後に「管理コードを削除」を押してください。
-  </p>
-</section>
-
-
-    <div id="notice" class="notice">確認中です。</div>
-
-    <section class="cards">
-      <div class="metric"><strong id="metricHealth">-</strong><span>API / DB</span></div>
-      <div class="metric"><strong id="metricTodayReservations">-</strong><span>本日の予約</span></div>
-      <div class="metric"><strong id="metricCustomers">-</strong><span>デモ顧客</span></div>
-      <div class="metric"><strong id="metricFollowups">-</strong><span>未対応フォロー</span></div>
+    <section class="admin-access" aria-label="管理コード">
+      <div class="admin-head">
+        <div class="admin-title">管理APIの接続</div>
+        <span class="admin-status" id="adminStatus">管理コード未入力</span>
+      </div>
+      <div class="admin-controls">
+        <input id="adminCode" type="password" inputmode="numeric" autocomplete="current-password" placeholder="管理コードを入力">
+        <button class="btn primary" id="adminSave" type="button">管理コードを設定</button>
+        <button class="btn" id="dproAdminClear" type="button">管理コードを削除</button>
+      </div>
+      <p class="help">管理コードはこのタブのsessionStorageだけに保存します。未入力でも静的検査・公開画面・管理コード拒否検査は実行できます。</p>
     </section>
 
-    <div class="grid">
+    <div class="notice" id="notice"></div>
+
+    <section class="summary">
+      <div class="metric ok"><strong id="okCount">0</strong><span>OK</span></div>
+      <div class="metric warn"><strong id="warnCount">0</strong><span>注意</span></div>
+      <div class="metric ng"><strong id="ngCount">0</strong><span>NG</span></div>
+      <div class="metric"><strong id="totalTime">-</strong><span>一括検査時間</span></div>
+    </section>
+
+    <div class="layout">
       <section>
         <div class="panel">
-          <h2>システム確認</h2>
-          <p class="sub">Worker API と Supabase の状態、店舗データ、メニュー、スタッフ、予約、フォローなどを確認します。</p>
-          <div class="check-grid" id="checks"></div>
-
-          <div class="status-row" id="statusRows">
-            <div>状態</div><div id="rowStatus">確認中</div>
-            <div>店舗コード</div><div id="rowShopCode">-</div>
-            <div>店舗名</div><div id="rowShopName">-</div>
-            <div>Worker version</div><div id="rowVersion">-</div>
-            <div>応答時間</div><div id="rowResponse">-</div>
-            <div>最終確認</div><div id="rowTime">-</div>
-          </div>
+          <h2>一括検査結果</h2>
+          <p class="sub">Actions静的検査と、現在の公開環境に対するライブ検査を統合します。</p>
+          <div id="resultGroups"></div>
         </div>
-
         <div class="panel">
-          <h2>営業前チェック</h2>
-          <p class="sub">営業前はこの順番で確認すると安全です。各画面は新しいタブで開きます。</p>
-          <div class="manual-list">
-            <div class="manual-item">
-              <div class="manual-num">1</div>
-              <div>
-                <div class="manual-title">営業前デモ準備を実行</div>
-                <div class="manual-text">本日基準の予約・顧客・回数券・フォローを作り直します。</div>
-              </div>
-              <button class="mini primary" id="miniPrepare">実行</button>
-            </div>
-            <div class="manual-item">
-              <div class="manual-num">2</div>
-              <div>
-                <div class="manual-title">ブラッシュアップ予約 index-brush.html を確認</div>
-                <div class="manual-text">電話・住所・店舗説明、会員確認、メニュー、空き時間、カウンセリング、予約送信を確認します。</div>
-              </div>
-              <a class="mini" href="index-brush.html" target="_blank" rel="noopener">開く</a>
-            </div>
-            <div class="manual-item">
-              <div class="manual-num">3</div>
-              <div>
-                <div class="manual-title">PC本格管理画面 owner.html を確認</div>
-                <div class="manual-text">今日の予約、顧客カルテ、回数券、フォロー、文面、店舗設定編集を確認します。</div>
-              </div>
-              <a class="mini" href="owner.html" target="_blank" rel="noopener">開く</a>
-            </div>
-            <div class="manual-item">
-              <div class="manual-num">4</div>
-              <div>
-                <div class="manual-title">スタッフ画面 staff.html を確認</div>
-                <div class="manual-text">店舗設定の電話番号反映、本日の担当予約、確認モーダル、施術中・会計待ち・完了への変更を確認します。</div>
-              </div>
-              <a class="mini" href="staff.html" target="_blank" rel="noopener">開く</a>
-            </div>
-            <div class="manual-item">
-              <div class="manual-num">5</div>
-              <div>
-                <div class="manual-title">お客様マイページ member.html を確認</div>
-                <div class="manual-text">店舗設定の電話番号反映、次回予約、回数券、来店履歴を確認します。</div>
-              </div>
-              <a class="mini" href="member.html" target="_blank" rel="noopener">開く</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <h2>取得ログ</h2>
-          <p class="sub">APIから取得した状態を確認できます。エラー時はここに内容が表示されます。</p>
-          <div class="log" id="log">起動中...</div>
+          <h2>コピー用検査ログ</h2>
+          <p class="sub">サポートへ送る場合は「検査結果をコピー」を使用してください。</p>
+          <div class="log" id="log">未実行です。</div>
         </div>
       </section>
 
       <aside>
         <div class="panel">
-          <h2>件数確認</h2>
-          <p class="sub">営業デモに必要なデータが揃っているか確認します。</p>
-          <div class="cards" style="grid-template-columns: 1fr 1fr; margin-bottom: 0;">
-            <div class="metric"><strong id="countReservations">-</strong><span>デモ予約</span></div>
-            <div class="metric"><strong id="countTickets">-</strong><span>回数券</span></div>
-            <div class="metric"><strong id="countMenus">-</strong><span>メニュー</span></div>
-            <div class="metric"><strong id="countStaff">-</strong><span>スタッフ</span></div>
-            <div class="metric"><strong id="countRooms">-</strong><span>ルーム</span></div>
-            <div class="metric"><strong id="countTemplates">-</strong><span>文面</span></div>
-          </div>
+          <h2>画面を開く</h2>
+          <p class="sub">PC・iPad・スタッフ・LINE会員・予約画面を確認します。</p>
+          <div class="url-list" id="urlList"></div>
         </div>
-
         <div class="panel">
-          <h2>最新採用ファイル</h2>
-          <p class="sub">GitHub Pages上の各HTMLと、Workerの最新バージョンが採用されているか確認します。</p>
-          <div class="worker-version-card" id="workerVersionCard">
-            <b>Worker</b>
-            <span>確認中です。</span>
+          <h2>手動目視</h2>
+          <p class="sub">自動検査後、実機で次だけ確認してください。</p>
+          <div class="result-list">
+            <div class="url-card"><b>PC</b><code>今日やること、フォロー、設定保存</code></div>
+            <div class="url-card"><b>iPad</b><code>進捗ボード、施術前確認、状態更新</code></div>
+            <div class="url-card"><b>スタッフ</b><code>今やること、施術開始ガード</code></div>
+            <div class="url-card"><b>スマホ・LINE会員</b><code>履歴、前回と同じ予約、横はみ出し</code></div>
           </div>
-          <div class="adopt-list" id="adoptList">
-            <div class="reflect-card">確認中です。</div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <h2>店舗設定反映チェック</h2>
-          <p class="sub">owner.htmlで保存した店舗設定がAPI上に残っているか確認します。</p>
-          <div class="reflect-grid" id="reflectList">
-            <div class="reflect-card">確認中です。</div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <h2>電話番号正規化チェック</h2>
-          <p class="sub">ハイフンあり・なし・全角数字でも同じ電話番号として扱えるか確認します。</p>
-          <div class="reflect-grid" id="phoneNormalizeList">
-            <div class="reflect-card">確認中です。</div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <h2>確認URL</h2>
-          <p class="sub">そのままコピペできるURLです。</p>
-          <div class="url-list">
-            <div class="url-card">
-              <b>ブラッシュアップ予約 index-brush.html</b>
-              <code>https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/index-brush.html</code>
-              <div class="url-actions">
-                <button class="mini" data-copy="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/index-brush.html">コピー</button>
-                <a class="mini primary" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/index-brush.html" target="_blank" rel="noopener">開く</a>
-              </div>
-            </div>
-            <div class="url-card">
-              <b>シンプル予約 index.html</b>
-              <code>https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/</code>
-              <div class="url-actions">
-                <button class="mini" data-copy="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/">コピー</button>
-                <a class="mini primary" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/" target="_blank" rel="noopener">開く</a>
-              </div>
-            </div>
-            <div class="url-card">
-              <b>PC本格管理 owner.html</b>
-              <code>https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner.html</code>
-              <div class="url-actions">
-                <button class="mini" data-copy="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner.html">コピー</button>
-                <a class="mini primary" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner.html" target="_blank" rel="noopener">開く</a>
-              </div>
-            </div>
-            <div class="url-card">
-              <b>スタッフ画面 staff.html</b>
-              <code>https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/staff.html</code>
-              <div class="url-actions">
-                <button class="mini" data-copy="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/staff.html">コピー</button>
-                <a class="mini primary" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/staff.html" target="_blank" rel="noopener">開く</a>
-              </div>
-            </div>
-            <div class="url-card">
-              <b>お客様マイページ member.html</b>
-              <code>https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/member.html</code>
-              <div class="url-actions">
-                <button class="mini" data-copy="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/member.html">コピー</button>
-                <a class="mini primary" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/member.html" target="_blank" rel="noopener">開く</a>
-              </div>
-            </div>
-            <div class="url-card">
-              <b>system-check.html</b>
-              <code>https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/system-check.html</code>
-              <div class="url-actions">
-                <button class="mini" data-copy="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/system-check.html">コピー</button>
-                <a class="mini primary" href="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/system-check.html" target="_blank" rel="noopener">開く</a>
-              </div>
-            </div>
-            <div class="url-card">
-              <b>Worker health</b>
-              <code>https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/health</code>
-              <div class="url-actions">
-                <button class="mini" data-copy="https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/health">コピー</button>
-                <a class="mini primary" href="https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/health" target="_blank" rel="noopener">開く</a>
-              </div>
-            </div>
-            <div class="url-card">
-              <b>Worker system-check API</b>
-              <code>https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/system-check</code>
-              <div class="url-actions">
-                <button class="mini" data-copy="https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/system-check">コピー</button>
-                <span class="mini">画面内で確認</span>
-              </div>
-            </div>
-            <div class="url-card">
-              <b>電話番号正規化チェックAPI</b>
-              <code>https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/phone-normalize-check</code>
-              <div class="url-actions">
-                <button class="mini" data-copy="https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/phone-normalize-check">コピー</button>
-                <span class="mini">画面内で確認</span>
-              </div>
-            </div>
-            <div class="url-card">
-              <b>営業前デモ準備API</b>
-              <code>https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/demo/prepare</code>
-              <div class="url-actions">
-                <button class="mini" data-copy="https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/admin/demo/prepare">コピー</button>
-                <span class="mini">画面内で確認</span>
-              </div>
-            </div>
-          </div>          </div>
         </div>
       </aside>
     </div>
   </main>
 
-  <div class="bottom-bar">
+  <div class="bottom">
     <div class="bottom-inner">
-      <div class="bottom-status" id="bottomStatus">営業前確認中...</div>
-      <button class="btn primary" id="bottomReload">最新状態を確認</button>
+      <div class="bottom-text" id="bottomText">一括検査を実行してください。</div>
+      <button class="btn primary" id="bottomRunBtn" type="button">一括検査を実行</button>
     </div>
   </div>
-
-  <div class="modal-backdrop" id="modalBackdrop">
-    <div class="modal">
-      <h3>営業前デモ準備を実行しますか？</h3>
-      <p>本日基準でデモ顧客・予約・回数券・フォローを作り直します。営業前に実行すると、当日のデモに使いやすい状態になります。</p>
-      <div class="status-row">
-        <div>実行方法</div><div>画面内から安全に実行します。</div><div>管理コード</div><div>入力済みの場合のみ実行できます。</div>
-      </div>
-      <div class="modal-actions">
-        <button class="btn ghost" id="modalCancel">戻る</button>
-        <button class="btn success" id="modalRunPrepare">営業前デモ準備を実行</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="toast" id="toast"></div>
 
   <script>
-    const STEP = "STEP ESTHE-NEXT-2";
-    const VERSION = "ESTHE-NEXT-2-SYSTEM-CHECK-20260723";
+    const STEP = "ESTHE-NEXT-9";
+    const VERSION = "ESTHE-NEXT-9-SYSTEM-CHECK-20260724";
     const API_BASE = "https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev";
-    const ADMIN_STORAGE_KEY = "dpro_esthe_admin_secret";
-const DEMO_ADMIN_CODE = "1234";
-let ADMIN_KEY = sessionStorage.getItem(ADMIN_STORAGE_KEY) || "";
     const FRONT_BASE = "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff";
+    const STATIC_REPORT_URL = `${FRONT_BASE}/esthe-next9-static-report.json`;
+    const ADMIN_STORAGE_KEY = "dpro_esthe_admin_secret";
+    let ADMIN_KEY = sessionStorage.getItem(ADMIN_STORAGE_KEY) || "";
+    let RUNNING = false;
+    let RESULTS = [];
+    let STARTED_AT = 0;
 
-    const ENDPOINTS = {
-      health: `${API_BASE}/api/health`,
-      systemCheck: `${API_BASE}/api/admin/system-check`,
-      demoPrepare: `${API_BASE}/api/admin/demo/prepare`,
-      adminSettings: `${API_BASE}/api/admin/settings`,
-      phoneNormalizeCheck: `${API_BASE}/api/admin/phone-normalize-check`,
-    };
-
-    const EXPECTED_WORKER_VERSION = "ESTHE-16-PHONE-NORMALIZE-SEARCH-20260711";
-
-    const ADOPTED_FILES = [
-      { label: "ブラッシュアップ予約", file: "index-brush.html", expect: "STEP ESTHE-NEXT-2" },
-      { label: "シンプル予約", file: "index.html", expect: "STEP ESTHE-NEXT-2" },
-      { label: "お客様マイページ", file: "member.html", expect: "STEP ESTHE-NEXT-2" },
-      { label: "スタッフ画面", file: "staff.html", expect: "STEP ESTHE-NEXT-2" },
-      { label: "PC本格管理画面", file: "owner.html", expect: "STEP ESTHE-NEXT-2" },
-      { label: "営業前確認画面", file: "system-check.html", expect: "STEP ESTHE-NEXT-2" },
+    const PAGES = [
+      {key:"booking", category:"画面", name:"お客様予約画面", file:"index-brush.html", marker:"STEP ESTHE-NEXT-7", public:true},
+      {key:"owner", category:"画面", name:"PCオーナー画面", file:"owner.html", marker:"STEP ESTHE-NEXT-8"},
+      {key:"ipad", category:"画面", name:"店舗iPad画面", file:"owner-ipad.html", marker:"STEP ESTHE-NEXT-6"},
+      {key:"staff", category:"画面", name:"スタッフ画面", file:"staff.html", marker:"STEP ESTHE-NEXT-6"},
+      {key:"member", category:"画面", name:"LINE会員画面", file:"member.html", marker:"STEP ESTHE-NEXT-7", public:true},
+      {key:"system", category:"画面", name:"system-check", file:"system-check.html", marker:"STEP ESTHE-NEXT-9"}
     ];
 
-    const CHECK_LABELS = [
-      ["api", "API", "Worker が応答している"],
-      ["db", "DB", "Supabase 接続"],
-      ["shop", "店舗", "店舗情報取得"],
-      ["business_hours", "営業時間", "営業日設定"],
-      ["menus", "メニュー", "有効メニュー"],
-      ["staff", "スタッフ", "スタッフ情報"],
-      ["rooms", "ルーム", "ベッド/個室"],
-      ["templates", "文面", "テンプレート"],
-      ["demo_customers", "顧客", "デモ顧客"],
-      ["demo_reservations", "予約", "デモ予約"],
-      ["demo_followups", "フォロー", "デモフォロー"],
+    const URLS = [
+      ["お客様予約",`${FRONT_BASE}/index-brush.html`],
+      ["PC管理",`${FRONT_BASE}/owner.html`],
+      ["店舗iPad",`${FRONT_BASE}/owner-ipad.html`],
+      ["スタッフ",`${FRONT_BASE}/staff.html`],
+      ["LINE会員",`${FRONT_BASE}/member.html`],
+      ["system-check",`${FRONT_BASE}/system-check.html`]
     ];
 
-    let lastSystem = null;
-    let loading = false;
+    const $ = id => document.getElementById(id);
+    const escapeHtml = value => String(value ?? "")
+      .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;").replaceAll("'","&#039;");
 
-    const $ = (id) => document.getElementById(id);
-
-
-function dproAdminStatusMessage(message, ok=false){
-  const status = document.getElementById("dproAdminStatus");
-  if(!status) return;
-  status.textContent = message;
-  status.classList.toggle("ok", ok);
-}
-
-function dproRequireAdminCode(){
-  if(!ADMIN_KEY){
-    throw new Error("管理コードを入力し、「管理コードを設定」を押してください。");
-  }
-}
-
-function dproInitAdminAccess(){
-  const input = document.getElementById("dproAdminCode");
-  const save = document.getElementById("dproAdminSave");
-  const clear = document.getElementById("dproAdminClear");
-  if(!input || !save || !clear) return;
-
-  if(ADMIN_KEY && ADMIN_KEY !== DEMO_ADMIN_CODE){
-    sessionStorage.removeItem(ADMIN_STORAGE_KEY);
-    ADMIN_KEY = "";
-  }
-
-  if(ADMIN_KEY){
-    input.value = "";
-    input.placeholder = "管理コード設定済み";
-    dproAdminStatusMessage("管理コード設定済み", true);
-  }else{
-    dproAdminStatusMessage("管理コード未入力", false);
-  }
-
-  save.addEventListener("click", () => {
-    const value = String(input.value || "").trim();
-    if(!value){
-      dproAdminStatusMessage("管理コードを入力してください", false);
-      input.focus();
-      return;
-    }
-    if(value !== DEMO_ADMIN_CODE){
-      dproAdminStatusMessage("管理コードが違います", false);
-      input.select();
-      return;
-    }
-    sessionStorage.setItem(ADMIN_STORAGE_KEY, value);
-    ADMIN_KEY = value;
-    dproAdminStatusMessage("管理コード設定済み", true);
-    window.location.reload();
-  });
-
-  clear.addEventListener("click", () => {
-    sessionStorage.removeItem(ADMIN_STORAGE_KEY);
-    ADMIN_KEY = "";
-    input.value = "";
-    input.placeholder = "管理コードを入力";
-    dproAdminStatusMessage("管理コードを削除しました", false);
-    window.location.reload();
-  });
-
-  input.addEventListener("keydown", (event) => {
-    if(event.key === "Enter") save.click();
-  });
-}
-
-document.addEventListener("DOMContentLoaded", dproInitAdminAccess);
-
-
-    function nowText() {
-      const d = new Date();
-      return d.toLocaleString("ja-JP", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        weekday: "short",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      });
+    function setNotice(type,message){
+      const el=$("notice");
+      el.className=`notice show ${type}`;
+      el.textContent=message;
     }
 
-    function escapeHtml(value) {
-      return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+    function setAdminStatus(){
+      $("adminStatus").textContent=ADMIN_KEY ? "管理コード設定済み" : "管理コード未入力";
+      $("adminStatus").classList.toggle("ok",Boolean(ADMIN_KEY));
+      $("adminCode").placeholder=ADMIN_KEY ? "管理コード設定済み" : "管理コードを入力";
+      $("adminCode").value="";
     }
 
-    function setNotice(type, message) {
-      const el = $("notice");
-      el.className = `notice show ${type || ""}`;
-      el.textContent = message;
+    function addResult(category,name,status,detail="",ms=null,source="live"){
+      const normalized=["OK","注意","NG"].includes(status)?status:"注意";
+      RESULTS.push({category,name,status:normalized,detail,ms,source,checked_at:new Date().toISOString()});
+      renderResults();
     }
 
-    function hideNotice() {
-      $("notice").className = "notice";
-    }
-
-    function showToast(message) {
-      const el = $("toast");
-      el.textContent = message;
-      el.classList.add("show");
-      setTimeout(() => el.classList.remove("show"), 2600);
-    }
-
-    function log(message, data) {
-      const text = `[${nowText()}] ${message}` + (data ? `\n${JSON.stringify(data, null, 2)}` : "");
-      $("log").textContent = text;
-    }
-
-    function setLoading(flag) {
-      loading = flag;
-      ["btnReload", "bottomReload", "btnPrepare", "miniPrepare", "modalRunPrepare"].forEach((id) => {
-        const btn = $(id);
-        if (btn) btn.disabled = flag;
-      });
-    }
-
-    async function apiGet(url, options = {}) {
-      const requestUrl = new URL(url, window.location.href);
-      const isAdmin = requestUrl.pathname.startsWith("/api/admin/");
-      if(isAdmin) dproRequireAdminCode();
-      const res = await fetch(requestUrl.toString(), {
-        method: options.method || "GET",
-        headers: {
-          "Accept": "application/json",
-          ...(isAdmin ? {"x-admin-secret": ADMIN_KEY} : {}),
-          ...(options.headers || {}),
-        },
-        body: options.body,
-      });
-
-      let data = null;
-      const text = await res.text();
-      try {
-        data = text ? JSON.parse(text) : null;
-      } catch (e) {
-        data = { raw: text };
-      }
-
-      if (!res.ok || data?.ok === false) {
-        const msg = data?.message || data?.error || `HTTP ${res.status}`;
-        const err = new Error(msg);
-        err.status = res.status;
-        err.data = data;
-        throw err;
-      }
-
-      return data;
-    }
-
-    function renderChecks(system) {
-      const checks = system?.checks || {};
-      $("checks").innerHTML = CHECK_LABELS.map(([key, title, text]) => {
-        const ok = checks[key] === true;
-        return `
-          <div class="check ${ok ? "ok" : "ng"}">
-            <div class="dot">${ok ? "✓" : "!"}</div>
-            <div>
-              <div class="check-title">${escapeHtml(title)}</div>
-              <div class="check-text">${escapeHtml(text)}</div>
-            </div>
+    function renderResults(){
+      const groups={};
+      RESULTS.forEach(item=>(groups[item.category]??=[]).push(item));
+      $("resultGroups").innerHTML=Object.entries(groups).map(([category,items])=>`
+        <section class="group">
+          <div class="group-title"><h3>${escapeHtml(category)}</h3><span class="group-count">${items.length}項目</span></div>
+          <div class="result-list">
+            ${items.map(item=>`
+              <div class="result">
+                <span class="status ${escapeHtml(item.status)}">${escapeHtml(item.status)}</span>
+                <div class="result-name">${escapeHtml(item.name)}</div>
+                <div class="result-detail">${escapeHtml(item.detail || "-")}</div>
+                <div class="result-ms">${item.ms == null ? escapeHtml(item.source) : `${Math.round(item.ms)} ms`}</div>
+              </div>
+            `).join("")}
           </div>
-        `;
-      }).join("");
-    }
-
-    function renderCounts(system) {
-      const c = system?.counts || {};
-      $("metricTodayReservations").textContent = c.today_reservations ?? "-";
-      $("metricCustomers").textContent = c.demo_customers ?? "-";
-      $("metricFollowups").textContent = c.pending_followups ?? c.demo_followups ?? "-";
-
-      $("countReservations").textContent = c.demo_reservations ?? "-";
-      $("countTickets").textContent = c.demo_tickets ?? "-";
-      $("countMenus").textContent = c.active_menus ?? "-";
-      $("countStaff").textContent = c.active_staff ?? "-";
-      $("countRooms").textContent = c.active_rooms ?? "-";
-      $("countTemplates").textContent = c.active_templates ?? "-";
-    }
-
-    function renderStatus(system, health) {
-      const ok = Boolean(system?.ok && health?.ok && system?.checks?.api && system?.checks?.db);
-      $("metricHealth").textContent = ok ? "OK" : "NG";
-      $("heroApi").textContent = ok ? "OK" : "NG";
-      $("heroToday").textContent = system?.today || "-";
-      $("rowStatus").textContent = system?.status || (ok ? "OK" : "確認不可");
-      $("rowShopCode").textContent = system?.shop_code || health?.shop_code || "-";
-      $("rowShopName").textContent = system?.shop_name || health?.shop_name || "-";
-      $("rowVersion").textContent = system?.version || health?.version || "-";
-      $("rowResponse").textContent = `${system?.response_ms ?? "-"} ms`;
-      $("rowTime").textContent = nowText();
-      $("bottomStatus").textContent = ok
-        ? `営業前確認OK｜本日の予約 ${system?.counts?.today_reservations ?? "-"}件｜未対応フォロー ${system?.counts?.pending_followups ?? "-"}件`
-        : "営業前確認でエラーがあります。";
-    }
-
-
-    function renderAdoptionChecking() {
-      $("adoptList").innerHTML = ADOPTED_FILES.map((item) => `
-        <div class="adopt-card">
-          <div>
-            <div class="adopt-title">${escapeHtml(item.label)}</div>
-            <div class="adopt-meta">${escapeHtml(item.file)}</div>
-          </div>
-          <div class="adopt-meta">期待STEP：${escapeHtml(item.expect)}</div>
-          <span class="adopt-warn">確認中</span>
-        </div>
+        </section>
       `).join("");
+
+      const ok=RESULTS.filter(x=>x.status==="OK").length;
+      const warn=RESULTS.filter(x=>x.status==="注意").length;
+      const ng=RESULTS.filter(x=>x.status==="NG").length;
+      $("okCount").textContent=ok;
+      $("warnCount").textContent=warn;
+      $("ngCount").textContent=ng;
+      $("bottomText").textContent=RUNNING
+        ? `検査中｜OK ${ok} / 注意 ${warn} / NG ${ng}`
+        : `検査完了｜OK ${ok} / 注意 ${warn} / NG ${ng}`;
+      $("log").textContent=JSON.stringify(buildReport(),null,2);
     }
 
-    function renderWorkerVersion(health, system) {
-      const version = health?.version || system?.version || "-";
-      const ok = version === EXPECTED_WORKER_VERSION;
-      $("workerVersionCard").innerHTML = `
-        <b>Worker</b>
-        <span>期待：${escapeHtml(EXPECTED_WORKER_VERSION)}</span>
-        <code>${escapeHtml(version)}</code>
-        <div style="margin-top:8px">
-          <span class="${ok ? "adopt-ok" : "adopt-warn"}">${ok ? "OK" : "Worker STEP14反映待ち"}</span>
-        </div>
-      `;
+    function buildReport(){
+      return {
+        system:"DPRO エステ LINE",
+        step:STEP,
+        version:VERSION,
+        checked_at:new Date().toISOString(),
+        total_ms:STARTED_AT ? Math.round(performance.now()-STARTED_AT) : null,
+        summary:{
+          ok:RESULTS.filter(x=>x.status==="OK").length,
+          attention:RESULTS.filter(x=>x.status==="注意").length,
+          ng:RESULTS.filter(x=>x.status==="NG").length
+        },
+        results:RESULTS
+      };
     }
 
-    async function renderFileAdoption() {
-      renderAdoptionChecking();
-      const rows = await Promise.all(ADOPTED_FILES.map(async (item) => {
-        const url = `${FRONT_BASE}/${item.file}`;
-        try {
-          const res = await fetch(url, { cache: "no-store" });
-          const text = await res.text();
-          const ok = res.ok && text.includes(item.expect);
-          return { ...item, ok, status: res.status, url };
-        } catch (e) {
-          return { ...item, ok: false, status: "error", error: e.message, url };
+    async function timedFetch(url,options={}){
+      const start=performance.now();
+      const response=await fetch(url,{cache:"no-store",...options});
+      const text=await response.text();
+      let data=null;
+      try{data=text?JSON.parse(text):null}catch(error){data={raw:text}}
+      return {response,data,text,ms:performance.now()-start};
+    }
+
+    async function loadStaticReport(){
+      try{
+        const {response,data,ms}=await timedFetch(`${STATIC_REPORT_URL}?t=${Date.now()}`);
+        if(!response.ok || !data?.items) throw new Error(`HTTP ${response.status}`);
+        data.items.forEach(item=>addResult(
+          item.category || "静的検査",
+          item.name || item.key || "検査",
+          item.status || "注意",
+          item.detail || "",
+          item.ms ?? null,
+          "Actions"
+        ));
+        addResult("静的検査","Actions静的レポート","OK",`生成：${data.generated_at_jst || "-"} / ${data.items.length}項目`,ms);
+      }catch(error){
+        addResult("静的検査","Actions静的レポート","NG",error.message);
+      }
+    }
+
+    async function checkHealth(){
+      try{
+        const {response,data,ms}=await timedFetch(`${API_BASE}/api/health?t=${Date.now()}`);
+        const ok=response.ok && data?.ok===true;
+        addResult("Worker・DB","Worker health",ok?"OK":"NG",`HTTP ${response.status} / version ${data?.version || "-"}`,ms);
+      }catch(error){
+        addResult("Worker・DB","Worker health","NG",error.message);
+      }
+    }
+
+    async function checkAdminRejection(){
+      try{
+        const {response,data,ms}=await timedFetch(`${API_BASE}/api/admin/system-check?t=${Date.now()}`,{
+          headers:{"Accept":"application/json","x-admin-secret":"DPRO-NEXT-WRONG-CODE"}
+        });
+        const rejected=[400,401,403].includes(response.status) || data?.ok===false;
+        addResult("セキュリティ","誤った管理コードの拒否",rejected?"OK":"NG",`HTTP ${response.status}`,ms);
+      }catch(error){
+        addResult("セキュリティ","誤った管理コードの拒否","注意",`通信エラー：${error.message}`);
+      }
+    }
+
+    async function adminJson(path,name){
+      if(!ADMIN_KEY){
+        addResult("Worker・DB",name,"注意","管理コード入力後に再実行すると確認できます。");
+        return null;
+      }
+      try{
+        const {response,data,ms}=await timedFetch(`${API_BASE}${path}${path.includes("?")?"&":"?"}t=${Date.now()}`,{
+          headers:{"Accept":"application/json","x-admin-secret":ADMIN_KEY}
+        });
+        const ok=response.ok && data?.ok!==false;
+        addResult("Worker・DB",name,ok?"OK":"NG",`HTTP ${response.status}`,ms);
+        return ok?data:null;
+      }catch(error){
+        addResult("Worker・DB",name,"NG",error.message);
+        return null;
+      }
+    }
+
+    function flattenBooleanChecks(value,prefix="",out=[]){
+      if(!value || typeof value!=="object") return out;
+      Object.entries(value).forEach(([key,item])=>{
+        const path=prefix?`${prefix}.${key}`:key;
+        if(typeof item==="boolean") out.push([path,item]);
+        else if(item && typeof item==="object") flattenBooleanChecks(item,path,out);
+      });
+      return out;
+    }
+
+    function appendWorkerChecks(system){
+      if(!system) return;
+      const checks=flattenBooleanChecks(system.checks || system.tests || {});
+      if(!checks.length){
+        addResult("主要業務ロジック","Worker内蔵検査","注意","boolean形式の内蔵検査項目を取得できませんでした。");
+        return;
+      }
+      checks.slice(0,40).forEach(([key,value])=>{
+        addResult("主要業務ロジック",key,value?"OK":"NG",value?"Worker判定OK":"Worker判定NG",null,"Worker");
+      });
+    }
+
+    async function checkPages(){
+      await Promise.all(PAGES.map(async page=>{
+        try{
+          const {response,text,ms}=await timedFetch(`${FRONT_BASE}/${page.file}?next9=${Date.now()}`);
+          const markerOk=response.ok && text.includes(page.marker);
+          const speedStatus=ms<=1200?"OK":ms<=2500?"注意":"NG";
+          addResult("画面",page.name,markerOk?"OK":"NG",`HTTP ${response.status} / 期待 ${page.marker}`,ms);
+          addResult("性能",`${page.name}読込`,speedStatus,`${Math.round(ms)} ms`,ms);
+          if(page.public){
+            const leaks=["x-admin-secret","DEMO_ADMIN_CODE","ADMIN_STORAGE_KEY","/api/admin/"].filter(token=>text.includes(token));
+            addResult("セキュリティ",`${page.name}の管理情報混入`,leaks.length?"NG":"OK",leaks.length?leaks.join(", "):"管理API・管理コード情報なし");
+          }
+        }catch(error){
+          addResult("画面",page.name,"NG",error.message);
         }
       }));
+    }
 
-      $("adoptList").innerHTML = rows.map((item) => `
-        <div class="adopt-card">
-          <div>
-            <div class="adopt-title">${escapeHtml(item.label)}</div>
-            <div class="adopt-meta">${escapeHtml(item.file)}</div>
+    async function checkLive(){
+      await Promise.all([checkHealth(),checkAdminRejection(),checkPages()]);
+      const [system,settings,phone]=await Promise.all([
+        adminJson("/api/admin/system-check","Worker system-check"),
+        adminJson("/api/admin/settings","店舗・事業所設定"),
+        adminJson("/api/admin/phone-normalize-check","電話番号正規化")
+      ]);
+      appendWorkerChecks(system);
+      if(settings){
+        const menuCount=(settings.menus||[]).length;
+        const staffCount=(settings.staff||[]).length;
+        addResult("主要業務ロジック","有効メニュー・スタッフ",menuCount&&staffCount?"OK":"注意",`メニュー ${menuCount} / スタッフ ${staffCount}`);
+      }
+      if(phone){
+        addResult("主要業務ロジック","電話番号正規化結果",phone.ok===true?"OK":"NG",`${(phone.samples||[]).length}サンプル`);
+      }
+    }
+
+    async function runAll(){
+      if(RUNNING)return;
+      RUNNING=true;RESULTS=[];STARTED_AT=performance.now();
+      ["runAllBtn","bottomRunBtn","prepareBtn"].forEach(id=>$(id).disabled=true);
+      setNotice("warn","静的検査と公開環境のライブ検査を実行中です。");
+      renderResults();
+      await loadStaticReport();
+      await checkLive();
+      RUNNING=false;
+      const report=buildReport();
+      $("totalTime").textContent=`${(report.total_ms/1000).toFixed(1)}秒`;
+      ["runAllBtn","bottomRunBtn","prepareBtn"].forEach(id=>$(id).disabled=false);
+      const type=report.summary.ng?"ng":report.summary.attention?"warn":"ok";
+      setNotice(type,report.summary.ng
+        ?`NGが${report.summary.ng}件あります。詳細を確認してください。`
+        :report.summary.attention
+          ?`自動検査は完了しました。注意が${report.summary.attention}件あります。`
+          :"全自動検査がOKです。");
+      renderResults();
+    }
+
+    async function prepareDemo(){
+      if(!ADMIN_KEY){setNotice("warn","管理コードを設定してから営業前デモ準備を実行してください。");return}
+      if(!confirm("本日基準のデモデータを準備しますか？"))return;
+      $("prepareBtn").disabled=true;
+      try{
+        const {response,data}=await timedFetch(`${API_BASE}/api/admin/demo/prepare?t=${Date.now()}`,{
+          headers:{"Accept":"application/json","x-admin-secret":ADMIN_KEY}
+        });
+        if(!response.ok || data?.ok===false)throw new Error(data?.message||data?.error||`HTTP ${response.status}`);
+        setNotice("ok","営業前デモ準備が完了しました。一括検査を再実行します。");
+        await runAll();
+      }catch(error){
+        setNotice("ng",`営業前デモ準備に失敗しました：${error.message}`);
+      }finally{$("prepareBtn").disabled=false}
+    }
+
+    async function copyReport(){
+      const text=JSON.stringify(buildReport(),null,2);
+      try{await navigator.clipboard.writeText(text);setNotice("ok","検査結果をコピーしました。")}
+      catch(error){
+        const ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();
+        setNotice("ok","検査結果をコピーしました。");
+      }
+    }
+
+    function renderUrls(){
+      $("urlList").innerHTML=URLS.map(([name,url])=>`
+        <div class="url-card">
+          <b>${escapeHtml(name)}</b><code>${escapeHtml(url)}</code>
+          <div class="url-actions">
+            <button class="mini" type="button" data-copy-url="${escapeHtml(url)}">コピー</button>
+            <a class="mini" href="${escapeHtml(url)}" target="_blank" rel="noopener">開く</a>
           </div>
-          <div class="adopt-meta">
-            期待：${escapeHtml(item.expect)}<br>
-            ${escapeHtml(item.url)}
-          </div>
-          <span class="${item.ok ? "adopt-ok" : "adopt-ng"}">${item.ok ? "OK" : "確認必要"}</span>
         </div>
       `).join("");
     }
 
-    function jpDayName(n) {
-      return ["日", "月", "火", "水", "木", "金", "土"][Number(n)] || "-";
-    }
-
-    async function renderPhoneNormalizeCheck() {
-      $("phoneNormalizeList").innerHTML = `<div class="reflect-card">電話番号正規化を確認中です。</div>`;
-      try {
-        const data = await apiGet(ENDPOINTS.phoneNormalizeCheck);
-        const samples = data.samples || [];
-        $("phoneNormalizeList").innerHTML = samples.map((s) => `
-          <div class="reflect-card">
-            <b>${escapeHtml(s.input)}</b>
-            <span>${escapeHtml(s.normalized)}</span>
-          </div>
-        `).join("") + `
-          <div class="reflect-card">
-            <b>判定</b>
-            <span>${data.ok ? "OK：すべて同じ電話番号として扱えます。" : "確認が必要です。"}</span>
-          </div>
-        `;
-      } catch (e) {
-        $("phoneNormalizeList").innerHTML = `<div class="reflect-card"><b>電話番号正規化チェックエラー</b><span>${escapeHtml(e.message)}</span></div>`;
-      }
-    }
-
-    async function renderSettingsReflection() {
-      $("reflectList").innerHTML = `<div class="reflect-card">店舗設定を確認中です。</div>`;
-      try {
-        const data = await apiGet(ENDPOINTS.adminSettings);
-        const shop = data.shop || {};
-        const hours = data.business_hours || [];
-        const closed = hours
-          .filter((h) => h.is_open === false)
-          .map((h) => jpDayName(h.day_of_week))
-          .join("・") || "なし";
-
-        $("reflectList").innerHTML = `
-          <div class="reflect-card"><b>店舗名</b><span>${escapeHtml(shop.display_name || shop.shop_name || "-")}</span></div>
-          <div class="reflect-card"><b>電話番号</b><span>${escapeHtml(shop.phone || "未設定")}</span></div>
-          <div class="reflect-card"><b>住所</b><span>${escapeHtml(shop.address || "未設定")}</span></div>
-          <div class="reflect-card"><b>予約受付</b><span>${escapeHtml(shop.default_booking_days_ahead || "-")}日先まで / ${escapeHtml(shop.booking_deadline_hours ?? "-")}時間前締切</span></div>
-          <div class="reflect-card"><b>定休日</b><span>${escapeHtml(closed)}</span></div>
-          <div class="reflect-card"><b>件数</b><span>メニュー ${escapeHtml((data.menus || []).length)}件 / スタッフ ${escapeHtml((data.staff || []).length)}件 / ルーム ${escapeHtml((data.rooms || []).length)}件</span></div>
-        `;
-      } catch (e) {
-        $("reflectList").innerHTML = `<div class="reflect-card"><b>店舗設定確認エラー</b><span>${escapeHtml(e.message)}</span></div>`;
-      }
-    }
-
-    async function loadAll() {
-      if (loading) return;
-      setLoading(true);
-      setNotice("warn", "API・DB・デモデータを確認中です。");
-      log("確認開始");
-
-      try {
-        const [health, system] = await Promise.all([
-          apiGet(ENDPOINTS.health),
-          apiGet(ENDPOINTS.systemCheck),
-        ]);
-
-        lastSystem = system;
-
-        renderChecks(system);
-        renderCounts(system);
-        renderStatus(system, health);
-        renderWorkerVersion(health, system);
-        await Promise.allSettled([
-          renderFileAdoption(),
-          renderSettingsReflection(),
-          renderPhoneNormalizeCheck(),
-        ]);
-
-        const allOk = Boolean(system.ok && health.ok && Object.values(system.checks || {}).every(Boolean));
-        if (allOk) {
-          setNotice("ok", "営業前確認OKです。API・DB・店舗設定・デモデータが正常です。");
-        } else {
-          setNotice("warn", "一部の確認項目に注意が必要です。チェック項目を確認してください。");
-        }
-
-        log("確認完了", { health, system });
-      } catch (err) {
-        $("metricHealth").textContent = "NG";
-        $("heroApi").textContent = "NG";
-        $("bottomStatus").textContent = "営業前確認でエラーが発生しました。";
-        setNotice("ng", `確認に失敗しました：${err.message}`);
-        log("確認エラー", err.data || { message: err.message, status: err.status });
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    function openPrepareModal() {
-      $("modalBackdrop").classList.add("show");
-    }
-
-    function closePrepareModal() {
-      $("modalBackdrop").classList.remove("show");
-    }
-
-    async function runPrepare() {
-      if (loading) return;
-      closePrepareModal();
-      setLoading(true);
-      setNotice("warn", "営業前デモ準備を実行中です。");
-      log("営業前デモ準備 実行開始");
-
-      try {
-        const result = await apiGet(ENDPOINTS.demoPrepare);
-        setNotice("ok", "営業前デモ準備が完了しました。最新状態を再確認します。");
-        showToast("営業前デモ準備が完了しました。");
-        log("営業前デモ準備 完了", result);
-        setLoading(false);
-        await loadAll();
-      } catch (err) {
-        setNotice("ng", `営業前デモ準備に失敗しました：${err.message}`);
-        showToast("営業前デモ準備に失敗しました。");
-        log("営業前デモ準備 エラー", err.data || { message: err.message, status: err.status });
-        setLoading(false);
-      }
-    }
-
-    async function copyText(text) {
-      try {
-        await navigator.clipboard.writeText(text);
-        showToast("コピーしました。");
-      } catch (e) {
-        const ta = document.createElement("textarea");
-        ta.value = text;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand("copy");
-        ta.remove();
-        showToast("コピーしました。");
-      }
-    }
-
-    document.addEventListener("click", (event) => {
-      const copyBtn = event.target.closest("[data-copy]");
-      if (copyBtn) {
-        copyText(copyBtn.getAttribute("data-copy"));
-      }
+    $("adminSave").addEventListener("click",()=>{
+      const value=$("adminCode").value.trim();
+      if(!value){setNotice("warn","管理コードを入力してください。");return}
+      sessionStorage.setItem(ADMIN_STORAGE_KEY,value);ADMIN_KEY=value;setAdminStatus();
+      setNotice("ok","管理コードをこのタブへ設定しました。");
+    });
+    $("dproAdminClear").addEventListener("click",()=>{
+      sessionStorage.removeItem(ADMIN_STORAGE_KEY);ADMIN_KEY="";setAdminStatus();
+      setNotice("warn","管理コードを削除しました。");
+    });
+    $("adminCode").addEventListener("keydown",event=>{if(event.key==="Enter")$("adminSave").click()});
+    $("runAllBtn").addEventListener("click",runAll);
+    $("bottomRunBtn").addEventListener("click",runAll);
+    $("prepareBtn").addEventListener("click",prepareDemo);
+    $("copyBtn").addEventListener("click",copyReport);
+    document.addEventListener("click",event=>{
+      const button=event.target.closest("[data-copy-url]");
+      if(button)navigator.clipboard.writeText(button.dataset.copyUrl).then(()=>setNotice("ok","URLをコピーしました。"));
     });
 
-    $("btnReload").addEventListener("click", loadAll);
-    $("bottomReload").addEventListener("click", loadAll);
-    $("btnPrepare").addEventListener("click", openPrepareModal);
-    $("miniPrepare").addEventListener("click", openPrepareModal);
-    $("modalCancel").addEventListener("click", closePrepareModal);
-    $("modalRunPrepare").addEventListener("click", runPrepare);
-    $("modalBackdrop").addEventListener("click", (event) => {
-      if (event.target.id === "modalBackdrop") closePrepareModal();
-    });
-
-    loadAll();
-  
-
-/* STEP ESTHE-7: date入力の曜日表示ブラッシュアップ */
-(function(){
-  function weekdayLabelV7(yyyyMmDd){
-    const parts = String(yyyyMmDd || "").split("-").map(Number);
-    if(parts.length !== 3 || parts.some(Number.isNaN)) return "";
-    const day = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2])).getUTCDay();
-    return ["日","月","火","水","木","金","土"][day] || "";
-  }
-
-  function dateDisplayTextV7(value){
-    if(!value) return "日付を選択";
-    const parts = String(value).split("-");
-    if(parts.length !== 3) return value;
-    const y = Number(parts[0]);
-    const m = Number(parts[1]);
-    const d = Number(parts[2]);
-    const w = weekdayLabelV7(value);
-    return `${y}年${m}月${d}日（${w}）`;
-  }
-
-  function updateDateDisplaysV7(){
-    document.querySelectorAll(".dateFieldV7").forEach((wrap) => {
-      const input = wrap.querySelector('input[type="date"]');
-      const display = wrap.querySelector(".dateDisplayV7");
-      if(input && display) display.textContent = dateDisplayTextV7(input.value);
-    });
-  }
-
-  function enhanceDateInputsV7(){
-    document.querySelectorAll('input[type="date"]:not([data-esthe-v7-date])').forEach((input) => {
-      input.setAttribute("data-esthe-v7-date", "1");
-      const wrap = document.createElement("div");
-      wrap.className = "dateFieldV7";
-      input.parentNode.insertBefore(wrap, input);
-      wrap.appendChild(input);
-
-      const display = document.createElement("button");
-      display.type = "button";
-      display.className = "dateDisplayV7";
-      wrap.insertBefore(display, input);
-
-      display.addEventListener("click", () => {
-        if(typeof input.showPicker === "function"){
-          input.showPicker();
-        }else{
-          input.focus();
-          input.click();
-        }
-      });
-
-      input.addEventListener("change", updateDateDisplaysV7);
-      updateDateDisplaysV7();
-    });
-  }
-
-  document.addEventListener("DOMContentLoaded", () => {
-    setTimeout(enhanceDateInputsV7, 80);
-    setTimeout(updateDateDisplaysV7, 160);
-  });
-  document.addEventListener("click", () => setTimeout(updateDateDisplaysV7, 60), true);
-  document.addEventListener("change", () => setTimeout(updateDateDisplaysV7, 30), true);
-  window.dproEstheUpdateDateDisplaysV7 = updateDateDisplaysV7;
-})();
-
-</script>
+    renderUrls();
+    setAdminStatus();
+    runAll();
+  </script>
 </body>
 </html>
