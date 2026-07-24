@@ -803,8 +803,12 @@
     <span class="dpro-admin-status" id="dproAdminStatus">管理コード未入力</span>
   </div>
   <div class="dpro-admin-controls">
+    <!-- ESTHE-NEXT-HF1-ADMIN-CODE-CLEAR -->
     <input id="dproAdminCode" type="password" inputmode="numeric"
-      autocomplete="current-password" placeholder="管理コードを入力">
+      name="dpro_esthe_admin_code_entry"
+      autocomplete="new-password" autocapitalize="off" spellcheck="false"
+      aria-autocomplete="none" data-lpignore="true" data-1p-ignore="true"
+      placeholder="管理コードを入力">
     <button class="dpro-admin-button" id="dproAdminSave" type="button">管理コードを設定</button>
     <button class="dpro-admin-button clear" id="dproAdminClear" type="button">管理コードを削除</button>
   </div>
@@ -1091,6 +1095,14 @@ const state = {
 const $ = (id) => document.getElementById(id);
 
 
+function dproResetAdminCodeVisual(input){
+  if(!input) return;
+  input.value = "";
+  input.defaultValue = "";
+  input.removeAttribute("value");
+  input.setAttribute("autocomplete", "new-password");
+}
+
 function dproAdminStatusMessage(message, ok=false){
   const status = document.getElementById("dproAdminStatus");
   if(!status) return;
@@ -1115,11 +1127,12 @@ function dproInitAdminAccess(){
     ADMIN_KEY = "";
   }
 
+  dproResetAdminCodeVisual(input);
   if(ADMIN_KEY){
-    input.value = "";
     input.placeholder = "管理コード設定済み";
     dproAdminStatusMessage("管理コード設定済み", true);
   }else{
+    input.placeholder = "管理コードを入力";
     dproAdminStatusMessage("管理コード未入力", false);
   }
 
@@ -1141,13 +1154,21 @@ function dproInitAdminAccess(){
     window.location.reload();
   });
 
-  clear.addEventListener("click", () => {
+  clear.addEventListener("click", (event) => {
+    event.preventDefault();
     sessionStorage.removeItem(ADMIN_STORAGE_KEY);
     ADMIN_KEY = "";
-    input.value = "";
+    dproResetAdminCodeVisual(input);
     input.placeholder = "管理コードを入力";
+    input.blur();
     dproAdminStatusMessage("管理コードを削除しました", false);
-    window.location.reload();
+
+    // パスワード管理ツールの遅延再入力も残さない。
+    [0, 100, 500, 1000].forEach((delay) => {
+      window.setTimeout(() => {
+        if(!ADMIN_KEY) dproResetAdminCodeVisual(input);
+      }, delay);
+    });
   });
 
   input.addEventListener("keydown", (event) => {

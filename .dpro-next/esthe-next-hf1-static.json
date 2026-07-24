@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "system": "DPRO エステ LINE",
+  "step": "ESTHE-NEXT-HF1",
+  "phase": "static-validation",
+  "summary": {
+    "ok": 13,
+    "attention": 0,
+    "ng": 0
+  },
+  "items": [
+    {
+      "name": "HTML構文",
+      "status": "OK",
+      "detail": "HTMLParser PASS"
+    },
+    {
+      "name": "HTML ID重複",
+      "status": "OK",
+      "detail": "なし"
+    },
+    {
+      "name": "JavaScript構文",
+      "status": "OK",
+      "detail": "1スクリプト正常"
+    },
+    {
+      "name": "HF1マーカー",
+      "status": "OK",
+      "detail": "PASS"
+    },
+    {
+      "name": "current-password除去",
+      "status": "OK",
+      "detail": "PASS"
+    },
+    {
+      "name": "new-password設定",
+      "status": "OK",
+      "detail": "PASS"
+    },
+    {
+      "name": "パスワード管理除外",
+      "status": "OK",
+      "detail": "PASS"
+    },
+    {
+      "name": "表示値完全消去",
+      "status": "OK",
+      "detail": "PASS"
+    },
+    {
+      "name": "sessionStorage削除",
+      "status": "OK",
+      "detail": "PASS"
+    },
+    {
+      "name": "削除後reload廃止",
+      "status": "OK",
+      "detail": "PASS"
+    },
+    {
+      "name": "遅延再入力消去",
+      "status": "OK",
+      "detail": "PASS"
+    },
+    {
+      "name": "保存後reload維持",
+      "status": "OK",
+      "detail": "PASS"
+    },
+    {
+      "name": "COMPLETE状態",
+      "status": "OK",
+      "detail": "PASS"
+    }
+  ]
+}

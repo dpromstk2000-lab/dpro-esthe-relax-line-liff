@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "system": "DPRO エステ LINE",
+  "step": "ESTHE-NEXT-HF1",
+  "stage": "patch-committed-publication-pending",
+  "updated_at_jst": "2026-07-24T20:06:53+09:00",
+  "target": "owner.html",
+  "reason": "current-passwordとreloadによるブラウザ伏字再表示",
+  "worker_changed": false,
+  "supabase_changed": false,
+  "api_changed": false,
+  "backup_tag": "backup-esthe-before-next-hf1-20260724"
+}
