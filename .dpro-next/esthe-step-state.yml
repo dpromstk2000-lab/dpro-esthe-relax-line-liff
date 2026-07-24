@@ -1,24 +1,22 @@
 schema_version: 1
 system: "DPRO エステ LINE"
-current_step: "ESTHE-NEXT-7-COMPLETE"
-next_step: "ESTHE-NEXT-8"
-updated_at_jst: "2026-07-24T11:41:04+09:00"
-source_commit: "3d22750f201c44dab690add991faf3c0c19e18f1"
-backup_tag: "backup-esthe-before-next7-r2-20260724"
+current_step: "ESTHE-NEXT-8-COMPLETE"
+next_step: "ESTHE-NEXT-9"
+updated_at_jst: "2026-07-24T14:12:17+09:00"
+source_commit: "b620d03a84aa10e9a47a66de88f243bccf0b48ba"
+backup_tag: "backup-esthe-before-next8-r2-20260724"
 result: "OK"
 changes:
   worker: false
   supabase: false
   api: false
-  latest_visit_summary: true
-  next_visit_estimate: true
-  history_initial_limit: 5
-  history_expand: true
-  repeat_same_menu_staff: true
-  repeat_payload_session_storage: true
-  repeat_payload_ttl_minutes: 30
-  phone_in_repeat_url: false
-  consultation_reuse: false
-  consent_reconfirmation: true
-  date_time_reselection: true
-  standard_initial_api_requests_added: 0
+  followup_priority_dashboard: true
+  default_range_days: 7
+  individual_message_review_copy: true
+  copy_does_not_complete: true
+  done_requires_confirmation: true
+  snooze_requires_confirmation: true
+  customer_karte_link: true
+  bulk_auto_line_delivery: false
+  followup_api_calls_per_load: 1
+  additional_initial_api_requests: 0

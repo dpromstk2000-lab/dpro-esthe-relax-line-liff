@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "system": "DPRO エステ LINE",
+  "step": "ESTHE-NEXT-8",
+  "completed_at_jst": "2026-07-24T14:12:15+09:00",
+  "target_files": [
+    "owner.html"
+  ],
+  "features": {
+    "followup_priority_dashboard": true,
+    "overdue_today_high_upcoming_counts": true,
+    "default_range_days": 7,
+    "individual_message_review_copy": true,
+    "copy_does_not_complete": true,
+    "done_requires_confirmation": true,
+    "snooze_requires_confirmation": true,
+    "customer_karte_link": true,
+    "booking_url_in_message": true,
+    "bulk_auto_line_delivery": false,
+    "followup_api_calls_per_load": 1,
+    "additional_initial_api_requests": 0
+  },
+  "changes": {
+    "worker": false,
+    "supabase": false,
+    "api": false
+  },
+  "rollback": {
+    "tag": "backup-esthe-before-next8-r2-20260724",
+    "method": "バックアップタグからowner.htmlと台帳を復元する"
+  }
+}

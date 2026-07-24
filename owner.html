@@ -1,10 +1,10 @@
 <!doctype html>
-<!-- STEP ESTHE-NEXT-5 -->
+<!-- STEP ESTHE-NEXT-8 -->
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DPRO Esthe Relaxation｜STEP ESTHE-NEXT-5｜owner.html</title>
+  <title>DPRO Esthe Relaxation｜STEP ESTHE-NEXT-8｜owner.html</title>
   <style>
     :root{
       --bg:#fffaf7;
@@ -749,12 +749,36 @@
             .preconfirm-checks{grid-template-columns:1fr}
           }
           
+
+/* DPRO NEXT-8: 再来店・個別フォロー */
+.followup-command-center{margin-bottom:16px;padding:18px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(135deg,#fff,#fff7ed);box-shadow:var(--shadow)}
+.followup-command-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:13px}
+.followup-command-head h2{margin:0;font-size:23px;letter-spacing:-.035em}
+.followup-command-head p{margin:5px 0 0;color:var(--muted);font-size:12px;font-weight:850;line-height:1.65}
+.followup-command-counts{display:flex;flex-wrap:wrap;gap:7px;justify-content:flex-end}
+.followup-count{display:inline-flex;align-items:center;min-height:34px;padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--main);font-size:11px;font-weight:950;white-space:nowrap}
+.followup-count.danger{background:#fff0f0;border-color:#efc2c2;color:#a83c3c}
+.followup-count.warn{background:#fff5df;border-color:#edd29d;color:#8c5c09}
+.followup-count.ok{background:#eaf8f2;border-color:#bce9d8;color:#087a59}
+.follow-card.next8{border-left:6px solid var(--main2)}
+.follow-card.next8.overdue{border-left-color:var(--danger);background:#fff8f8}
+.follow-card.next8.today{border-left-color:var(--warn);background:#fffaf0}
+.follow-card.next8.high{box-shadow:0 0 0 2px rgba(184,134,71,.14),var(--shadow)}
+.followup-card-customer{margin-top:8px;padding:9px 10px;border-radius:13px;background:var(--soft);color:var(--text);font-size:12px;font-weight:850;line-height:1.6}
+.followup-message-preview{margin-top:9px;padding:11px 12px;border:1px solid var(--line);border-radius:14px;background:#fff;color:var(--text);font-size:12px;font-weight:800;line-height:1.65;white-space:pre-wrap}
+.followup-due-label{display:inline-flex;margin-top:7px;padding:5px 8px;border-radius:999px;background:var(--soft);color:var(--main);font-size:10px;font-weight:950}
+.followup-due-label.overdue{background:#fff0f0;color:#a83c3c}.followup-due-label.today{background:#fff4dc;color:#8d600d}.followup-due-label.upcoming{background:#eaf8f2;color:#087a59}
+.followup-actions-main{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:7px;margin-top:11px}
+.followup-actions-main .mini{width:100%;min-height:43px}
+.followup-safe-note{margin-top:12px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--soft);color:var(--muted);font-size:11px;font-weight:850;line-height:1.65}
+@media(max-width:760px){.followup-command-head{display:grid}.followup-command-counts{justify-content:flex-start}.followup-actions-main{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
   <main class="wrap">
     <section class="hero">
-      <div class="badge">STEP ESTHE-NEXT-5｜施術内容・料金・同意確認</div>
+      <div class="badge">STEP ESTHE-NEXT-8｜再来店・個別フォロー</div>
       <h1>DPRO Esthe Relaxation</h1>
       <p>本日の予約、予約一覧、顧客カルテ、回数券、未対応フォロー、文面テンプレートをまとめて確認できるPC用の本格管理画面です。</p>
       <div class="hero-meta">
@@ -795,7 +819,7 @@
       <button class="tab" data-tab="reservations">予約一覧</button>
       <button class="tab" data-tab="customers">顧客・カルテ</button>
       <button class="tab" data-tab="tickets">回数券</button>
-      <button class="tab" data-tab="followups">フォロー</button>
+      <button class="tab" data-tab="followups">再来店フォロー</button>
       <button class="tab" data-tab="templates">文面</button>
       <button class="tab" data-tab="settings">店舗設定確認</button>
     </div>
@@ -806,7 +830,7 @@
       <div class="metric"><strong id="metricToday">-</strong><span>本日の予約</span></div>
       <div class="metric"><strong id="metricActive">-</strong><span>未完・施術中</span></div>
       <div class="metric"><strong id="metricCompleted">-</strong><span>完了</span></div>
-      <div class="metric"><strong id="metricFollowups">-</strong><span>未対応フォロー</span></div>
+      <div class="metric"><strong id="metricFollowups">-</strong><span>7日以内フォロー</span></div>
       <div class="metric"><strong id="metricTickets">-</strong><span>有効回数券</span></div>
     </section>
 
@@ -953,23 +977,25 @@
     </section>
 
     <section id="tabFollowups" class="hidden">
-      <div class="panel">
-        <div class="section-title">
-          <div>
-            <h2>未対応フォロー</h2>
-            <p class="sub">施術後フォロー、回数券期限、再来店案内などを確認し、対応済みにできます。</p>
-          </div>
-          <span class="pill warn">フォロー</span>
+      <section class="followup-command-center" id="followupCommandCenter">
+        <div class="followup-command-head">
+          <div><h2>再来店フォロー・今日の優先順</h2><p>期限超過、本日期限、高優先、今後7日の順で確認します。文面は必ず確認してから個別送信してください。</p></div>
+          <div class="followup-command-counts" id="followupCommandCounts"></div>
         </div>
+        <div class="followup-safe-note">LINEへの一括自動配信は行いません。「文面を確認・コピー」→LINEで個別送信→「送信後に対応済み」の順で操作します。</div>
+      </section>
+      <div class="panel">
+        <div class="section-title"><div><h2>再来店・施術後・回数券フォロー</h2><p class="sub">期限、優先度、お客様情報を確認し、個別文面をコピーして対応履歴を更新します。</p></div><span class="pill warn">個別確認</span></div>
         <div class="form-grid">
           <div class="field"><label>ステータス</label><select id="followStatus"><option value="pending">未対応</option><option value="all">すべて</option></select></div>
-          <div class="field"><label>操作</label><button class="btn primary" id="loadFollowupsBtn">フォローを表示</button></div>
+          <div class="field"><label>表示範囲</label><select id="followRange"><option value="due">期限到来まで</option><option value="7days" selected>今後7日まで</option><option value="all">すべて</option></select></div>
+          <div class="field"><label>操作</label><button class="btn primary" id="loadFollowupsBtn">優先順で表示</button></div>
         </div>
         <div id="followupList" class="list"></div>
       </div>
     </section>
 
-    <section id="tabTemplates" class="hidden">
+    <section id="tabTemplates class="hidden">
       <div class="panel">
         <div class="section-title">
           <div>
@@ -1034,11 +1060,13 @@
   <div class="toast" id="toast"></div>
 
 <script>
-const VERSION = "ESTHE-NEXT-5-TREATMENT-CONFIRMATION-20260723";
+const VERSION = "ESTHE-NEXT-8-REVISIT-FOLLOWUP-20260724";
 const API_BASE = "https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev";
 const SHOP_CODE = "esthe_demo_default";
 const ADMIN_STORAGE_KEY = "dpro_esthe_admin_secret";
 const DEMO_ADMIN_CODE = "1234";
+const BOOKING_URL = "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/index-brush.html";
+const MEMBER_URL = "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/member.html";
 let ADMIN_KEY = sessionStorage.getItem(ADMIN_STORAGE_KEY) || "";
 
 const state = {
@@ -2326,35 +2354,87 @@ function openUseTicket(idx){
   );
 }
 
+
+function followupDateValue(f){ return String(f?.due_date || f?.followup_date || f?.scheduled_date || "").slice(0,10); }
+function followupCustomerName(f){ return f?.customer_name || f?.customer?.customer_name || f?.line_display_name || "お客様"; }
+function followupCustomerPhone(f){ return normalizePhone(f?.customer_phone || f?.phone || f?.customer?.phone || ""); }
+function followupMenuName(f){ return f?.menu_name || f?.last_menu_name || f?.recommend_menu || f?.customer?.last_menu_name || ""; }
+function followupDayDiff(dateStr){
+  if(!dateStr) return 9999;
+  const start=new Date(`${state.today}T00:00:00+09:00`), due=new Date(`${dateStr}T00:00:00+09:00`);
+  if(Number.isNaN(start.getTime())||Number.isNaN(due.getTime())) return 9999;
+  return Math.round((due.getTime()-start.getTime())/86400000);
+}
+function followupUrgency(f){
+  const due=followupDateValue(f), diff=followupDayDiff(due);
+  if(diff<0) return {rank:0,cls:"overdue",label:`${Math.abs(diff)}日超過`};
+  if(diff===0) return {rank:1,cls:"today",label:"本日期限"};
+  if(diff<=7) return {rank:3,cls:"upcoming",label:`あと${diff}日`};
+  if(!due) return {rank:4,cls:"",label:"期限未設定"};
+  return {rank:5,cls:"",label:dateText(due)};
+}
+function followupPriorityRank(f){
+  const p=String(f?.priority||"").toLowerCase();
+  if(["high","urgent","重要","高"].includes(p)) return 0;
+  if(["normal","medium","通常","中"].includes(p)) return 1;
+  return 2;
+}
+function sortFollowups(rows){ return rows.slice().sort((a,b)=>{const ua=followupUrgency(a),ub=followupUrgency(b);return ua.rank-ub.rank||followupPriorityRank(a)-followupPriorityRank(b)||String(followupDateValue(a)).localeCompare(String(followupDateValue(b)));}); }
+function followupDefaultText(f){
+  const name=followupCustomerName(f), menu=followupMenuName(f);
+  return [`${name}様`,"","いつもご利用いただきありがとうございます。",menu?`前回の${menu}からお日にちが経ちましたが、その後のお肌やお身体の状態はいかがでしょうか。`:"前回のご来店からお日にちが経ちましたが、その後のお肌やお身体の状態はいかがでしょうか。","次回ケアの時期の目安になりましたので、ご都合のよいタイミングでご予約ください。","",`ご予約：${BOOKING_URL}`,`予約・履歴確認：${MEMBER_URL}`,"","体調や状態に合わせて内容をご相談いただけます。"].join("\n");
+}
+function personalizeFollowupText(f){
+  let text=String(f?.message_body||f?.body||"").replaceAll("\\n","\n").trim();
+  if(!text) text=followupDefaultText(f);
+  const r={"{{customer_name}}":followupCustomerName(f),"{{menu_name}}":followupMenuName(f)||"前回メニュー","{{recommend_menu}}":f?.recommend_menu||followupMenuName(f)||"おすすめメニュー","{{due_date}}":followupDateValue(f)?dateText(followupDateValue(f)):"ご都合のよい時期","{{booking_url}}":BOOKING_URL,"{{member_url}}":MEMBER_URL};
+  Object.entries(r).forEach(([k,v])=>{text=text.replaceAll(k,v);});
+  if(!text.includes(BOOKING_URL)) text=`${text}\n\nご予約：${BOOKING_URL}`;
+  return text.trim();
+}
+function followupRangeDueBefore(){const r=$("followRange")?.value||"7days";if(r==="all") return "all";if(r==="7days") return addDays(state.today,7);return state.today;}
+function renderFollowupCommandCenter(){
+  const p=state.followups.filter(f=>f.status!=="done");
+  const o=p.filter(f=>followupDayDiff(followupDateValue(f))<0).length,t=p.filter(f=>followupDayDiff(followupDateValue(f))===0).length,h=p.filter(f=>followupPriorityRank(f)===0).length,u=p.filter(f=>{const d=followupDayDiff(followupDateValue(f));return d>0&&d<=7;}).length;
+  $("followupCommandCounts").innerHTML=`<span class="followup-count ${o?"danger":""}">期限超過 ${o}</span><span class="followup-count ${t?"warn":""}">本日期限 ${t}</span><span class="followup-count ${h?"warn":""}">高優先 ${h}</span><span class="followup-count ${u?"ok":""}">今後7日 ${u}</span>`;
+}
+function followupCardHtml(f,index){
+  const urgency=followupUrgency(f), high=followupPriorityRank(f)===0, done=f.status==="done", message=personalizeFollowupText(f), name=followupCustomerName(f), phone=followupCustomerPhone(f), menu=followupMenuName(f), type=f.followup_type||f.type||f.category||"再来店・施術後";
+  return `<div class="follow-card next8 ${escapeHtml(urgency.cls)} ${high?"high":""}">
+    <div class="card-head"><div><div class="card-title">${escapeHtml(f.title||`${type}フォロー`)}</div><div class="card-meta">期限：${escapeHtml(followupDateValue(f)?dateText(followupDateValue(f)):"未設定")} / 優先度：${escapeHtml(high?"高":f.priority==="normal"?"通常":f.priority||"通常")} / 状態：${escapeHtml(done?"対応済み":"未対応")}</div><span class="followup-due-label ${escapeHtml(urgency.cls)}">${escapeHtml(urgency.label)}</span></div><span class="pill ${done?"ok":high?"warn":""}">${escapeHtml(done?"対応済み":type)}</span></div>
+    <div class="followup-card-customer">お客様：${escapeHtml(name)}${phone?` / 電話：${escapeHtml(phone)}`:""}${menu?`<br>前回・推奨メニュー：${escapeHtml(menu)}`:""}</div>
+    <div class="followup-message-preview">${escapeHtml(message.slice(0,260))}${message.length>260?"…":""}</div>
+    <div class="followup-actions-main"><button class="mini primary" data-review-follow="${index}">文面を確認・コピー</button>${done?`<button class="mini green" type="button" disabled>対応済み</button>`:`<button class="mini green" data-done-follow="${index}">送信後に対応済み</button>`}${done?`<button class="mini" type="button" disabled>延期不要</button>`:`<button class="mini warn" data-snooze-follow="${index}">3日後に再表示</button>`}</div>
+    ${(f.customer_id||phone)?`<div class="card-actions"><button class="mini" data-follow-customer="${index}">顧客カルテを開く</button></div>`:""}
+  </div>`;
+}
 async function loadFollowups(){
-  setMessage("warn", "フォローを読み込み中です。");
+  setMessage("warn","再来店フォローを優先順に整理しています。");
   try{
-    const status = $("followStatus").value;
-    const date = status === "all" ? "all" : state.today;
-    const data = await api(`/api/admin/followups?status=${encodeURIComponent(status)}&due_before=${encodeURIComponent(date)}&limit=200`);
-    state.followups = data.followups || [];
-    $("followupList").innerHTML = state.followups.length ? state.followups.map((f,i)=>`
-      <div class="follow-card">
-        <div class="card-head">
-          <div>
-            <div class="card-title">${escapeHtml(f.title || "フォロー")}</div>
-            <div class="card-meta">期限：${escapeHtml(f.due_date || "-")} / 優先度：${escapeHtml(f.priority === "high" ? "高め" : f.priority === "normal" ? "通常" : f.priority || "-")} / 状態：${escapeHtml(f.status === "pending" ? "未対応" : f.status === "done" ? "対応済み" : f.status || "-")}</div>
-          </div>
-          <span class="pill warn">未対応</span>
-        </div>
-        <div class="card-meta">${escapeHtml(f.message_body || f.body || "-")}</div>
-        <div class="card-actions">
-          <button class="mini" data-copy-follow="${i}">文面コピー</button>
-          <button class="mini green" data-done-follow="${i}">対応済み</button>
-          <button class="mini warn" data-snooze-follow="${i}">3日後</button>
-        </div>
-      </div>
-    `).join("") : `<div class="notice">フォローはありません。</div>`;
-    renderMetrics();
-    setMessage("ok", "フォローを表示しました。");
-  }catch(e){
-    setMessage("ng", "フォロー取得に失敗しました：" + e.message);
-  }
+    const status=$("followStatus").value,dueBefore=followupRangeDueBefore();
+    const data=await api(`/api/admin/followups?status=${encodeURIComponent(status)}&due_before=${encodeURIComponent(dueBefore)}&limit=200`);
+    state.followups=sortFollowups(data.followups||[]);
+    renderFollowupCommandCenter();
+    $("followupList").innerHTML=state.followups.length?state.followups.map((f,i)=>followupCardHtml(f,i)).join(""):`<div class="notice">選択した範囲にフォローはありません。</div>`;
+    renderMetrics();setMessage("ok",`フォローを優先順で表示しました（${state.followups.length}件）。`);
+  }catch(e){setMessage("ng","フォロー取得に失敗しました："+e.message);}
+}
+function openFollowupMessage(idx){
+  const f=state.followups[idx];if(!f)return;const message=personalizeFollowupText(f);
+  openModal("個別フォロー文面を確認","内容を確認してコピーし、LINEで個別送信してください。コピーだけでは対応済みになりません。",`<div class="summary-row"><div>お客様</div><div>${escapeHtml(followupCustomerName(f))}</div><div>期限</div><div>${escapeHtml(followupDateValue(f)?dateText(followupDateValue(f)):"未設定")}</div><div>種類</div><div>${escapeHtml(f.followup_type||f.type||f.category||"再来店フォロー")}</div></div><div class="followup-message-preview">${escapeHtml(message)}</div>`,"文面をコピー",async()=>{try{await navigator.clipboard.writeText(message);closeModal();showToast("個別フォロー文面をコピーしました。");}catch(error){setMessage("ng","文面をコピーできませんでした。");}});
+}
+function confirmFollowupDone(idx){
+  const f=state.followups[idx];if(!f)return;
+  openModal("個別送信は完了しましたか？","LINE等で実際に送信した後だけ対応済みにしてください。",`<div class="summary-row"><div>お客様</div><div>${escapeHtml(followupCustomerName(f))}</div><div>フォロー</div><div>${escapeHtml(f.title||"再来店フォロー")}</div><div>変更後</div><div>対応済み</div></div>`,"送信済み・対応完了",async()=>{closeModal();await updateFollow(idx,"done");});
+}
+function confirmFollowupSnooze(idx){
+  const f=state.followups[idx];if(!f)return;
+  openModal("3日後に再表示しますか？","今回は送信せず、既存の延期処理で後日に回します。",`<div class="summary-row"><div>お客様</div><div>${escapeHtml(followupCustomerName(f))}</div><div>現在期限</div><div>${escapeHtml(followupDateValue(f)||"未設定")}</div><div>操作</div><div>3日後に再表示</div></div>`,"3日後に回す",async()=>{closeModal();await updateFollow(idx,"snoozed");});
+}
+async function openFollowupCustomer(idx){
+  const f=state.followups[idx];if(!f)return;const id=f.customer_id||f.customer?.id||"",phone=followupCustomerPhone(f);setTab("customers");
+  if(id){await loadCustomerDetailByCustomer({id});return;}
+  if(phone){$("customerQuery").value=phone;await searchCustomers();if(state.customers[0])await loadCustomerDetailByCustomer(state.customers[0]);}
 }
 
 async function updateFollow(idx, status){
@@ -2969,19 +3049,17 @@ document.addEventListener("click", async (e) => {
   const useTicket = e.target.closest("[data-use-ticket]");
   if(useTicket){ openUseTicket(Number(useTicket.dataset.useTicket)); return; }
 
+  const reviewFollow = e.target.closest("[data-review-follow]");
+  if(reviewFollow){ openFollowupMessage(Number(reviewFollow.dataset.reviewFollow)); return; }
+
   const doneFollow = e.target.closest("[data-done-follow]");
-  if(doneFollow){ await updateFollow(Number(doneFollow.dataset.doneFollow), "done"); return; }
+  if(doneFollow){ confirmFollowupDone(Number(doneFollow.dataset.doneFollow)); return; }
 
   const snoozeFollow = e.target.closest("[data-snooze-follow]");
-  if(snoozeFollow){ await updateFollow(Number(snoozeFollow.dataset.snoozeFollow), "snoozed"); return; }
+  if(snoozeFollow){ confirmFollowupSnooze(Number(snoozeFollow.dataset.snoozeFollow)); return; }
 
-  const copyFollow = e.target.closest("[data-copy-follow]");
-  if(copyFollow){
-    const f = state.followups[Number(copyFollow.dataset.copyFollow)];
-    const text = f?.message_body || f?.body || f?.title || "";
-    navigator.clipboard?.writeText(text).then(()=>showToast("フォロー文面をコピーしました。"));
-    return;
-  }
+  const followCustomer = e.target.closest("[data-follow-customer]");
+  if(followCustomer){ await openFollowupCustomer(Number(followCustomer.dataset.followCustomer)); return; }
 
   const copyTemplate = e.target.closest("[data-copy-template]");
   if(copyTemplate){
@@ -3029,6 +3107,8 @@ $("searchCustomerBtn").addEventListener("click", searchCustomers);
 $("saveNoteBtn").addEventListener("click", saveKarteNote);
 $("loadTicketsBtn").addEventListener("click", loadTickets);
 $("loadFollowupsBtn").addEventListener("click", loadFollowups);
+$("followStatus").addEventListener("change", loadFollowups);
+$("followRange").addEventListener("change", loadFollowups);
 $("modalCancel").addEventListener("click", closeModal);
 $("modalBackdrop").addEventListener("click", (e)=>{ if(e.target.id === "modalBackdrop") closeModal(); });
 $("modalOk").addEventListener("click", async ()=>{ if(typeof state.pendingAction === "function") await state.pendingAction(); });
