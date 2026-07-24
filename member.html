@@ -1,10 +1,10 @@
 <!doctype html>
-<!-- STEP ESTHE-NEXT-5 -->
+<!-- STEP ESTHE-NEXT-7 -->
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DPRO Esthe Relaxation｜STEP ESTHE-NEXT-5｜member.html</title>
+  <title>DPRO Esthe Relaxation｜STEP ESTHE-NEXT-7｜member.html</title>
   <style>
     :root{
       --bg:#fffaf7;
@@ -154,14 +154,109 @@
       .bottom-inner{flex-direction:column;align-items:stretch}
       .bottom-inner .btn{width:100%}
     }
-  </style>
+  
+    /* DPRO NEXT-7: 履歴・次回来店目安・前回と同じ予約 */
+    .repeat-visit-panel{
+      position:relative;
+      overflow:hidden;
+      margin-bottom:18px;
+      padding:20px;
+      border:1px solid var(--line);
+      border-radius:24px;
+      background:linear-gradient(135deg,#fff,#fff6ef);
+      box-shadow:var(--shadow);
+    }
+    .repeat-visit-panel::after{
+      content:"";
+      position:absolute;
+      right:-55px;
+      bottom:-70px;
+      width:190px;
+      height:190px;
+      border-radius:999px;
+      background:rgba(184,134,71,.10);
+      pointer-events:none;
+    }
+    .repeat-visit-grid{
+      position:relative;
+      z-index:1;
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:14px;
+      align-items:stretch;
+    }
+    .repeat-visit-main,
+    .next-visit-estimate{
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:#fff;
+      padding:16px;
+    }
+    .repeat-kicker{
+      color:var(--muted);
+      font-size:11px;
+      font-weight:950;
+      letter-spacing:.04em;
+    }
+    .repeat-title{
+      margin-top:5px;
+      color:var(--main);
+      font-size:22px;
+      font-weight:1000;
+      line-height:1.3;
+      letter-spacing:-.03em;
+    }
+    .repeat-meta{
+      margin-top:7px;
+      color:var(--muted);
+      font-size:12px;
+      font-weight:850;
+      line-height:1.65;
+    }
+    .repeat-actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:13px;
+    }
+    .repeat-actions .btn{min-height:46px}
+    .estimate-date{
+      display:block;
+      margin-top:7px;
+      color:var(--main);
+      font-size:25px;
+      font-weight:1000;
+      letter-spacing:-.04em;
+    }
+    .estimate-note{
+      display:block;
+      margin-top:7px;
+      color:var(--muted);
+      font-size:11px;
+      font-weight:800;
+      line-height:1.6;
+    }
+    .history-card .card-actions{margin-top:11px}
+    .history-more{
+      width:100%;
+      min-height:44px;
+      margin-top:12px;
+      border-radius:15px;
+    }
+    @media(max-width:720px){
+      .repeat-visit-grid{grid-template-columns:1fr}
+      .repeat-actions{display:grid;grid-template-columns:1fr}
+      .repeat-actions .btn{width:100%}
+    }
+
+</style>
 </head>
 <body>
   <main class="wrap">
     <section class="hero">
-      <div class="badge">STEP ESTHE-NEXT-5｜予約内容・料金確認</div>
+      <div class="badge">STEP ESTHE-NEXT-7｜履歴・前回と同じ予約</div>
       <h1 id="shopTitle">DPRO Esthe Relaxation</h1>
-      <p id="shopLead">次回予約・予約変更・キャンセル・回数券残数・来店履歴をLINE上で確認できる、お客様用マイページです。</p>
+      <p id="shopLead">次回予約、来店履歴、次回来店目安、前回と同じ内容の再予約まで確認できるLINE会員ページです。</p>
       <div class="hero-meta">
         <span>API接続：<span id="apiStatus">確認中</span></span>
         <span>店舗：<span id="shopName">DPRO Esthe Relaxation</span></span>
@@ -171,8 +266,7 @@
     </section>
 
     <div class="topnav">
-      <a class="btn" href="index-brush.html">ブラッシュアップ予約へ</a>
-      <a class="btn" href="index.html">シンプル予約へ</a>
+      <a class="btn primary" href="index-brush.html">新しい予約へ</a>
     </div>
 
     <div id="message" class="notice warn">電話番号を入力して、お客様マイページを表示してください。</div>
@@ -211,6 +305,10 @@
             <div class="metric"><strong id="metricVisit">-</strong><span>来店回数</span></div>
           </div>
 
+          <section class="repeat-visit-panel" id="repeatVisitPanel">
+            <div id="repeatVisitContent" class="notice">来店履歴を確認中です。</div>
+          </section>
+
           <div class="panel">
             <div class="section-title">
               <div>
@@ -237,11 +335,12 @@
             <div class="section-title">
               <div>
                 <h2>来店履歴</h2>
-                <p class="sub">過去の施術履歴や予約履歴を確認します。データがない場合は予約履歴を表示します。</p>
+                <p class="sub">最新5件を先に表示します。各履歴から同じメニュー・担当で新しい予約へ進めます。</p>
               </div>
               <span class="pill">履歴</span>
             </div>
             <div id="historyList" class="list"></div>
+            <button class="btn history-more hidden" id="historyMoreBtn" type="button">履歴をもっと見る</button>
           </div>
         </div>
       </section>
@@ -298,7 +397,7 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    const VERSION = "ESTHE-NEXT-5-MEMBER-CONFIRMATION-20260723";
+    const VERSION = "ESTHE-NEXT-7-MEMBER-HISTORY-REBOOK-20260723";
     const API_BASE = "https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev";
     const SHOP_CODE = "esthe_demo_default";
 
@@ -315,7 +414,8 @@
       pendingAction: null,
       settings: null,
       shop: null,
-      menus: []
+      menus: [],
+      historyShowAll: false
     };
 
     const $ = (id) => document.getElementById(id);
@@ -505,6 +605,7 @@
         state.reservations = normalizeList(data, ["next_reservations", "reservations", "upcoming_reservations", "active_reservations"]);
         state.tickets = normalizeList(data, ["tickets", "active_tickets", "customer_tickets"]);
         state.history = normalizeList(data, ["history", "visit_history", "treatments", "past_reservations"]);
+        state.historyShowAll = false;
 
         if(!data.found){
           $("memberArea").classList.add("hidden");
@@ -526,9 +627,157 @@
       }
     }
 
+
+    function historyTimestamp(item){
+      const raw = item?.start_at || item?.treatment_at || item?.treatment_date || item?.date || item?.created_at;
+      const parsed = raw ? new Date(raw) : null;
+      return parsed && !Number.isNaN(parsed.getTime()) ? parsed.getTime() : 0;
+    }
+
+    function memberHistoryList(){
+      const source = state.history.length
+        ? state.history
+        : state.reservations.filter(r => ["completed","cancelled","no_show"].includes(r.status));
+      return source.slice().sort((a,b) => historyTimestamp(b) - historyTimestamp(a));
+    }
+
+    function isRepeatableVisit(item){
+      if(!item) return false;
+      if(["cancelled","no_show"].includes(item.status)) return false;
+      return Boolean(item.menu_id || item.menu?.id || item.menu_name || item.treatment_name);
+    }
+
+    function latestRepeatableVisit(){
+      return memberHistoryList().find(isRepeatableVisit) || null;
+    }
+
+    function historyMenu(item){
+      const menuId = String(item?.menu_id || item?.menu?.id || "");
+      const menuName = String(item?.menu_name || item?.treatment_name || item?.menu?.menu_name || "");
+      return (state.menus || []).find(menu =>
+        (menuId && String(menu.id || "") === menuId) ||
+        (menuName && String(menu.menu_name || "") === menuName)
+      ) || item?.menu || null;
+    }
+
+    function recommendedIntervalDays(item){
+      const menu = historyMenu(item) || {};
+      const explicit = Number(
+        item?.next_visit_days ??
+        item?.recommended_interval_days ??
+        menu.next_visit_days ??
+        menu.recommended_interval_days ??
+        menu.repeat_interval_days
+      );
+      if(Number.isFinite(explicit) && explicit >= 7 && explicit <= 180) return explicit;
+
+      const name = String(item?.menu_name || item?.treatment_name || menu.menu_name || "");
+      if(/脱毛/.test(name)) return 42;
+      if(/リンパ|ボディ|整体|マッサージ|リラク|むくみ/.test(name)) return 21;
+      if(/フェイシャル|小顔|肌|毛穴|美顔/.test(name)) return 28;
+      return 28;
+    }
+
+    function visitDateString(item){
+      const dt = reservationDateTime(item || {});
+      if(dt.date) return dt.date;
+      const raw = item?.treatment_date || item?.created_at || "";
+      const match = String(raw).match(/^\d{4}-\d{2}-\d{2}/);
+      return match ? match[0] : "";
+    }
+
+    function nextVisitEstimate(item){
+      const base = visitDateString(item);
+      if(!base) return {date:"", days:recommendedIntervalDays(item)};
+      const days = recommendedIntervalDays(item);
+      return {date:addDays(base, days), days};
+    }
+
+    function buildRepeatBookingPayload(item){
+      const menu = historyMenu(item) || {};
+      return {
+        version:VERSION,
+        created_at:Date.now(),
+        expires_at:Date.now() + 30 * 60 * 1000,
+        customer_name:state.customer?.customer_name || $("nameInput").value.trim() || "",
+        customer_phone:normalizePhone(state.customer?.phone || $("phoneInput").value),
+        menu_id:item?.menu_id || item?.menu?.id || menu.id || "",
+        menu_name:item?.menu_name || item?.treatment_name || menu.menu_name || "",
+        staff_id:item?.staff_id || item?.staff?.id || "",
+        staff_name:item?.staff_name || item?.staff?.staff_name || "",
+        source_history_id:item?.id || item?.reservation_id || item?.reservation_code || ""
+      };
+    }
+
+    function repeatBooking(item){
+      if(!isRepeatableVisit(item)){
+        showToast("同じ内容で予約できる施術履歴がありません。");
+        return;
+      }
+      try{
+        const payload = buildRepeatBookingPayload(item);
+        sessionStorage.setItem("dpro_esthe_repeat_booking", JSON.stringify(payload));
+        location.href = "index-brush.html?repeat=1";
+      }catch(error){
+        showToast("再予約情報を準備できませんでした。新しい予約から進んでください。");
+      }
+    }
+
+    function renderRepeatVisitPanel(){
+      const item = latestRepeatableVisit();
+      const box = $("repeatVisitContent");
+      if(!item){
+        box.className = "";
+        box.innerHTML = `
+          <div class="repeat-visit-grid">
+            <div class="repeat-visit-main">
+              <div class="repeat-kicker">NEXT ACTION</div>
+              <div class="repeat-title">新しい予約へ進む</div>
+              <div class="repeat-meta">来店履歴ができると、前回のメニューと担当を引き継いで予約できます。</div>
+              <div class="repeat-actions">
+                <a class="btn primary" href="index-brush.html">新しい予約をする</a>
+              </div>
+            </div>
+            <div class="next-visit-estimate">
+              <div class="repeat-kicker">次回来店目安</div>
+              <span class="estimate-date">来店後に表示</span>
+              <span class="estimate-note">施術履歴をもとに目安を表示します。</span>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      const dt = reservationDateTime(item);
+      const estimate = nextVisitEstimate(item);
+      box.className = "";
+      box.innerHTML = `
+        <div class="repeat-visit-grid">
+          <div class="repeat-visit-main">
+            <div class="repeat-kicker">前回の施術</div>
+            <div class="repeat-title">${escapeHtml(item.menu_name || item.treatment_name || "前回の施術")}</div>
+            <div class="repeat-meta">
+              ${escapeHtml(dt.date ? dateText(dt.date) : visitDateString(item) || "-")} /
+              担当：${escapeHtml(item.staff_name || "指名なし")}
+            </div>
+            <div class="repeat-actions">
+              <button class="btn primary" type="button" data-repeat-latest="1">前回と同じ内容で予約</button>
+              <a class="btn" href="index-brush.html">別の内容で予約</a>
+            </div>
+          </div>
+          <div class="next-visit-estimate">
+            <div class="repeat-kicker">次回来店目安</div>
+            <span class="estimate-date">${escapeHtml(estimate.date ? dateText(estimate.date) : "店舗でご相談")}</span>
+            <span class="estimate-note">前回施術から約${escapeHtml(estimate.days)}日後の目安です。肌・体調・施術内容により変わります。</span>
+          </div>
+        </div>
+      `;
+    }
+
     function renderAll(){
       renderMetrics();
       renderCustomer();
+      renderRepeatVisitPanel();
       renderReservations();
       renderTickets();
       renderHistory();
@@ -621,24 +870,40 @@
 
     function renderHistory(){
       const el = $("historyList");
-      let list = state.history;
-      if(!list.length){
-        list = state.reservations.filter(r => ["completed","cancelled","no_show"].includes(r.status));
-      }
+      const list = memberHistoryList();
       if(!list.length){
         el.innerHTML = `<div class="notice">表示できる来店履歴はまだありません。</div>`;
+        $("historyMoreBtn").classList.add("hidden");
         return;
       }
-      el.innerHTML = list.map(h => {
+
+      const visible = state.historyShowAll ? list : list.slice(0,5);
+      el.innerHTML = visible.map((h,index) => {
         const dt = reservationDateTime(h);
+        const priceInfo = memberReservationPriceInfo(h);
+        const repeatable = isRepeatableVisit(h);
         return `
           <div class="history-card">
-            <div class="card-title">${escapeHtml(h.menu_name || h.treatment_name || "施術履歴")}</div>
-            <div class="small">${escapeHtml(dt.date ? dateText(dt.date) : (h.treatment_date || h.created_at || "-"))} ${escapeHtml(dt.time || "")}</div>
-            <div class="small">担当：${escapeHtml(h.staff_name || "未設定")} / 状態：${escapeHtml(statusLabel(h.status))}</div>
+            <div class="card-head">
+              <div>
+                <div class="card-title">${escapeHtml(h.menu_name || h.treatment_name || "施術履歴")}</div>
+                <div class="card-meta">${escapeHtml(dt.date ? dateText(dt.date) : (h.treatment_date || h.created_at || "-"))} ${escapeHtml(dt.time || "")}</div>
+              </div>
+              <span class="pill ${["cancelled","no_show"].includes(h.status) ? "red" : "ok"}">${escapeHtml(statusLabel(h.status || "completed"))}</span>
+            </div>
+            <div class="small">担当：${escapeHtml(h.staff_name || "指名なし")}</div>
+            <div class="small">料金目安：${escapeHtml(priceInfo.priceText)} / 所要時間目安：${escapeHtml(priceInfo.durationText)}</div>
+            ${repeatable ? `<div class="card-actions"><button class="mini primary" type="button" data-repeat-history="${index}">前回と同じ内容で予約</button></div>` : ""}
           </div>
         `;
       }).join("");
+
+      if(list.length > 5){
+        $("historyMoreBtn").classList.remove("hidden");
+        $("historyMoreBtn").textContent = state.historyShowAll ? "最新5件だけ表示" : `履歴をもっと見る（全${list.length}件）`;
+      }else{
+        $("historyMoreBtn").classList.add("hidden");
+      }
     }
 
     function copyReservation(idx){
@@ -836,6 +1101,15 @@
     }
 
     document.addEventListener("click", (e) => {
+      const repeatLatest = e.target.closest("[data-repeat-latest]");
+      if(repeatLatest){ repeatBooking(latestRepeatableVisit()); return; }
+
+      const repeatHistory = e.target.closest("[data-repeat-history]");
+      if(repeatHistory){
+        repeatBooking(memberHistoryList()[Number(repeatHistory.dataset.repeatHistory)]);
+        return;
+      }
+
       const copy = e.target.closest("[data-copy-reservation]");
       if(copy){ copyReservation(Number(copy.dataset.copyReservation)); return; }
 
@@ -855,6 +1129,11 @@
           notice.textContent = `${dateText(state.changeDate)} ${state.changeTime} を選択中です。次に「変更内容を確認する」を押してください。`;
         }
       }
+    });
+
+    $("historyMoreBtn").addEventListener("click", () => {
+      state.historyShowAll = !state.historyShowAll;
+      renderHistory();
     });
 
     $("phoneInput").addEventListener("blur", () => {
@@ -880,7 +1159,7 @@
       const displayName = shop.display_name || shop.shop_name || "DPRO Esthe Relaxation";
       $("shopTitle").textContent = displayName;
       $("shopName").textContent = displayName;
-      $("shopLead").textContent = shop.description || "次回予約・予約変更・キャンセル・回数券残数・来店履歴をLINE上で確認できる、お客様用マイページです。";
+      $("shopLead").textContent = shop.description || "次回予約、来店履歴、次回来店目安、前回と同じ内容の再予約まで確認できるLINE会員ページです。";
       $("shopPhone").textContent = shop.phone || "未設定";
     }
 

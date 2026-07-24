@@ -1,10 +1,10 @@
 <!doctype html>
-<!-- STEP ESTHE-NEXT-5 -->
+<!-- STEP ESTHE-NEXT-7 -->
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DPRO Esthe Relaxation｜STEP ESTHE-NEXT-5｜index-brush</title>
+  <title>DPRO Esthe Relaxation｜STEP ESTHE-NEXT-7｜index-brush</title>
   <style>
     :root{
       --bg:#fffaf7;
@@ -432,14 +432,48 @@
       .bottom-inner{flex-direction:column;align-items:stretch}
       .bottom-inner .btn{width:100%}
     }
-  </style>
+  
+    /* DPRO NEXT-7: 前回内容引継ぎ */
+    .repeat-booking-banner{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:12px;
+      align-items:center;
+      margin:0 0 16px;
+      padding:15px 17px;
+      border:1px solid #d9b996;
+      border-radius:18px;
+      background:linear-gradient(135deg,#fff8eb,#fff);
+      color:var(--main);
+      box-shadow:0 10px 28px rgba(88,55,46,.07);
+    }
+    .repeat-booking-banner strong{
+      display:block;
+      font-size:16px;
+      line-height:1.45;
+    }
+    .repeat-booking-banner span{
+      display:block;
+      margin-top:4px;
+      color:var(--muted);
+      font-size:11px;
+      font-weight:850;
+      line-height:1.6;
+    }
+    .repeat-booking-banner .pill{justify-self:end}
+    @media(max-width:640px){
+      .repeat-booking-banner{grid-template-columns:1fr}
+      .repeat-booking-banner .pill{justify-self:start}
+    }
+
+</style>
 </head>
 <body>
   <main class="wrap">
     <section class="hero">
-      <div class="badge">STEP ESTHE-NEXT-5｜料金・同意確認付き予約</div>
+      <div class="badge">STEP ESTHE-NEXT-7｜前回内容を引継ぐ予約</div>
       <h1 id="shopTitle">DPRO Esthe Relaxation</h1>
-      <p id="shopLead">初回カウンセリング・回数券状況・次回予約導線までつながる、エステ・リラクゼーション向けのブラッシュアップ版予約画面です。</p>
+      <p id="shopLead">前回のメニューと担当を引き継ぎながら、日時・体調・同意は毎回確認して予約する画面です。</p>
       <div class="hero-meta">
         <span>API接続：<span id="apiStatus">確認中</span></span>
         <span>予約受付期間：<span id="rangeText">確認中</span></span>
@@ -450,7 +484,6 @@
     </section>
 
     <div class="topnav">
-      <a class="btn" href="index.html">シンプル予約へ</a>
       <a class="btn" href="member.html">予約・履歴を確認</a>
     </div>
 
@@ -463,6 +496,7 @@
     </div>
 
     <div id="message" class="notice warn">読み込み中です。</div>
+    <div id="repeatBookingBanner" class="repeat-booking-banner hidden"></div>
 
     <div class="grid">
       <section>
@@ -680,24 +714,19 @@
         </div>
 
         <div class="panel">
-          <h2>確認URL</h2>
-          <p class="sub">ブラッシュアップ版と既存画面の確認用です。</p>
+          <h2>ご予約前の確認</h2>
           <div class="side-list">
             <div class="ticket-card">
-              <b>ブラッシュアップ予約</b>
-              <div class="small">https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/index-brush.html</div>
+              <b>前回と同じ予約</b>
+              <div class="small">メニューと担当だけを引き継ぎます。日時は空き状況から改めて選択します。</div>
             </div>
             <div class="ticket-card">
-              <b>シンプル予約</b>
-              <div class="small">https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/</div>
+              <b>体調・同意</b>
+              <div class="small">体調、肌状態、注意事項、施術前同意は安全のため毎回確認します。</div>
             </div>
             <div class="ticket-card">
-              <b>system-check</b>
-              <div class="small">https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/system-check.html</div>
-            </div>
-            <div class="ticket-card">
-              <b>API</b>
-              <div class="small">https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev/api/health</div>
+              <b>最終料金</b>
+              <div class="small">回数券、追加内容、当日の変更がある場合は店頭で最終確認します。</div>
             </div>
           </div>
         </div>
@@ -727,7 +756,7 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    const VERSION = "ESTHE-NEXT-5-PUBLIC-CONFIRMATION-20260723";
+    const VERSION = "ESTHE-NEXT-7-REPEAT-BOOKING-20260723";
     const API_BASE = "https://dpro-esthe-relax-line-api.dpromstk2000.workers.dev";
     const SHOP_CODE = "esthe_demo_default";
 
@@ -745,7 +774,8 @@
       selectedTime: "",
       customerName: "",
       customerPhone: "",
-      submitResult: null
+      submitResult: null,
+      repeatBooking: null
     };
 
     const $ = (id) => document.getElementById(id);
@@ -758,6 +788,92 @@
         .replaceAll('"',"&quot;").replaceAll("'","&#039;");
     }
 
+
+
+    function readRepeatBookingPayload(){
+      const params = new URLSearchParams(location.search);
+      if(params.get("repeat") !== "1") return null;
+      try{
+        const raw = sessionStorage.getItem("dpro_esthe_repeat_booking");
+        if(!raw) return null;
+        const payload = JSON.parse(raw);
+        if(!payload || Number(payload.expires_at || 0) < Date.now()){
+          sessionStorage.removeItem("dpro_esthe_repeat_booking");
+          return null;
+        }
+        return payload;
+      }catch(error){
+        return null;
+      }
+    }
+
+    function showRepeatBookingBanner(payload, staffMatched){
+      const banner = $("repeatBookingBanner");
+      banner.classList.remove("hidden");
+      banner.innerHTML = `
+        <div>
+          <strong>前回の内容を引き継ぎました：${escapeHtml(payload.menu_name || "メニュー")}</strong>
+          <span>
+            担当：${escapeHtml(staffMatched ? (state.selectedStaff?.staff_name || payload.staff_name || "指名なし") : "空き状況に合わせて選択")}
+            ／日時・体調・注意事項・施術前同意は改めて確認してください。
+          </span>
+        </div>
+        <span class="pill ok">再予約</span>
+      `;
+    }
+
+    async function applyRepeatBookingIfAvailable(){
+      const payload = readRepeatBookingPayload();
+      if(!payload) return false;
+
+      state.repeatBooking = payload;
+      state.customerName = payload.customer_name || "";
+      state.customerPhone = normalizePhone(payload.customer_phone || "");
+      $("lookupName").value = state.customerName;
+      $("lookupPhone").value = state.customerPhone;
+      $("customerName").value = state.customerName;
+      $("customerPhone").value = state.customerPhone;
+
+      const menu = state.menus.find(item =>
+        (payload.menu_id && String(item.id || "") === String(payload.menu_id)) ||
+        (payload.menu_name && String(item.menu_name || "") === String(payload.menu_name))
+      );
+
+      if(!menu){
+        $("repeatBookingBanner").classList.remove("hidden");
+        $("repeatBookingBanner").innerHTML = `
+          <div>
+            <strong>前回のメニューは現在選択できません。</strong>
+            <span>新しいメニューを選んで予約してください。</span>
+          </div>
+          <span class="pill warn">要選択</span>
+        `;
+        setMessage("warn","前回のメニューが見つからないため、新しいメニューを選択してください。");
+        return true;
+      }
+
+      state.selectedMenu = menu;
+      renderMenus();
+      await loadStaff();
+
+      const matchedStaff = state.staff.find(item =>
+        (payload.staff_id && String(item.id || "") === String(payload.staff_id)) ||
+        (payload.staff_name && String(item.staff_name || "") === String(payload.staff_name))
+      );
+      if(matchedStaff) state.selectedStaff = matchedStaff;
+      renderStaff();
+
+      if(state.customerPhone){
+        await lookupMember();
+      }else{
+        renderCustomerSide();
+      }
+
+      showRepeatBookingBanner(payload, Boolean(matchedStaff));
+      setStep(2);
+      setMessage("ok","前回のメニューと担当を引き継ぎました。内容を確認して日時選択へ進んでください。");
+      return true;
+    }
 
     function normalizePhone(value){
       let s = String(value || "")
@@ -1192,7 +1308,9 @@
         answers: {
           version: VERSION,
           screen: "index-brush.html",
-          lookup_found: Boolean(state.member?.found)
+          lookup_found: Boolean(state.member?.found),
+          repeat_booking: Boolean(state.repeatBooking),
+          repeat_source_history_id: state.repeatBooking?.source_history_id || ""
         }
       };
     }
@@ -1257,6 +1375,7 @@
         };
         const data = await api(`/api/public/reservations?shop_code=${SHOP_CODE}`, {method:"POST", body});
         state.submitResult = data;
+        try{ sessionStorage.removeItem("dpro_esthe_repeat_booking"); }catch(error){}
         renderSuccess(data);
         showToast("予約を受付しました。");
         setMessage("ok","予約を受付しました。");
@@ -1316,7 +1435,7 @@
         const displayName = state.shop?.display_name || state.shop?.shop_name || "DPRO Esthe Relaxation";
         $("shopTitle").textContent = displayName;
         $("shopName").textContent = displayName;
-        $("shopLead").textContent = state.shop?.description || "初回カウンセリング・回数券状況・次回予約導線までつながる、エステ・リラクゼーション向けのブラッシュアップ版予約画面です。";
+        $("shopLead").textContent = state.shop?.description || "前回のメニューと担当を引き継ぎながら、日時・体調・同意は毎回確認して予約する画面です。";
         $("shopPhone").textContent = state.shop?.phone || "未設定";
         $("shopAddress").textContent = state.shop?.address || "未設定";
         $("rangeText").textContent = `${(data.booking_range?.from || "").replaceAll("-","/")}〜${(data.booking_range?.to || "").replaceAll("-","/")}`;
@@ -1329,7 +1448,10 @@
         updateDateDisplay();
         renderCustomerSide();
         renderSideSummary();
-        setMessage("ok","ブラッシュアップ版予約画面を読み込みました。");
+        const repeatApplied = await applyRepeatBookingIfAvailable();
+        if(!repeatApplied){
+          setMessage("ok","ブラッシュアップ版予約画面を読み込みました。");
+        }
       }catch(e){
         $("apiStatus").textContent = "NG";
         setMessage("ng", "読み込みに失敗しました：" + e.message);
@@ -1437,7 +1559,7 @@
     $("submitBtn").addEventListener("click", openSubmitModal);
     $("modalCancel").addEventListener("click", () => $("modalBackdrop").classList.remove("show"));
     $("modalOk").addEventListener("click", submitReservation);
-    $("newReservationBtn").addEventListener("click", () => location.href = "index-brush.html");
+    $("newReservationBtn").addEventListener("click", () => { try{ sessionStorage.removeItem("dpro_esthe_repeat_booking"); }catch(error){} location.href = "index-brush.html"; });
     $("copyCompleteBtn").addEventListener("click", copyComplete);
 
     init();

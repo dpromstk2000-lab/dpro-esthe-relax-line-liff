@@ -1,20 +1,24 @@
 schema_version: 1
 system: "DPRO エステ LINE"
-current_step: "ESTHE-NEXT-6-COMPLETE"
-next_step: "ESTHE-NEXT-7"
-updated_at_jst: "2026-07-23T22:36:20+09:00"
-source_commit: "1a72ec42536d3df084d1f384dc29971e4bdca638"
-backup_tag: "backup-esthe-before-next6-20260723"
+current_step: "ESTHE-NEXT-7-COMPLETE"
+next_step: "ESTHE-NEXT-8"
+updated_at_jst: "2026-07-24T11:41:04+09:00"
+source_commit: "3d22750f201c44dab690add991faf3c0c19e18f1"
+backup_tag: "backup-esthe-before-next7-r2-20260724"
 result: "OK"
 changes:
   worker: false
   supabase: false
   api: false
-  owner_ipad_created: true
-  owner_ipad_day_only_initial_load: true
-  staff_command_center: true
-  staff_contextual_next_action: true
-  staff_pre_treatment_guard: true
-  staff_customer_detail_lazy_fetch: true
-  additional_staff_initial_api_requests: 0
-  owner_ipad_initial_admin_api_requests: 1
+  latest_visit_summary: true
+  next_visit_estimate: true
+  history_initial_limit: 5
+  history_expand: true
+  repeat_same_menu_staff: true
+  repeat_payload_session_storage: true
+  repeat_payload_ttl_minutes: 30
+  phone_in_repeat_url: false
+  consultation_reuse: false
+  consent_reconfirmation: true
+  date_time_reselection: true
+  standard_initial_api_requests_added: 0

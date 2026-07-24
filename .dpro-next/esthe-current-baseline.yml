@@ -116,3 +116,22 @@ next6_completion:
   worker_changed: false
   supabase_changed: false
   api_changed: false
+
+next7_completion:
+  completed_at_jst: "2026-07-24T11:41:04+09:00"
+  backup_tag: "backup-esthe-before-next7-r2-20260724"
+  latest_visit_summary: true
+  next_visit_estimate: true
+  history_initial_limit: 5
+  history_expand: true
+  repeat_same_menu_staff: true
+  repeat_payload_session_storage: true
+  repeat_payload_ttl_minutes: 30
+  phone_in_repeat_url: false
+  consultation_reuse: false
+  consent_reconfirmation: true
+  date_time_reselection: true
+  standard_initial_api_requests_added: 0
+  worker_changed: false
+  supabase_changed: false
+  api_changed: false
