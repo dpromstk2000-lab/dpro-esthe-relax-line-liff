@@ -1,0 +1,90 @@
+{
+  "step": "ESTHE-NEXT-10A",
+  "pdf": "deliverables/esthe-next-10/DPRO_ESTHE_NEXT_operation_experience_sheet_20260724.pdf",
+  "page_count": 1,
+  "original_qr": [
+    {
+      "label": "製品紹介",
+      "expected": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/esthe.html",
+      "decoded": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/esthe.html",
+      "pass": true
+    },
+    {
+      "label": "お客様予約",
+      "expected": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/index-brush.html",
+      "decoded": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/index-brush.html",
+      "pass": true
+    },
+    {
+      "label": "オーナーPC",
+      "expected": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner.html",
+      "decoded": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner.html",
+      "pass": true
+    },
+    {
+      "label": "店舗iPad",
+      "expected": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner-ipad.html",
+      "decoded": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner-ipad.html",
+      "pass": true
+    },
+    {
+      "label": "LINE会員",
+      "expected": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/member.html",
+      "decoded": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/member.html",
+      "pass": true
+    },
+    {
+      "label": "DPRO公式LINE",
+      "expected": "https://lin.ee/YxJGXV6D",
+      "decoded": "https://lin.ee/YxJGXV6D",
+      "pass": true
+    }
+  ],
+  "final_pdf_qr": [
+    {
+      "label": "製品紹介",
+      "expected": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/esthe.html",
+      "decoded": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/esthe.html",
+      "pass": true
+    },
+    {
+      "label": "お客様予約",
+      "expected": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/index-brush.html",
+      "decoded": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/index-brush.html",
+      "pass": true
+    },
+    {
+      "label": "オーナーPC",
+      "expected": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner.html",
+      "decoded": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner.html",
+      "pass": true
+    },
+    {
+      "label": "店舗iPad",
+      "expected": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner-ipad.html",
+      "decoded": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner-ipad.html",
+      "pass": true
+    },
+    {
+      "label": "LINE会員",
+      "expected": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/member.html",
+      "decoded": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/member.html",
+      "pass": true
+    },
+    {
+      "label": "DPRO公式LINE",
+      "expected": "https://lin.ee/YxJGXV6D",
+      "decoded": "https://lin.ee/YxJGXV6D",
+      "pass": true
+    }
+  ],
+  "all_pass": true,
+  "expected_urls": {
+    "製品紹介": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/esthe.html",
+    "お客様予約": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/index-brush.html",
+    "オーナーPC": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner.html",
+    "店舗iPad": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner-ipad.html",
+    "LINE会員": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/member.html",
+    "DPRO公式LINE": "https://lin.ee/YxJGXV6D"
+  }
+}

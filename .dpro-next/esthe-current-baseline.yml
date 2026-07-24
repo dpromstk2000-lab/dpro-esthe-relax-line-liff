@@ -168,3 +168,17 @@ next9_completion:
   worker_changed: false
   supabase_changed: false
   api_changed: false
+
+next10a_completion:
+  completed_at_jst: "2026-07-24T14:58:52+09:00"
+  backup_tag: "backup-esthe-before-next10a-20260724"
+  operation_sheet_pdf: "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/deliverables/esthe-next-10/DPRO_ESTHE_NEXT_operation_experience_sheet_20260724.pdf"
+  operation_sheet_png: "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/deliverables/esthe-next-10/DPRO_ESTHE_NEXT_operation_experience_sheet_20260724.png"
+  a4_portrait_one_page: true
+  real_screen_captures: true
+  final_pdf_qr_decode_pass: true
+  qr_count: 6
+  product_site_update: pending_next10b
+  worker_changed: false
+  supabase_changed: false
+  api_changed: false

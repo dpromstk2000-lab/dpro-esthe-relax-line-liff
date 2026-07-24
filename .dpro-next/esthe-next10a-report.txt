@@ -1,0 +1,20 @@
+DPRO エステ LINE / ESTHE-NEXT-10A 実行結果
+完了日時JST: 2026-07-24T14:58:52+09:00
+変更前Commit: 80749753a75c140edfa822f6bdc6ecd1d654c024
+バックアップタグ: backup-esthe-before-next10a-20260724
+
+操作体験シート:
+- PDF: https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/deliverables/esthe-next-10/DPRO_ESTHE_NEXT_operation_experience_sheet_20260724.pdf
+- PNG: https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/deliverables/esthe-next-10/DPRO_ESTHE_NEXT_operation_experience_sheet_20260724.png
+- A4縦: PASS
+- 1ページ: PASS
+- 実画面スクリーンショット: PASS
+- QRコード: 6件
+- 最終PDF内QR読取: ALL PASS
+
+変更記録:
+- Worker: 変更なし
+- Supabase: 変更なし
+- API: 変更なし
+
+次STEP: ESTHE-NEXT-10B-PRODUCT-SITE

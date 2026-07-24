@@ -1,0 +1,20 @@
+{
+  "step": "ESTHE-NEXT-10A",
+  "pdf": "deliverables/esthe-next-10/DPRO_ESTHE_NEXT_operation_experience_sheet_20260724.pdf",
+  "png": "deliverables/esthe-next-10/DPRO_ESTHE_NEXT_operation_experience_sheet_20260724.png",
+  "page_count": 1,
+  "page_size_points": [
+    595.2755737304688,
+    841.8897705078125
+  ],
+  "a4_portrait": true,
+  "pdf_bytes": 536850,
+  "png_bytes": 656082,
+  "qr_count": 6,
+  "qr_all_pass": true,
+  "screenshots": [
+    "deliverables/esthe-next-10/screenshots/booking-mobile.png",
+    "deliverables/esthe-next-10/screenshots/owner-pc.png",
+    "deliverables/esthe-next-10/screenshots/owner-ipad.png"
+  ]
+}

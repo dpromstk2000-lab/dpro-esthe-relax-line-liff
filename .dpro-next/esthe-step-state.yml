@@ -1,25 +1,18 @@
 schema_version: 1
 system: "DPRO エステ LINE"
-current_step: "ESTHE-NEXT-9-COMPLETE"
-next_step: "ESTHE-NEXT-10"
-updated_at_jst: "2026-07-24T14:29:39+09:00"
-source_commit: "8563d0231348f2510996599dffde1e29570e2fb4"
-backup_tag: "backup-esthe-before-next9-20260724"
-result: "ATTENTION"
+current_step: "ESTHE-NEXT-10A-COMPLETE"
+next_step: "ESTHE-NEXT-10B-PRODUCT-SITE"
+updated_at_jst: "2026-07-24T14:58:52+09:00"
+source_commit: "80749753a75c140edfa822f6bdc6ecd1d654c024"
+backup_tag: "backup-esthe-before-next10a-20260724"
+result: "OK"
 changes:
   worker: false
   supabase: false
   api: false
-  system_check_next9: true
-  actions_static_report: true
-  live_worker_db_api_check: true
-  owner_pc_ipad_staff_member_check: true
-  html_javascript_id_check: true
-  file_size_check: true
-  load_time_check: true
-  wrong_admin_code_rejection: true
-  public_admin_info_leak_check: true
-  phone_normalization_check: true
-  past_datetime_guard_check: true
-  duplicate_guard_check: true
-  demo_prepare: true
+  operation_sheet_a4_portrait_one_page: true
+  real_screen_captures: true
+  pdf_to_png: true
+  final_pdf_qr_decode_pass: true
+  qr_count: 6
+  product_site_update: pending_next10b

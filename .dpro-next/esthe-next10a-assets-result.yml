@@ -1,0 +1,24 @@
+document:
+  step: "ESTHE-NEXT-10A"
+  title: "DPRO ESTHE NEXT 操作体験シート"
+  generated_at_jst: "2026-07-24T14:58:52+09:00"
+  status: "assets_completed_product_site_pending"
+artifacts:
+  pdf: "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/deliverables/esthe-next-10/DPRO_ESTHE_NEXT_operation_experience_sheet_20260724.pdf"
+  png: "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/deliverables/esthe-next-10/DPRO_ESTHE_NEXT_operation_experience_sheet_20260724.png"
+  pdf_bytes: 536850
+  png_bytes: 656082
+validation:
+  a4_portrait: true
+  page_count: 1
+  real_screenshots: true
+  qr_png_decode: true
+  final_pdf_qr_decode: true
+  qr_count: 6
+changes:
+  worker: false
+  supabase: false
+  api: false
+next_action:
+  id: "ESTHE-NEXT-10B-PRODUCT-SITE"
+  repository: "dpromstk2000-lab/dpro-line-systems-site"

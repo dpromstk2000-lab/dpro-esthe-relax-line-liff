@@ -1,0 +1,81 @@
+{
+  "step": "ESTHE-NEXT-10A",
+  "screenshots": [
+    {
+      "name": "booking-mobile",
+      "url": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/index-brush.html?next10a=30070850856",
+      "path": "deliverables/esthe-next-10/screenshots/booking-mobile.png",
+      "bytes": 196317,
+      "matched_text": [
+        "前回",
+        "予約",
+        "メニュー"
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "name": "member-mobile",
+      "url": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/member.html?next10a=30070850856",
+      "path": "deliverables/esthe-next-10/screenshots/member-mobile.png",
+      "bytes": 170567,
+      "matched_text": [
+        "次回来店目安",
+        "前回",
+        "来店履歴"
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "name": "owner-pc",
+      "url": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner.html?next10a=30070850856",
+      "path": "deliverables/esthe-next-10/screenshots/owner-pc.png",
+      "bytes": 544404,
+      "matched_text": [
+        "今日やること",
+        "再来店フォロー",
+        "進捗"
+      ],
+      "viewport": {
+        "width": 1440,
+        "height": 980
+      }
+    },
+    {
+      "name": "owner-ipad",
+      "url": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner-ipad.html?next10a=30070850856",
+      "path": "deliverables/esthe-next-10/screenshots/owner-ipad.png",
+      "bytes": 376117,
+      "matched_text": [
+        "店舗iPad",
+        "進捗",
+        "本日"
+      ],
+      "viewport": {
+        "width": 1180,
+        "height": 820
+      }
+    },
+    {
+      "name": "staff-mobile",
+      "url": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/staff.html?next10a=30070850856",
+      "path": "deliverables/esthe-next-10/screenshots/staff-mobile.png",
+      "bytes": 177220,
+      "matched_text": [
+        "今やること",
+        "担当",
+        "施術"
+      ],
+      "viewport": {
+        "width": 430,
+        "height": 900
+      }
+    }
+  ],
+  "count": 5
+}
