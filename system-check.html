@@ -143,7 +143,12 @@
         <span class="admin-status" id="adminStatus">管理コード未入力</span>
       </div>
       <div class="admin-controls">
-        <input id="adminCode" type="password" inputmode="numeric" autocomplete="current-password" placeholder="管理コードを入力">
+        <!-- ESTHE-NEXT-HF1-R2-SYSTEM-CHECK-CLEAR -->
+        <input id="adminCode" type="password" inputmode="numeric"
+          name="dpro_esthe_system_check_admin_code"
+          autocomplete="new-password" autocapitalize="off" spellcheck="false"
+          aria-autocomplete="none" data-lpignore="true" data-1p-ignore="true"
+          placeholder="管理コードを入力">
         <button class="btn primary" id="adminSave" type="button">管理コードを設定</button>
         <button class="btn" id="dproAdminClear" type="button">管理コードを削除</button>
       </div>
@@ -241,11 +246,20 @@
       el.textContent=message;
     }
 
+    function resetAdminCodeVisual(){
+      const input=$("adminCode");
+      if(!input)return;
+      input.value="";
+      input.defaultValue="";
+      input.removeAttribute("value");
+      input.setAttribute("autocomplete","new-password");
+    }
+
     function setAdminStatus(){
       $("adminStatus").textContent=ADMIN_KEY ? "管理コード設定済み" : "管理コード未入力";
       $("adminStatus").classList.toggle("ok",Boolean(ADMIN_KEY));
       $("adminCode").placeholder=ADMIN_KEY ? "管理コード設定済み" : "管理コードを入力";
-      $("adminCode").value="";
+      resetAdminCodeVisual();
     }
 
     function addResult(category,name,status,detail="",ms=null,source="live"){
@@ -490,9 +504,18 @@
       sessionStorage.setItem(ADMIN_STORAGE_KEY,value);ADMIN_KEY=value;setAdminStatus();
       setNotice("ok","管理コードをこのタブへ設定しました。");
     });
-    $("dproAdminClear").addEventListener("click",()=>{
-      sessionStorage.removeItem(ADMIN_STORAGE_KEY);ADMIN_KEY="";setAdminStatus();
+    $("dproAdminClear").addEventListener("click",event=>{
+      event.preventDefault();
+      sessionStorage.removeItem(ADMIN_STORAGE_KEY);
+      ADMIN_KEY="";
+      setAdminStatus();
+      $("adminCode").blur();
       setNotice("warn","管理コードを削除しました。");
+      [0,100,500,1000].forEach(delay=>{
+        window.setTimeout(()=>{
+          if(!ADMIN_KEY)resetAdminCodeVisual();
+        },delay);
+      });
     });
     $("adminCode").addEventListener("keydown",event=>{if(event.key==="Enter")$("adminSave").click()});
     $("runAllBtn").addEventListener("click",runAll);

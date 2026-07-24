@@ -1,0 +1,253 @@
+{
+  "schema_version": 1,
+  "system": "DPRO エステ LINE",
+  "step": "ESTHE-NEXT-HF1-R2",
+  "phase": "four-screen-static-validation",
+  "summary": {
+    "ok": 40,
+    "attention": 0,
+    "ng": 0
+  },
+  "items": [
+    {
+      "file": "owner.html",
+      "name": "HTML構文",
+      "status": "OK",
+      "detail": "HTMLParser PASS"
+    },
+    {
+      "file": "owner.html",
+      "name": "HTML ID重複",
+      "status": "OK",
+      "detail": "なし"
+    },
+    {
+      "file": "owner.html",
+      "name": "JavaScript構文",
+      "status": "OK",
+      "detail": "1スクリプト正常"
+    },
+    {
+      "file": "owner.html",
+      "name": "current-password完全除去",
+      "status": "OK",
+      "detail": "管理コード欄にcurrent-passwordなし"
+    },
+    {
+      "file": "owner.html",
+      "name": "new-password設定",
+      "status": "OK",
+      "detail": "現在パスワード自動入力を抑止"
+    },
+    {
+      "file": "owner.html",
+      "name": "パスワード管理除外属性",
+      "status": "OK",
+      "detail": "除外属性あり"
+    },
+    {
+      "file": "owner.html",
+      "name": "遅延再入力消去",
+      "status": "OK",
+      "detail": "0/100/500/1000ms"
+    },
+    {
+      "file": "owner.html",
+      "name": "R2マーカー",
+      "status": "OK",
+      "detail": "汎用管理画面R2"
+    },
+    {
+      "file": "owner.html",
+      "name": "表示値完全消去関数",
+      "status": "OK",
+      "detail": "value/defaultValue/value属性"
+    },
+    {
+      "file": "owner.html",
+      "name": "削除後reload廃止",
+      "status": "OK",
+      "detail": "削除操作で再読込しない"
+    },
+    {
+      "file": "owner-ipad.html",
+      "name": "HTML構文",
+      "status": "OK",
+      "detail": "HTMLParser PASS"
+    },
+    {
+      "file": "owner-ipad.html",
+      "name": "HTML ID重複",
+      "status": "OK",
+      "detail": "なし"
+    },
+    {
+      "file": "owner-ipad.html",
+      "name": "JavaScript構文",
+      "status": "OK",
+      "detail": "1スクリプト正常"
+    },
+    {
+      "file": "owner-ipad.html",
+      "name": "current-password完全除去",
+      "status": "OK",
+      "detail": "管理コード欄にcurrent-passwordなし"
+    },
+    {
+      "file": "owner-ipad.html",
+      "name": "new-password設定",
+      "status": "OK",
+      "detail": "現在パスワード自動入力を抑止"
+    },
+    {
+      "file": "owner-ipad.html",
+      "name": "パスワード管理除外属性",
+      "status": "OK",
+      "detail": "除外属性あり"
+    },
+    {
+      "file": "owner-ipad.html",
+      "name": "遅延再入力消去",
+      "status": "OK",
+      "detail": "0/100/500/1000ms"
+    },
+    {
+      "file": "owner-ipad.html",
+      "name": "R2マーカー",
+      "status": "OK",
+      "detail": "汎用管理画面R2"
+    },
+    {
+      "file": "owner-ipad.html",
+      "name": "表示値完全消去関数",
+      "status": "OK",
+      "detail": "value/defaultValue/value属性"
+    },
+    {
+      "file": "owner-ipad.html",
+      "name": "削除後reload廃止",
+      "status": "OK",
+      "detail": "削除操作で再読込しない"
+    },
+    {
+      "file": "staff.html",
+      "name": "HTML構文",
+      "status": "OK",
+      "detail": "HTMLParser PASS"
+    },
+    {
+      "file": "staff.html",
+      "name": "HTML ID重複",
+      "status": "OK",
+      "detail": "なし"
+    },
+    {
+      "file": "staff.html",
+      "name": "JavaScript構文",
+      "status": "OK",
+      "detail": "1スクリプト正常"
+    },
+    {
+      "file": "staff.html",
+      "name": "current-password完全除去",
+      "status": "OK",
+      "detail": "管理コード欄にcurrent-passwordなし"
+    },
+    {
+      "file": "staff.html",
+      "name": "new-password設定",
+      "status": "OK",
+      "detail": "現在パスワード自動入力を抑止"
+    },
+    {
+      "file": "staff.html",
+      "name": "パスワード管理除外属性",
+      "status": "OK",
+      "detail": "除外属性あり"
+    },
+    {
+      "file": "staff.html",
+      "name": "遅延再入力消去",
+      "status": "OK",
+      "detail": "0/100/500/1000ms"
+    },
+    {
+      "file": "staff.html",
+      "name": "R2マーカー",
+      "status": "OK",
+      "detail": "汎用管理画面R2"
+    },
+    {
+      "file": "staff.html",
+      "name": "表示値完全消去関数",
+      "status": "OK",
+      "detail": "value/defaultValue/value属性"
+    },
+    {
+      "file": "staff.html",
+      "name": "削除後reload廃止",
+      "status": "OK",
+      "detail": "削除操作で再読込しない"
+    },
+    {
+      "file": "system-check.html",
+      "name": "HTML構文",
+      "status": "OK",
+      "detail": "HTMLParser PASS"
+    },
+    {
+      "file": "system-check.html",
+      "name": "HTML ID重複",
+      "status": "OK",
+      "detail": "なし"
+    },
+    {
+      "file": "system-check.html",
+      "name": "JavaScript構文",
+      "status": "OK",
+      "detail": "1スクリプト正常"
+    },
+    {
+      "file": "system-check.html",
+      "name": "current-password完全除去",
+      "status": "OK",
+      "detail": "管理コード欄にcurrent-passwordなし"
+    },
+    {
+      "file": "system-check.html",
+      "name": "new-password設定",
+      "status": "OK",
+      "detail": "現在パスワード自動入力を抑止"
+    },
+    {
+      "file": "system-check.html",
+      "name": "パスワード管理除外属性",
+      "status": "OK",
+      "detail": "除外属性あり"
+    },
+    {
+      "file": "system-check.html",
+      "name": "遅延再入力消去",
+      "status": "OK",
+      "detail": "0/100/500/1000ms"
+    },
+    {
+      "file": "system-check.html",
+      "name": "R2マーカー",
+      "status": "OK",
+      "detail": "system-check R2"
+    },
+    {
+      "file": "system-check.html",
+      "name": "表示値完全消去関数",
+      "status": "OK",
+      "detail": "value/defaultValue/value属性"
+    },
+    {
+      "file": "台帳",
+      "name": "COMPLETE状態維持",
+      "status": "OK",
+      "detail": "完成状態を維持"
+    }
+  ]
+}
