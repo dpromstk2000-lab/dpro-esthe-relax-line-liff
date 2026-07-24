@@ -1,5 +1,6 @@
 {
-  "step": "ESTHE-NEXT-10A",
+  "step": "ESTHE-NEXT-10A-R2",
+  "layout_reference": "DPRO_KSH_NEXT",
   "pdf": "deliverables/esthe-next-10/DPRO_ESTHE_NEXT_operation_experience_sheet_20260724.pdf",
   "page_count": 1,
   "original_qr": [

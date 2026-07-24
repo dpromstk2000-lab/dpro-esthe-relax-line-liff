@@ -1,0 +1,52 @@
+{
+  "step": "ESTHE-NEXT-10A-R2",
+  "layout_reference": "DPRO_KSH_NEXT",
+  "screenshots": [
+    {
+      "name": "owner-pc",
+      "url": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner.html?next10a_r2=30073267917",
+      "path": "deliverables/esthe-next-10/screenshots/owner-pc.png",
+      "matched_text": [
+        "今日やること",
+        "再来店フォロー",
+        "進捗"
+      ],
+      "viewport": {
+        "width": 1440,
+        "height": 980
+      },
+      "quality": {
+        "width": 1440,
+        "height": 980,
+        "bytes": 550266,
+        "gray_std": 56.94,
+        "adjacent_mad": 5.17,
+        "sample_unique_colors": 7095
+      }
+    },
+    {
+      "name": "owner-ipad",
+      "url": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner-ipad.html?next10a_r2=30073267917",
+      "path": "deliverables/esthe-next-10/screenshots/owner-ipad.png",
+      "matched_text": [
+        "店舗iPad",
+        "進捗",
+        "本日"
+      ],
+      "viewport": {
+        "width": 1180,
+        "height": 820
+      },
+      "quality": {
+        "width": 1180,
+        "height": 820,
+        "bytes": 379573,
+        "gray_std": 57.21,
+        "adjacent_mad": 4.78,
+        "sample_unique_colors": 6856
+      }
+    }
+  ],
+  "count": 2,
+  "quality_pass": true
+}

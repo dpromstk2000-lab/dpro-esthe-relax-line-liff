@@ -1,0 +1,56 @@
+{
+  "layout_reference": "DPRO_KSH_NEXT",
+  "layout_style": "DPRO_KSH_STANDARD_A4",
+  "top_qr_cards": 5,
+  "five_minute_route_items": 5,
+  "large_real_screens": 2,
+  "benefit_cards": 3,
+  "official_line_qr": 1,
+  "qr_boxes_pdf_points": {
+    "製品紹介": [
+      50.02755905511812,
+      643.8897637795277,
+      51,
+      51
+    ],
+    "お客様予約": [
+      161.08267716535437,
+      643.8897637795277,
+      51,
+      51
+    ],
+    "オーナーPC": [
+      272.1377952755906,
+      643.8897637795277,
+      51,
+      51
+    ],
+    "店舗iPad": [
+      383.19291338582684,
+      643.8897637795277,
+      51,
+      51
+    ],
+    "LINE会員": [
+      494.24803149606305,
+      643.8897637795277,
+      51,
+      51
+    ],
+    "DPRO公式LINE": [
+      490.27559055118115,
+      48,
+      52,
+      52
+    ]
+  },
+  "expected_urls": {
+    "製品紹介": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/esthe.html",
+    "お客様予約": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/index-brush.html",
+    "オーナーPC": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner.html",
+    "店舗iPad": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner-ipad.html",
+    "LINE会員": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/member.html",
+    "DPRO公式LINE": "https://lin.ee/YxJGXV6D"
+  },
+  "visual_difference_from_previous_png": 63.05
+}

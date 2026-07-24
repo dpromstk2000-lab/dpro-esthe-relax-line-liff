@@ -1,0 +1,27 @@
+document:
+  step: "ESTHE-NEXT-10A-R2"
+  title: "DPRO エステ・リラクゼーション LINE 操作体験シート"
+  generated_at_jst: "2026-07-24T15:47:32+09:00"
+  status: "ksh_style_assets_completed_product_site_pending"
+  layout_reference: DPRO_KSH_NEXT
+artifacts:
+  pdf: "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/deliverables/esthe-next-10/DPRO_ESTHE_NEXT_operation_experience_sheet_20260724.pdf"
+  png: "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/deliverables/esthe-next-10/DPRO_ESTHE_NEXT_operation_experience_sheet_20260724.png"
+  pdf_bytes: 432950
+  png_bytes: 732732
+validation:
+  a4_portrait: true
+  page_count: 1
+  real_screenshots_refreshed: true
+  screenshot_noise_guard: true
+  qr_png_decode: true
+  final_pdf_qr_decode: true
+  qr_count: 6
+  visual_difference_from_previous_png: 63.05
+changes:
+  worker: false
+  supabase: false
+  api: false
+next_action:
+  id: "ESTHE-NEXT-10B-PRODUCT-SITE"
+  repository: "dpromstk2000-lab/dpro-line-systems-site"
