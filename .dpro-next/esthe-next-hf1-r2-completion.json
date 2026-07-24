@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "system": "DPRO エステ LINE",
+  "current_step": "COMPLETE",
+  "hotfix_step": "ESTHE-NEXT-HF1-R2",
+  "final_version": "DPRO-ESTHE-NEXT-1.0.1",
+  "completed_at_jst": "2026-07-24T20:33:31+09:00",
+  "result": "OK",
+  "targets": [
+    "owner.html",
+    "owner-ipad.html",
+    "staff.html",
+    "system-check.html"
+  ],
+  "validation": {
+    "static_ng": 0,
+    "public_browser_screen_count": 4,
+    "public_browser_all_pass": true,
+    "storage_removed_all": true,
+    "input_blank_immediately_all": true,
+    "input_blank_after_1s_all": true,
+    "input_blank_after_reload_all": true,
+    "existing_admin_save_all": true
+  },
+  "changes": {
+    "worker": false,
+    "supabase": false,
+    "api": false
+  },
+  "backup_tag": "backup-esthe-before-next-hf1-r2-20260724"
+}

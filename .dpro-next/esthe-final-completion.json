@@ -150,7 +150,7 @@
     "一括自動LINE配信は追加せず、個別確認・コピー運用を維持する",
     "異常時は最終バックアップタグから台帳・対象ファイルを復元する"
   ],
-  "updated_at_jst": "2026-07-24T20:08:19+09:00",
+  "updated_at_jst": "2026-07-24T20:33:31+09:00",
   "hotfixes": [
     {
       "step": "ESTHE-NEXT-HF1",
@@ -166,6 +166,26 @@
       "supabase_changed": false,
       "api_changed": false,
       "backup_tag": "backup-esthe-before-next-hf1-20260724"
+    },
+    {
+      "step": "ESTHE-NEXT-HF1-R2",
+      "version": "DPRO-ESTHE-NEXT-1.0.1",
+      "completed_at_jst": "2026-07-24T20:33:31+09:00",
+      "status": "OK",
+      "targets": [
+        "owner.html",
+        "owner-ipad.html",
+        "staff.html",
+        "system-check.html"
+      ],
+      "static_ng": 0,
+      "public_browser_screen_count": 4,
+      "public_browser_all_pass": true,
+      "input_blank_after_reload_all": true,
+      "worker_changed": false,
+      "supabase_changed": false,
+      "api_changed": false,
+      "backup_tag": "backup-esthe-before-next-hf1-r2-20260724"
     }
   ]
 }

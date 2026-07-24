@@ -26,3 +26,15 @@ last_hotfix:
   worker_changed: false
   supabase_changed: false
   api_changed: false
+
+last_hotfix:
+  step: "ESTHE-NEXT-HF1-R2"
+  version: "DPRO-ESTHE-NEXT-1.0.1"
+  completed_at_jst: "2026-07-24T20:33:31+09:00"
+  result: "OK"
+  targets: "owner.html, owner-ipad.html, staff.html, system-check.html"
+  four_screen_browser_validation: true
+  input_blank_after_reload_all: true
+  worker_changed: false
+  supabase_changed: false
+  api_changed: false

@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "system": "DPRO エステ LINE",
+  "step": "ESTHE-NEXT-HF1-R2",
+  "phase": "four-screen-public-browser-validation",
+  "screen_count": 4,
+  "all_pass": true,
+  "results": [
+    {
+      "file": "owner.html",
+      "initial": {
+        "storage": null,
+        "input": "",
+        "status": "管理コード未入力",
+        "autocomplete": "new-password"
+      },
+      "set_state": {
+        "storage": "1234",
+        "input": "",
+        "status": "管理コード設定済み"
+      },
+      "cleared": {
+        "storage": null,
+        "input": "",
+        "default_value": "",
+        "value_attribute": null,
+        "status": "管理コードを削除しました"
+      },
+      "reloaded": {
+        "storage": null,
+        "input": "",
+        "status": "管理コード未入力",
+        "autocomplete": "new-password"
+      },
+      "screenshot": ".esthe-next-hf1-r2-artifact/owner-admin-clear.png",
+      "pass": true
+    },
+    {
+      "file": "owner-ipad.html",
+      "initial": {
+        "storage": null,
+        "input": "",
+        "status": "管理コード未入力",
+        "autocomplete": "new-password"
+      },
+      "set_state": {
+        "storage": "1234",
+        "input": "",
+        "status": "管理コード設定済み"
+      },
+      "cleared": {
+        "storage": null,
+        "input": "",
+        "default_value": "",
+        "value_attribute": null,
+        "status": "管理コードを削除しました"
+      },
+      "reloaded": {
+        "storage": null,
+        "input": "",
+        "status": "管理コード未入力",
+        "autocomplete": "new-password"
+      },
+      "screenshot": ".esthe-next-hf1-r2-artifact/owner-ipad-admin-clear.png",
+      "pass": true
+    },
+    {
+      "file": "staff.html",
+      "initial": {
+        "storage": null,
+        "input": "",
+        "status": "管理コード未入力",
+        "autocomplete": "new-password"
+      },
+      "set_state": {
+        "storage": "1234",
+        "input": "",
+        "status": "管理コード設定済み"
+      },
+      "cleared": {
+        "storage": null,
+        "input": "",
+        "default_value": "",
+        "value_attribute": null,
+        "status": "管理コードを削除しました"
+      },
+      "reloaded": {
+        "storage": null,
+        "input": "",
+        "status": "管理コード未入力",
+        "autocomplete": "new-password"
+      },
+      "screenshot": ".esthe-next-hf1-r2-artifact/staff-admin-clear.png",
+      "pass": true
+    },
+    {
+      "file": "system-check.html",
+      "initial": {
+        "storage": null,
+        "input": "",
+        "status": "管理コード未入力",
+        "autocomplete": "new-password"
+      },
+      "set_state": {
+        "storage": "1234",
+        "input": "",
+        "status": "管理コード設定済み"
+      },
+      "cleared": {
+        "storage": null,
+        "input": "",
+        "default_value": "",
+        "value_attribute": null,
+        "status": "管理コード未入力"
+      },
+      "reloaded": {
+        "storage": null,
+        "input": "",
+        "status": "管理コード未入力",
+        "autocomplete": "new-password"
+      },
+      "screenshot": ".esthe-next-hf1-r2-artifact/system-check-admin-clear.png",
+      "pass": true
+    }
+  ]
+}
