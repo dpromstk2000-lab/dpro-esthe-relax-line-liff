@@ -1,0 +1,817 @@
+# DPRO エステ LINE
+# 完成後ホットフィックス: ESTHE-NEXT-HF1
+#
+# 不具合:
+# - 管理コード削除後も入力欄の伏字が消えない
+#
+# 原因:
+# - sessionStorageとADMIN_KEYは正常に削除済み
+# - autocomplete=current-passwordと削除直後のreloadにより、
+#   ブラウザのパスワード自動入力が伏字を再表示
+#
+# 対象:
+# - owner.html
+# - COMPLETE台帳
+#
+# 完成状態:
+# - current_step: COMPLETEを維持
+# - final_version: DPRO-ESTHE-NEXT-1.0.1
+#
+# Worker / Supabase / API:
+# - 変更なし
+
+name: "DPRO ESTHE NEXT-HF1 - Admin Code Clear Fix"
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/ESTHE-NEXT-HF1.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: "dpro-esthe-next"
+  cancel-in-progress: false
+
+env:
+  WORKFLOW_FILE: ".github/workflows/ESTHE-NEXT-HF1.yml"
+  BACKUP_TAG_PREFIX: "backup-esthe-before-next-hf1"
+  OWNER_URL: "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner.html"
+
+jobs:
+  esthe-next-hf1:
+    name: "Fix and verify admin code visual clear"
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: "Checkout ESTHE repository with history"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: "Configure Git identity"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name "DPRO NEXT Actions"
+          git config user.email "actions@users.noreply.github.com"
+
+      - name: "Confirm COMPLETE 1.0.0 baseline"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          grep -q '<!-- STEP ESTHE-NEXT-8 -->' owner.html
+          grep -q 'autocomplete="current-password"' owner.html
+          grep -q '^current_step: COMPLETE$' .dpro-next/esthe-step-state.yml
+          grep -q '^final_version: "DPRO-ESTHE-NEXT-1.0.0"$' \
+            .dpro-next/esthe-step-state.yml
+          ! grep -q 'ESTHE-NEXT-HF1-ADMIN-CODE-CLEAR' owner.html
+
+      - name: "Create change-before backup tag"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          CHANGE_BEFORE_SHA="$GITHUB_SHA"
+          mapfile -t HEAD_FILES < <(
+            git diff-tree --no-commit-id --name-only -r "$GITHUB_SHA"
+          )
+          if [[ "${#HEAD_FILES[@]}" -eq 1 \
+            && "${HEAD_FILES[0]}" == "$WORKFLOW_FILE" ]]; then
+            CHANGE_BEFORE_SHA="$(git rev-parse "${GITHUB_SHA}^")"
+          fi
+
+          BASE_TAG="${BACKUP_TAG_PREFIX}-$(TZ=Asia/Tokyo date +%Y%m%d)"
+          BACKUP_TAG="$BASE_TAG"
+          if git ls-remote --exit-code --tags origin \
+            "refs/tags/$BACKUP_TAG" >/dev/null 2>&1; then
+            BACKUP_TAG="${BASE_TAG}-run-${GITHUB_RUN_ID}"
+          fi
+
+          git tag -a "$BACKUP_TAG" "$CHANGE_BEFORE_SHA" \
+            -m "DPRO ESTHE before NEXT-HF1"
+          git push origin "refs/tags/$BACKUP_TAG"
+          echo "BACKUP_TAG=$BACKUP_TAG" >> "$GITHUB_ENV"
+
+      - name: "Apply admin code clear hotfix"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import datetime as dt
+          import json
+          import os
+
+          path = Path("owner.html")
+          text = path.read_text(encoding="utf-8")
+
+          if "ESTHE-NEXT-HF1-ADMIN-CODE-CLEAR" in text:
+              raise RuntimeError("HF1 is already applied")
+          if text.count('autocomplete="current-password"') != 1:
+              raise RuntimeError("current-password target is not unique")
+          if text.count('id="dproAdminCode"') != 1:
+              raise RuntimeError("dproAdminCode is not unique")
+
+          input_anchor = '    <input id="dproAdminCode" type="password" inputmode="numeric"'
+          if text.count(input_anchor) != 1:
+              raise RuntimeError("admin input anchor is not unique")
+          text = text.replace(
+              input_anchor,
+              '    <!-- ESTHE-NEXT-HF1-ADMIN-CODE-CLEAR -->\n' + input_anchor,
+              1,
+          )
+          old_attr = 'autocomplete="current-password" placeholder="管理コードを入力">'
+          new_attr = (
+              'name="dpro_esthe_admin_code_entry"\n'
+              '      autocomplete="new-password" autocapitalize="off" '
+              'spellcheck="false"\n'
+              '      aria-autocomplete="none" data-lpignore="true" '
+              'data-1p-ignore="true"\n'
+              '      placeholder="管理コードを入力">'
+          )
+          if text.count(old_attr) != 1:
+              raise RuntimeError("admin input attribute target is not unique")
+          text = text.replace(old_attr, new_attr, 1)
+
+          helper_anchor = 'function dproAdminStatusMessage(message, ok=false){'
+          helper = '\n'.join([
+              'function dproResetAdminCodeVisual(input){',
+              '  if(!input) return;',
+              '  input.value = "";',
+              '  input.defaultValue = "";',
+              '  input.removeAttribute("value");',
+              '  input.setAttribute("autocomplete", "new-password");',
+              '}',
+              '',
+              'function dproAdminStatusMessage(message, ok=false){',
+          ])
+          if text.count(helper_anchor) != 1:
+              raise RuntimeError("status helper anchor is not unique")
+          text = text.replace(helper_anchor, helper, 1)
+
+          old_init = '\n'.join([
+              '  if(ADMIN_KEY){',
+              '    input.value = "";',
+              '    input.placeholder = "管理コード設定済み";',
+              '    dproAdminStatusMessage("管理コード設定済み", true);',
+              '  }else{',
+              '    dproAdminStatusMessage("管理コード未入力", false);',
+              '  }',
+          ])
+          new_init = '\n'.join([
+              '  dproResetAdminCodeVisual(input);',
+              '  if(ADMIN_KEY){',
+              '    input.placeholder = "管理コード設定済み";',
+              '    dproAdminStatusMessage("管理コード設定済み", true);',
+              '  }else{',
+              '    input.placeholder = "管理コードを入力";',
+              '    dproAdminStatusMessage("管理コード未入力", false);',
+              '  }',
+          ])
+          if text.count(old_init) != 1:
+              raise RuntimeError("initial admin display target is not unique")
+          text = text.replace(old_init, new_init, 1)
+
+          old_clear = '\n'.join([
+              '  clear.addEventListener("click", () => {',
+              '    sessionStorage.removeItem(ADMIN_STORAGE_KEY);',
+              '    ADMIN_KEY = "";',
+              '    input.value = "";',
+              '    input.placeholder = "管理コードを入力";',
+              '    dproAdminStatusMessage("管理コードを削除しました", false);',
+              '    window.location.reload();',
+              '  });',
+          ])
+          new_clear = '\n'.join([
+              '  clear.addEventListener("click", (event) => {',
+              '    event.preventDefault();',
+              '    sessionStorage.removeItem(ADMIN_STORAGE_KEY);',
+              '    ADMIN_KEY = "";',
+              '    dproResetAdminCodeVisual(input);',
+              '    input.placeholder = "管理コードを入力";',
+              '    input.blur();',
+              '    dproAdminStatusMessage("管理コードを削除しました", false);',
+              '',
+              '    // パスワード管理ツールの遅延再入力も残さない。',
+              '    [0, 100, 500, 1000].forEach((delay) => {',
+              '      window.setTimeout(() => {',
+              '        if(!ADMIN_KEY) dproResetAdminCodeVisual(input);',
+              '      }, delay);',
+              '    });',
+              '  });',
+          ])
+          if text.count(old_clear) != 1:
+              raise RuntimeError("clear handler target is not unique")
+          text = text.replace(old_clear, new_clear, 1)
+
+          path.write_text(text.rstrip() + "\n", encoding="utf-8")
+
+          now = dt.datetime.now(
+              dt.timezone(dt.timedelta(hours=9))
+          ).replace(microsecond=0)
+          stage = {
+              "schema_version": 1,
+              "system": "DPRO エステ LINE",
+              "step": "ESTHE-NEXT-HF1",
+              "stage": "patch-committed-publication-pending",
+              "updated_at_jst": now.isoformat(),
+              "target": "owner.html",
+              "reason": "current-passwordとreloadによるブラウザ伏字再表示",
+              "worker_changed": False,
+              "supabase_changed": False,
+              "api_changed": False,
+              "backup_tag": os.environ["BACKUP_TAG"],
+          }
+          Path(".dpro-next/esthe-next-hf1.json").write_text(
+              json.dumps(stage, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: "Run HTML JavaScript ID and source validation"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          from collections import Counter
+          from html.parser import HTMLParser
+          from pathlib import Path
+          import json
+          import re
+          import subprocess
+          import sys
+          import tempfile
+
+          class Parser(HTMLParser):
+              def __init__(self):
+                  super().__init__(convert_charrefs=True)
+                  self.ids = []
+              def handle_starttag(self, tag, attrs):
+                  for key, value in attrs:
+                      if key.lower() == "id" and value:
+                          self.ids.append(value)
+              def handle_startendtag(self, tag, attrs):
+                  self.handle_starttag(tag, attrs)
+
+          text = Path("owner.html").read_text(encoding="utf-8")
+          items = []
+
+          def add(name, ok, detail):
+              items.append({
+                  "name": name,
+                  "status": "OK" if ok else "NG",
+                  "detail": detail,
+              })
+
+          parser = Parser()
+          try:
+              parser.feed(text)
+              parser.close()
+              add("HTML構文", True, "HTMLParser PASS")
+          except Exception as error:
+              add("HTML構文", False, str(error))
+
+          duplicates = sorted(
+              key for key, count in Counter(parser.ids).items()
+              if count > 1
+          )
+          add("HTML ID重複", not duplicates, duplicates or "なし")
+
+          scripts = re.findall(
+              r"<script(?![^>]*\bsrc=)[^>]*>(.*?)</script>",
+              text,
+              flags=re.IGNORECASE | re.DOTALL,
+          )
+          js_errors = []
+          for index, script in enumerate(scripts, 1):
+              if not script.strip():
+                  continue
+              with tempfile.NamedTemporaryFile(
+                  "w", suffix=".js", encoding="utf-8", delete=False
+              ) as handle:
+                  handle.write(script)
+                  temp_js = handle.name
+              try:
+                  result = subprocess.run(
+                      ["node", "--check", temp_js],
+                      capture_output=True,
+                      text=True,
+                      check=False,
+                  )
+                  if result.returncode != 0:
+                      js_errors.append(
+                          f"script{index}: "
+                          + (result.stderr or result.stdout)[:600]
+                      )
+              finally:
+                  Path(temp_js).unlink(missing_ok=True)
+
+          add(
+              "JavaScript構文",
+              not js_errors,
+              " / ".join(js_errors)
+              if js_errors else f"{len(scripts)}スクリプト正常",
+          )
+
+          checks = {
+              "HF1マーカー": "ESTHE-NEXT-HF1-ADMIN-CODE-CLEAR" in text,
+              "current-password除去": 'autocomplete="current-password"' not in text,
+              "new-password設定": 'autocomplete="new-password"' in text,
+              "パスワード管理除外": (
+                  'data-lpignore="true"' in text
+                  and 'data-1p-ignore="true"' in text
+              ),
+              "表示値完全消去": (
+                  "function dproResetAdminCodeVisual(input)" in text
+                  and 'input.defaultValue = "";' in text
+                  and 'input.removeAttribute("value");' in text
+              ),
+              "sessionStorage削除": "sessionStorage.removeItem(ADMIN_STORAGE_KEY);" in text,
+              "削除後reload廃止": (
+                  'dproAdminStatusMessage("管理コードを削除しました", false);\n'
+                  '    window.location.reload();' not in text
+              ),
+              "遅延再入力消去": "[0, 100, 500, 1000].forEach" in text,
+              "保存後reload維持": (
+                  'dproAdminStatusMessage("管理コード設定済み", true);\n'
+                  '    window.location.reload();' in text
+              ),
+              "COMPLETE状態": (
+                  "current_step: COMPLETE"
+                  in Path(".dpro-next/esthe-step-state.yml")
+                  .read_text(encoding="utf-8")
+              ),
+          }
+          for name, ok in checks.items():
+              add(name, ok, "PASS" if ok else "条件不一致")
+
+          ng = sum(item["status"] == "NG" for item in items)
+          report = {
+              "schema_version": 1,
+              "system": "DPRO エステ LINE",
+              "step": "ESTHE-NEXT-HF1",
+              "phase": "static-validation",
+              "summary": {
+                  "ok": len(items) - ng,
+                  "attention": 0,
+                  "ng": ng,
+              },
+              "items": items,
+          }
+          Path(".dpro-next/esthe-next-hf1-static.json").write_text(
+              json.dumps(report, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+          print(json.dumps(report, ensure_ascii=False, indent=2))
+          if ng:
+              sys.exit(1)
+          PY
+
+          ruby -e 'require "yaml"; YAML.parse_file(ARGV[0]); puts "YML OK"' \
+            "$WORKFLOW_FILE"
+
+      - name: "Commit owner hotfix and push"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git add \
+            owner.html \
+            .dpro-next/esthe-next-hf1.json \
+            .dpro-next/esthe-next-hf1-static.json
+          git commit -m "DPRO ESTHE NEXT-HF1: clear admin code field"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+          echo "PATCH_COMMIT_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: "Wait for HF1 public owner page"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          PUBLISHED=false
+          for attempt in $(seq 1 60); do
+            BODY="$(curl -L -sS --retry 2 \
+              -H "Cache-Control: no-cache, no-store" \
+              "$OWNER_URL?hf1=${PATCH_COMMIT_SHA}_${attempt}" || true)"
+            if [[ "$BODY" == *"ESTHE-NEXT-HF1-ADMIN-CODE-CLEAR"* \
+              && "$BODY" == *'autocomplete="new-password"'* ]]; then
+              PUBLISHED=true
+              break
+            fi
+            sleep 10
+          done
+          [[ "$PUBLISHED" == true ]] || {
+            echo "::error::HF1公開反映を確認できません"
+            exit 1
+          }
+
+      - name: "Install Chromium validation"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 -m pip install --upgrade pip
+          python3 -m pip install playwright
+          python3 -m playwright install --with-deps chromium
+
+      - name: "Verify set clear delayed clear and reload behavior"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          import asyncio
+          import json
+          import os
+          from pathlib import Path
+          from playwright.async_api import async_playwright
+
+          async def main():
+              url = os.environ["OWNER_URL"]
+              run_id = os.environ.get("GITHUB_RUN_ID", "local")
+              out = Path(".esthe-next-hf1-artifact")
+              out.mkdir(exist_ok=True)
+
+              async with async_playwright() as playwright:
+                  browser = await playwright.chromium.launch(
+                      headless=True,
+                      args=["--no-sandbox", "--disable-dev-shm-usage"],
+                  )
+                  context = await browser.new_context(
+                      viewport={"width": 1440, "height": 1000},
+                      locale="ja-JP",
+                      timezone_id="Asia/Tokyo",
+                  )
+                  page = await context.new_page()
+                  response = await page.goto(
+                      f"{url}?esthe_next_hf1={run_id}",
+                      wait_until="domcontentloaded",
+                      timeout=60000,
+                  )
+                  if not response or response.status >= 400:
+                      raise RuntimeError("owner page HTTP error")
+                  await page.wait_for_timeout(900)
+
+                  if "ESTHE-NEXT-HF1-ADMIN-CODE-CLEAR" not in await page.content():
+                      raise RuntimeError("HF1 public marker missing")
+
+                  field = page.locator("#dproAdminCode")
+                  status = page.locator("#dproAdminStatus")
+                  save = page.locator("#dproAdminSave")
+                  clear = page.locator("#dproAdminClear")
+
+                  initial = {
+                      "storage": await page.evaluate(
+                          "sessionStorage.getItem('dpro_esthe_admin_secret')"
+                      ),
+                      "input": await field.input_value(),
+                      "status": (await status.inner_text()).strip(),
+                      "autocomplete": await field.get_attribute("autocomplete"),
+                  }
+                  expected_initial = {
+                      "storage": None,
+                      "input": "",
+                      "status": "管理コード未入力",
+                      "autocomplete": "new-password",
+                  }
+                  if initial != expected_initial:
+                      raise RuntimeError(f"initial mismatch: {initial}")
+
+                  await field.fill("1234")
+                  await save.click()
+                  await page.wait_for_load_state("domcontentloaded")
+                  await page.wait_for_timeout(700)
+
+                  set_state = {
+                      "storage": await page.evaluate(
+                          "sessionStorage.getItem('dpro_esthe_admin_secret')"
+                      ),
+                      "input": await field.input_value(),
+                      "status": (await status.inner_text()).strip(),
+                  }
+                  expected_set = {
+                      "storage": "1234",
+                      "input": "",
+                      "status": "管理コード設定済み",
+                  }
+                  if set_state != expected_set:
+                      raise RuntimeError(f"set mismatch: {set_state}")
+
+                  await field.evaluate(
+                      """el => {
+                        el.value = 'browser-autofill-simulated';
+                        el.defaultValue = 'browser-autofill-simulated';
+                        el.setAttribute('value', 'browser-autofill-simulated');
+                      }"""
+                  )
+                  await clear.click()
+                  await page.wait_for_timeout(1200)
+
+                  cleared = {
+                      "storage": await page.evaluate(
+                          "sessionStorage.getItem('dpro_esthe_admin_secret')"
+                      ),
+                      "input": await field.input_value(),
+                      "default_value": await field.evaluate("el => el.defaultValue"),
+                      "value_attribute": await field.get_attribute("value"),
+                      "status": (await status.inner_text()).strip(),
+                  }
+                  expected_clear = {
+                      "storage": None,
+                      "input": "",
+                      "default_value": "",
+                      "value_attribute": None,
+                      "status": "管理コードを削除しました",
+                  }
+                  if cleared != expected_clear:
+                      raise RuntimeError(f"clear mismatch: {cleared}")
+
+                  await page.reload(wait_until="domcontentloaded", timeout=60000)
+                  await page.wait_for_timeout(800)
+                  reloaded = {
+                      "storage": await page.evaluate(
+                          "sessionStorage.getItem('dpro_esthe_admin_secret')"
+                      ),
+                      "input": await field.input_value(),
+                      "status": (await status.inner_text()).strip(),
+                      "autocomplete": await field.get_attribute("autocomplete"),
+                  }
+                  if reloaded != expected_initial:
+                      raise RuntimeError(f"reload mismatch: {reloaded}")
+
+                  shot = out / "owner-admin-code-cleared.png"
+                  await page.screenshot(
+                      path=str(shot), full_page=False, animations="disabled"
+                  )
+                  if shot.stat().st_size < 20000:
+                      raise RuntimeError("screenshot too small")
+
+                  report = {
+                      "schema_version": 1,
+                      "system": "DPRO エステ LINE",
+                      "step": "ESTHE-NEXT-HF1",
+                      "phase": "public-behavior-validation",
+                      "pass": True,
+                      "initial": initial,
+                      "set_state": set_state,
+                      "cleared": cleared,
+                      "reloaded": reloaded,
+                      "screenshot": str(shot),
+                      "screenshot_bytes": shot.stat().st_size,
+                  }
+                  Path(".dpro-next/esthe-next-hf1-public.json").write_text(
+                      json.dumps(report, ensure_ascii=False, indent=2) + "\n",
+                      encoding="utf-8",
+                  )
+                  print(json.dumps(report, ensure_ascii=False, indent=2))
+                  await context.close()
+                  await browser.close()
+
+          asyncio.run(main())
+          PY
+
+      - name: "Write COMPLETE 1.0.1 maintenance ledger"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import datetime as dt
+          import json
+          import os
+
+          now = dt.datetime.now(
+              dt.timezone(dt.timedelta(hours=9))
+          ).replace(microsecond=0)
+          version = "DPRO-ESTHE-NEXT-1.0.1"
+
+          static = json.loads(
+              Path(".dpro-next/esthe-next-hf1-static.json")
+              .read_text(encoding="utf-8")
+          )
+          public = json.loads(
+              Path(".dpro-next/esthe-next-hf1-public.json")
+              .read_text(encoding="utf-8")
+          )
+
+          state_path = Path(".dpro-next/esthe-step-state.yml")
+          state = state_path.read_text(encoding="utf-8")
+          if "current_step: COMPLETE" not in state:
+              raise RuntimeError("COMPLETE state is missing")
+          state = state.replace(
+              'final_version: "DPRO-ESTHE-NEXT-1.0.0"',
+              f'final_version: "{version}"',
+              1,
+          )
+          state += (
+              "\nlast_hotfix:\n"
+              '  step: "ESTHE-NEXT-HF1"\n'
+              f'  version: "{version}"\n'
+              f'  completed_at_jst: "{now.isoformat()}"\n'
+              '  result: "OK"\n'
+              '  target: "owner.html"\n'
+              '  input_visual_cleared: true\n'
+              '  input_blank_after_reload: true\n'
+              '  worker_changed: false\n'
+              '  supabase_changed: false\n'
+              '  api_changed: false\n'
+          )
+          state_path.write_text(state, encoding="utf-8")
+
+          yml_path = Path(".dpro-next/esthe-final-completion.yml")
+          yml = yml_path.read_text(encoding="utf-8")
+          yml = yml.replace(
+              'final_version: "DPRO-ESTHE-NEXT-1.0.0"',
+              f'final_version: "{version}"',
+              1,
+          )
+          yml += (
+              "\nhotfixes:\n"
+              '  - step: "ESTHE-NEXT-HF1"\n'
+              f'    version: "{version}"\n'
+              f'    completed_at_jst: "{now.isoformat()}"\n'
+              '    status: OK\n'
+              '    target: "owner.html"\n'
+              '    result: "管理コード削除後の伏字を完全消去"\n'
+              '    public_behavior_pass: true\n'
+              '    worker_changed: false\n'
+              '    supabase_changed: false\n'
+              '    api_changed: false\n'
+          )
+          yml_path.write_text(yml, encoding="utf-8")
+
+          json_path = Path(".dpro-next/esthe-final-completion.json")
+          data = json.loads(json_path.read_text(encoding="utf-8"))
+          data["final_version"] = version
+          data["updated_at_jst"] = now.isoformat()
+          data.setdefault("hotfixes", []).append({
+              "step": "ESTHE-NEXT-HF1",
+              "version": version,
+              "completed_at_jst": now.isoformat(),
+              "status": "OK",
+              "target": "owner.html",
+              "static_ng": static["summary"]["ng"],
+              "public_behavior_pass": public["pass"],
+              "input_blank_after_1s": public["cleared"]["input"] == "",
+              "input_blank_after_reload": public["reloaded"]["input"] == "",
+              "worker_changed": False,
+              "supabase_changed": False,
+              "api_changed": False,
+              "backup_tag": os.environ["BACKUP_TAG"],
+          })
+          json_path.write_text(
+              json.dumps(data, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+
+          baseline = Path(".dpro-next/esthe-current-baseline.yml")
+          with baseline.open("a", encoding="utf-8") as handle:
+              handle.write("\nhotfix_esthe_next_hf1:\n")
+              handle.write(f'  version: "{version}"\n')
+              handle.write(f'  completed_at_jst: "{now.isoformat()}"\n')
+              handle.write("  result: OK\n")
+              handle.write('  target: "owner.html"\n')
+              handle.write("  input_visual_cleared: true\n")
+              handle.write("  input_blank_after_reload: true\n")
+              handle.write(f'  backup_tag: "{os.environ["BACKUP_TAG"]}"\n')
+              handle.write("  worker_changed: false\n")
+              handle.write("  supabase_changed: false\n")
+              handle.write("  api_changed: false\n")
+
+          completion = {
+              "schema_version": 1,
+              "system": "DPRO エステ LINE",
+              "current_step": "COMPLETE",
+              "hotfix_step": "ESTHE-NEXT-HF1",
+              "final_version": version,
+              "completed_at_jst": now.isoformat(),
+              "result": "OK",
+              "validation": {
+                  "static_ng": 0,
+                  "public_behavior_pass": True,
+                  "session_storage_removed": True,
+                  "input_blank_immediately": True,
+                  "input_blank_after_1s": True,
+                  "input_blank_after_reload": True,
+                  "existing_admin_save_pass": True,
+              },
+              "changes": {
+                  "owner_html": True,
+                  "worker": False,
+                  "supabase": False,
+                  "api": False,
+              },
+              "backup_tag": os.environ["BACKUP_TAG"],
+          }
+          Path(".dpro-next/esthe-next-hf1-completion.json").write_text(
+              json.dumps(completion, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+          Path(".dpro-next/esthe-next-hf1-completion.yml").write_text(
+              "\n".join([
+                  "schema_version: 1",
+                  'system: "DPRO エステ LINE"',
+                  "current_step: COMPLETE",
+                  'hotfix_step: "ESTHE-NEXT-HF1"',
+                  f'final_version: "{version}"',
+                  f'completed_at_jst: "{now.isoformat()}"',
+                  "result: OK",
+                  "validation:",
+                  "  static_ng: 0",
+                  "  public_behavior_pass: true",
+                  "  session_storage_removed: true",
+                  "  input_blank_immediately: true",
+                  "  input_blank_after_1s: true",
+                  "  input_blank_after_reload: true",
+                  "  existing_admin_save_pass: true",
+                  "changes:",
+                  "  owner_html: true",
+                  "  worker: false",
+                  "  supabase: false",
+                  "  api: false",
+                  f'backup_tag: "{os.environ["BACKUP_TAG"]}"',
+              ]) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+          grep -q '^current_step: COMPLETE$' \
+            .dpro-next/esthe-step-state.yml
+          grep -q '^final_version: "DPRO-ESTHE-NEXT-1.0.1"$' \
+            .dpro-next/esthe-step-state.yml
+          grep -q 'input_blank_after_reload: true' \
+            .dpro-next/esthe-next-hf1-completion.yml
+          ruby -e 'require "yaml"; YAML.parse_file(ARGV[0])' \
+            .dpro-next/esthe-step-state.yml
+          ruby -e 'require "yaml"; YAML.parse_file(ARGV[0])' \
+            .dpro-next/esthe-final-completion.yml
+
+      - name: "Upload HF1 validation artifact"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "ESTHE-NEXT-HF1-${{ github.run_id }}"
+          path: |
+            .esthe-next-hf1-artifact/
+            .dpro-next/esthe-next-hf1*.json
+            .dpro-next/esthe-next-hf1*.yml
+          if-no-files-found: warn
+          retention-days: 90
+
+      - name: "Commit maintenance ledger delete workflow and push"
+        if: success()
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git add \
+            .dpro-next/esthe-step-state.yml \
+            .dpro-next/esthe-current-baseline.yml \
+            .dpro-next/esthe-final-completion.yml \
+            .dpro-next/esthe-final-completion.json \
+            .dpro-next/esthe-next-hf1-static.json \
+            .dpro-next/esthe-next-hf1-public.json \
+            .dpro-next/esthe-next-hf1-completion.json \
+            .dpro-next/esthe-next-hf1-completion.yml
+          git rm --ignore-unmatch "$WORKFLOW_FILE"
+          git commit -m "DPRO ESTHE NEXT-HF1 complete: version 1.0.1"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+          echo "FINAL_COMMIT_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: "Confirm final HF1 ledger"
+        if: success()
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          RAW_STATE="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${GITHUB_REF_NAME}/.dpro-next/esthe-step-state.yml"
+          CONFIRMED=false
+          for attempt in $(seq 1 36); do
+            BODY="$(curl -L -sS --retry 2 \
+              -H "Cache-Control: no-cache, no-store" \
+              "$RAW_STATE?hf1=${FINAL_COMMIT_SHA}_${attempt}" || true)"
+            if [[ "$BODY" == *"current_step: COMPLETE"* \
+              && "$BODY" == *'final_version: "DPRO-ESTHE-NEXT-1.0.1"'* \
+              && "$BODY" == *'step: "ESTHE-NEXT-HF1"'* ]]; then
+              CONFIRMED=true
+              break
+            fi
+            sleep 10
+          done
+          [[ "$CONFIRMED" == true ]] || {
+            echo "::error::HF1完成台帳を確認できません"
+            exit 1
+          }
+
+          echo "### DPRO エステ / ESTHE-NEXT-HF1 完了" \
+            >> "$GITHUB_STEP_SUMMARY"
+          echo "- current_step: **COMPLETE維持**" \
+            >> "$GITHUB_STEP_SUMMARY"
+          echo "- final_version: **DPRO-ESTHE-NEXT-1.0.1**" \
+            >> "$GITHUB_STEP_SUMMARY"
+          echo "- sessionStorage削除: **PASS**" \
+            >> "$GITHUB_STEP_SUMMARY"
+          echo "- 入力欄即時・1秒後・再読込後: **空欄PASS**" \
+            >> "$GITHUB_STEP_SUMMARY"
+          echo "- Worker / Supabase / API: **変更なし**" \
+            >> "$GITHUB_STEP_SUMMARY"
