@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "system": "DPRO エステ LINE",
+  "current_step": "COMPLETE",
+  "final_version": "DPRO-ESTHE-NEXT-1.0.0",
+  "completed_at_jst": "2026-07-24T19:44:20+09:00",
+  "result": "OK",
+  "completion": {
+    "sales_ready": true,
+    "public_demo_ready": true,
+    "owner_operation_ready": true,
+    "operation_sheet_ready": true,
+    "product_site_published": true,
+    "system_check_pass": true
+  },
+  "all_steps": [
+    {
+      "step": "ESTHE-NEXT-1",
+      "status": "OK",
+      "result": "正常版保護・現状基準台帳"
+    },
+    {
+      "step": "ESTHE-NEXT-2",
+      "status": "OK",
+      "result": "PC今日やること・管理情報分離"
+    },
+    {
+      "step": "ESTHE-NEXT-3",
+      "status": "OK",
+      "result": "予約・来店・施術案件統合"
+    },
+    {
+      "step": "ESTHE-NEXT-4",
+      "status": "OK",
+      "result": "施術進捗ボード"
+    },
+    {
+      "step": "ESTHE-NEXT-5",
+      "status": "OK",
+      "result": "施術前確認・同意・顧客連携"
+    },
+    {
+      "step": "ESTHE-NEXT-6",
+      "status": "OK",
+      "result": "iPad・スタッフ画面最適化"
+    },
+    {
+      "step": "ESTHE-NEXT-7",
+      "status": "OK",
+      "result": "LINE会員履歴・前回と同じ予約"
+    },
+    {
+      "step": "ESTHE-NEXT-8",
+      "status": "OK",
+      "result": "次回来店・個別フォロー"
+    },
+    {
+      "step": "ESTHE-NEXT-9",
+      "status": "OK",
+      "result": "性能・セキュリティ・system-check"
+    },
+    {
+      "step": "ESTHE-NEXT-10A-R3",
+      "status": "OK",
+      "result": "操作体験シート・公開QR検査"
+    },
+    {
+      "step": "ESTHE-NEXT-10B-R4",
+      "status": "OK",
+      "result": "製品サイト・一覧カード・レスポンシブ検査"
+    },
+    {
+      "step": "ESTHE-NEXT-10C",
+      "status": "OK",
+      "result": "最終完成判定・COMPLETE台帳"
+    }
+  ],
+  "public_urls": {
+    "booking": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/index-brush.html",
+    "owner_pc": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner.html",
+    "owner_ipad": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner-ipad.html",
+    "staff": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/staff.html",
+    "member": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/member.html?phone=08000003002",
+    "system_check": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/system-check.html",
+    "product_page": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/esthe.html",
+    "catalog": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems.html",
+    "operation_sheet_pdf": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/deliverables/esthe-next-10/DPRO_ESTHE_NEXT_operation_experience_sheet_20260724.pdf",
+    "operation_sheet_png": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/deliverables/esthe-next-10/DPRO_ESTHE_NEXT_operation_experience_sheet_20260724.png",
+    "official_line": "https://lin.ee/YxJGXV6D"
+  },
+  "operation_sheet": {
+    "layout_reference": "DPRO_KSH_NEXT",
+    "a4_portrait": true,
+    "page_count": 1,
+    "pdf_sha256": "ae2b2e1ced05d5eda5558bedb82c86dc4f68650e3ab92bb19dfa175f23f69fde",
+    "png_sha256": "bbc8ef31221766d53d0c0b379c131fb0c2fb433d51c150843071cc4dc4f98afb",
+    "qr_count": 6,
+    "qr_all_pass": true
+  },
+  "safety_validation": {
+    "static": {
+      "ok": 39,
+      "attention": 1,
+      "ng": 0
+    },
+    "public_pages_pass": true,
+    "system_check_pass": true,
+    "system_check_summary": {
+      "ok": 82,
+      "attention": 3,
+      "ng": 0
+    },
+    "product_site_validation": {
+      "static_ok": 19,
+      "static_ng": 0,
+      "product_desktop_1440": true,
+      "product_mobile_390": true,
+      "product_mobile_360": true,
+      "catalog_desktop_1440": true,
+      "catalog_mobile_390": true,
+      "catalog_mobile_360": true,
+      "catalog_mobile_320": true,
+      "actual_horizontal_scroll": false,
+      "critical_content_within_viewport": true,
+      "paint_only_attention_count": 2
+    },
+    "wrong_admin_code_rejection": true,
+    "public_admin_information_leak": false,
+    "phone_normalization": true,
+    "past_datetime_guard": true,
+    "duplicate_guard": true,
+    "bulk_auto_line_delivery": false
+  },
+  "change_record": {
+    "worker_changed_during_next": false,
+    "supabase_changed_during_next": false,
+    "api_changed_during_next": false,
+    "product_site_changed": true,
+    "operation_sheet_changed": true
+  },
+  "backup": {
+    "final_backup_tag": "backup-esthe-before-next10c-r2-complete-20260724",
+    "rollback_method": "最終バックアップタグから対象ファイルと.dpro-next台帳を復元し、mainへCommit・Pushする"
+  },
+  "maintenance_policy": [
+    "月1回、system-check.htmlで一括検査を実行する",
+    "Worker・Supabase・APIを変更した場合はsystem-checkと主要画面を再検査する",
+    "メニュー・スタッフ・営業時間変更後は予約画面とiPad画面を確認する",
+    "製品サイトまたは操作体験シートURL変更時はPDF内QR6件を再検査する",
+    "一括自動LINE配信は追加せず、個別確認・コピー運用を維持する",
+    "異常時は最終バックアップタグから台帳・対象ファイルを復元する"
+  ]
+}

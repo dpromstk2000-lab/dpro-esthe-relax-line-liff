@@ -1,0 +1,57 @@
+DPRO エステ LINE / DPRO NEXT 最終完成報告
+current_step: COMPLETE
+final_version: DPRO-ESTHE-NEXT-1.0.0
+完成日時JST: 2026-07-24T19:44:20+09:00
+
+全STEP結果:
+- ESTHE-NEXT-1: OK / 正常版保護・現状基準台帳
+- ESTHE-NEXT-2: OK / PC今日やること・管理情報分離
+- ESTHE-NEXT-3: OK / 予約・来店・施術案件統合
+- ESTHE-NEXT-4: OK / 施術進捗ボード
+- ESTHE-NEXT-5: OK / 施術前確認・同意・顧客連携
+- ESTHE-NEXT-6: OK / iPad・スタッフ画面最適化
+- ESTHE-NEXT-7: OK / LINE会員履歴・前回と同じ予約
+- ESTHE-NEXT-8: OK / 次回来店・個別フォロー
+- ESTHE-NEXT-9: OK / 性能・セキュリティ・system-check
+- ESTHE-NEXT-10A-R3: OK / 操作体験シート・公開QR検査
+- ESTHE-NEXT-10B-R4: OK / 製品サイト・一覧カード・レスポンシブ検査
+- ESTHE-NEXT-10C: OK / 最終完成判定・COMPLETE台帳
+
+公開URL:
+- お客様予約: https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/index-brush.html
+- PCオーナー: https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner.html
+- 店舗iPad: https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner-ipad.html
+- スタッフ: https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/staff.html
+- LINE会員: https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/member.html?phone=08000003002
+- system-check: https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/system-check.html
+- 製品ページ: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/esthe.html
+- 製品一覧: https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems.html
+- 操作体験シートPDF: https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/deliverables/esthe-next-10/DPRO_ESTHE_NEXT_operation_experience_sheet_20260724.pdf
+
+安全検査結果:
+- 静的検査: OK 39 / 注意 1 / NG 0
+- system-check: OK 82 / 注意 3 / NG 0
+- 公開画面: PASS
+- 製品サイト: PASS
+- 公開PDF・PNG SHA256: PASS
+- PDF内QR: 6 / 6 PASS
+- 誤った管理コード拒否: PASS
+- 公開画面への管理情報混入: なし
+
+変更記録:
+- Worker: 変更なし
+- Supabase: 変更なし
+- API: 変更なし
+
+販売・公開判定:
+- 販売可能
+- 公開デモ可能
+- オーナー操作可能
+
+今後の保守方針:
+- 月1回、system-check.htmlで一括検査を実行する
+- Worker・Supabase・APIを変更した場合はsystem-checkと主要画面を再検査する
+- メニュー・スタッフ・営業時間変更後は予約画面とiPad画面を確認する
+- 製品サイトまたは操作体験シートURL変更時はPDF内QR6件を再検査する
+- 一括自動LINE配信は追加せず、個別確認・コピー運用を維持する
+- 異常時は最終バックアップタグから台帳・対象ファイルを復元する

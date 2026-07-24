@@ -1,0 +1,253 @@
+{
+  "schema_version": 1,
+  "system": "DPRO エステ LINE",
+  "step": "ESTHE-NEXT-10C",
+  "phase": "final-static-validation",
+  "summary": {
+    "ok": 39,
+    "attention": 1,
+    "ng": 0
+  },
+  "items": [
+    {
+      "category": "STEP",
+      "name": "index-brush.html採用STEP",
+      "status": "OK",
+      "detail": "期待：STEP ESTHE-NEXT-7"
+    },
+    {
+      "category": "HTML",
+      "name": "index-brush.html HTML構文",
+      "status": "OK",
+      "detail": "HTMLParser PASS"
+    },
+    {
+      "category": "HTML",
+      "name": "index-brush.html ID重複",
+      "status": "OK",
+      "detail": "重複なし"
+    },
+    {
+      "category": "JavaScript",
+      "name": "index-brush.html JavaScript構文",
+      "status": "OK",
+      "detail": "1スクリプト正常"
+    },
+    {
+      "category": "性能",
+      "name": "index-brush.html ファイル容量",
+      "status": "OK",
+      "detail": "61,876 bytes"
+    },
+    {
+      "category": "セキュリティ",
+      "name": "index-brush.html 管理情報混入",
+      "status": "OK",
+      "detail": "管理API・管理コード情報なし"
+    },
+    {
+      "category": "STEP",
+      "name": "owner.html採用STEP",
+      "status": "OK",
+      "detail": "期待：STEP ESTHE-NEXT-8"
+    },
+    {
+      "category": "HTML",
+      "name": "owner.html HTML構文",
+      "status": "OK",
+      "detail": "HTMLParser PASS"
+    },
+    {
+      "category": "HTML",
+      "name": "owner.html ID重複",
+      "status": "OK",
+      "detail": "重複なし"
+    },
+    {
+      "category": "JavaScript",
+      "name": "owner.html JavaScript構文",
+      "status": "OK",
+      "detail": "1スクリプト正常"
+    },
+    {
+      "category": "性能",
+      "name": "owner.html ファイル容量",
+      "status": "OK",
+      "detail": "139,507 bytes"
+    },
+    {
+      "category": "STEP",
+      "name": "owner-ipad.html採用STEP",
+      "status": "OK",
+      "detail": "期待：STEP ESTHE-NEXT-6"
+    },
+    {
+      "category": "HTML",
+      "name": "owner-ipad.html HTML構文",
+      "status": "OK",
+      "detail": "HTMLParser PASS"
+    },
+    {
+      "category": "HTML",
+      "name": "owner-ipad.html ID重複",
+      "status": "OK",
+      "detail": "重複なし"
+    },
+    {
+      "category": "JavaScript",
+      "name": "owner-ipad.html JavaScript構文",
+      "status": "OK",
+      "detail": "1スクリプト正常"
+    },
+    {
+      "category": "性能",
+      "name": "owner-ipad.html ファイル容量",
+      "status": "OK",
+      "detail": "129,934 bytes"
+    },
+    {
+      "category": "STEP",
+      "name": "staff.html採用STEP",
+      "status": "OK",
+      "detail": "期待：STEP ESTHE-NEXT-6"
+    },
+    {
+      "category": "HTML",
+      "name": "staff.html HTML構文",
+      "status": "OK",
+      "detail": "HTMLParser PASS"
+    },
+    {
+      "category": "HTML",
+      "name": "staff.html ID重複",
+      "status": "OK",
+      "detail": "重複なし"
+    },
+    {
+      "category": "JavaScript",
+      "name": "staff.html JavaScript構文",
+      "status": "OK",
+      "detail": "1スクリプト正常"
+    },
+    {
+      "category": "性能",
+      "name": "staff.html ファイル容量",
+      "status": "OK",
+      "detail": "47,689 bytes"
+    },
+    {
+      "category": "STEP",
+      "name": "member.html採用STEP",
+      "status": "OK",
+      "detail": "期待：STEP ESTHE-NEXT-7"
+    },
+    {
+      "category": "HTML",
+      "name": "member.html HTML構文",
+      "status": "OK",
+      "detail": "HTMLParser PASS"
+    },
+    {
+      "category": "HTML",
+      "name": "member.html ID重複",
+      "status": "OK",
+      "detail": "重複なし"
+    },
+    {
+      "category": "JavaScript",
+      "name": "member.html JavaScript構文",
+      "status": "OK",
+      "detail": "1スクリプト正常"
+    },
+    {
+      "category": "性能",
+      "name": "member.html ファイル容量",
+      "status": "OK",
+      "detail": "53,999 bytes"
+    },
+    {
+      "category": "セキュリティ",
+      "name": "member.html 管理情報混入",
+      "status": "OK",
+      "detail": "管理API・管理コード情報なし"
+    },
+    {
+      "category": "STEP",
+      "name": "system-check.html採用STEP",
+      "status": "OK",
+      "detail": "期待：STEP ESTHE-NEXT-9"
+    },
+    {
+      "category": "HTML",
+      "name": "system-check.html HTML構文",
+      "status": "OK",
+      "detail": "HTMLParser PASS"
+    },
+    {
+      "category": "HTML",
+      "name": "system-check.html ID重複",
+      "status": "OK",
+      "detail": "重複なし"
+    },
+    {
+      "category": "JavaScript",
+      "name": "system-check.html JavaScript構文",
+      "status": "OK",
+      "detail": "1スクリプト正常"
+    },
+    {
+      "category": "性能",
+      "name": "system-check.html ファイル容量",
+      "status": "OK",
+      "detail": "26,143 bytes"
+    },
+    {
+      "category": "NEXT-9",
+      "name": "Actions静的レポートNG",
+      "status": "OK",
+      "detail": "{\"ok\": 48, \"attention\": 3, \"ng\": 0}"
+    },
+    {
+      "category": "NEXT-9",
+      "name": "Actions静的レポート注意",
+      "status": "注意",
+      "detail": "注意 3件 / 許容済み"
+    },
+    {
+      "category": "台帳",
+      "name": "NEXT-2～NEXT-10A-R3完了記録",
+      "status": "OK",
+      "detail": "全完了記録あり"
+    },
+    {
+      "category": "台帳",
+      "name": "ESTHE-NEXT-10A-R3現在状態",
+      "status": "OK",
+      "detail": "本体最終前状態"
+    },
+    {
+      "category": "台帳",
+      "name": "製品サイト待機状態",
+      "status": "OK",
+      "detail": "NEXT-10CでCOMPLETEへ同期"
+    },
+    {
+      "category": "操作体験シート",
+      "name": "A4縦1ページ",
+      "status": "OK",
+      "detail": "page_count=1"
+    },
+    {
+      "category": "操作体験シート",
+      "name": "QR件数・生成時検査",
+      "status": "OK",
+      "detail": "QR 6件"
+    },
+    {
+      "category": "操作体験シート",
+      "name": "DPRO NEXTレイアウト",
+      "status": "OK",
+      "detail": "DPRO_KSH_NEXT"
+    }
+  ]
+}

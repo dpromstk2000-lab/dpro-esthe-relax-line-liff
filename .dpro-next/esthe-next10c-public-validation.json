@@ -1,0 +1,944 @@
+{
+  "schema_version": 1,
+  "system": "DPRO エステ LINE",
+  "step": "ESTHE-NEXT-10C",
+  "phase": "final-public-and-system-check",
+  "public_pages_pass": true,
+  "system_check_pass": true,
+  "pages": [
+    {
+      "name": "booking-mobile-390",
+      "url": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/index-brush.html",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "marker": "STEP ESTHE-NEXT-7",
+      "metrics": {
+        "viewport": 390,
+        "documentScrollWidth": 390,
+        "bodyScrollWidth": 390,
+        "title": "DPRO Esthe Relaxation｜STEP ESTHE-NEXT-7｜index-brush",
+        "scrollXAfter": 0
+      },
+      "screenshot": ".next10c-final-artifact/booking-mobile-390.png",
+      "screenshot_bytes": 196317,
+      "pass": true
+    },
+    {
+      "name": "member-mobile-390",
+      "url": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/member.html?phone=08000003002",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "marker": "STEP ESTHE-NEXT-7",
+      "metrics": {
+        "viewport": 390,
+        "documentScrollWidth": 390,
+        "bodyScrollWidth": 390,
+        "title": "DPRO Esthe Relaxation｜STEP ESTHE-NEXT-7｜member.html",
+        "scrollXAfter": 0
+      },
+      "screenshot": ".next10c-final-artifact/member-mobile-390.png",
+      "screenshot_bytes": 170099,
+      "pass": true
+    },
+    {
+      "name": "owner-desktop-1440",
+      "url": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner.html",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "marker": "STEP ESTHE-NEXT-8",
+      "metrics": {
+        "viewport": 1440,
+        "documentScrollWidth": 1440,
+        "bodyScrollWidth": 1440,
+        "title": "DPRO Esthe Relaxation｜STEP ESTHE-NEXT-8｜owner.html",
+        "scrollXAfter": 0
+      },
+      "screenshot": ".next10c-final-artifact/owner-desktop-1440.png",
+      "screenshot_bytes": 466776,
+      "pass": true
+    },
+    {
+      "name": "ipad-1180",
+      "url": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/owner-ipad.html",
+      "viewport": {
+        "width": 1180,
+        "height": 820
+      },
+      "marker": "STEP ESTHE-NEXT-6",
+      "metrics": {
+        "viewport": 1180,
+        "documentScrollWidth": 1180,
+        "bodyScrollWidth": 1180,
+        "title": "DPRO Esthe Relaxation｜STEP ESTHE-NEXT-6｜owner-ipad.html",
+        "scrollXAfter": 0
+      },
+      "screenshot": ".next10c-final-artifact/ipad-1180.png",
+      "screenshot_bytes": 312557,
+      "pass": true
+    },
+    {
+      "name": "staff-mobile-390",
+      "url": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/staff.html",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "marker": "STEP ESTHE-NEXT-6",
+      "metrics": {
+        "viewport": 390,
+        "documentScrollWidth": 390,
+        "bodyScrollWidth": 390,
+        "title": "DPRO Esthe Relaxation｜STEP ESTHE-NEXT-6｜staff.html",
+        "scrollXAfter": 0
+      },
+      "screenshot": ".next10c-final-artifact/staff-mobile-390.png",
+      "screenshot_bytes": 154023,
+      "pass": true
+    },
+    {
+      "name": "product-mobile-390",
+      "url": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/esthe.html",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "marker": "STEP ESTHE-NEXT-10B",
+      "metrics": {
+        "viewport": 390,
+        "documentScrollWidth": 390,
+        "bodyScrollWidth": 390,
+        "title": "DPRO エステ・リラクゼーション LINE｜予約・施術進捗・顧客履歴・再来店フォロー",
+        "scrollXAfter": 0
+      },
+      "screenshot": ".next10c-final-artifact/product-mobile-390.png",
+      "screenshot_bytes": 211848,
+      "pass": true
+    },
+    {
+      "name": "catalog-mobile-390",
+      "url": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems.html",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "marker": "CATALOG-NEXT10B-R4-TEXT-FIT",
+      "metrics": {
+        "viewport": 390,
+        "documentScrollWidth": 390,
+        "bodyScrollWidth": 390,
+        "title": "システム一覧｜DPRO LINE SYSTEMS",
+        "scrollXAfter": 0
+      },
+      "screenshot": ".next10c-final-artifact/catalog-mobile-390.png",
+      "screenshot_bytes": 171496,
+      "pass": true
+    }
+  ],
+  "system_check": {
+    "name": "system-check-final",
+    "url": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/system-check.html",
+    "summary": {
+      "ok": 82,
+      "attention": 3,
+      "ng": 0
+    },
+    "total_ms": 1500,
+    "admin_session_storage_verified": true,
+    "admin_status_verified": true,
+    "required_results": {
+      "Worker health": "OK",
+      "誤った管理コードの拒否": "OK",
+      "Worker system-check": "OK",
+      "店舗・事業所設定": "OK",
+      "電話番号正規化": "OK"
+    },
+    "screenshot": ".next10c-final-artifact/system-check-final.png",
+    "screenshot_bytes": 557756,
+    "pass": true,
+    "report": {
+      "system": "DPRO エステ LINE",
+      "step": "ESTHE-NEXT-9",
+      "version": "ESTHE-NEXT-9-SYSTEM-CHECK-20260724",
+      "checked_at": "2026-07-24T10:44:20.078Z",
+      "total_ms": 1500,
+      "summary": {
+        "ok": 82,
+        "attention": 3,
+        "ng": 0
+      },
+      "results": [
+        {
+          "category": "静的検査",
+          "name": "index-brush.html採用STEP",
+          "status": "OK",
+          "detail": "期待：STEP ESTHE-NEXT-7",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.616Z"
+        },
+        {
+          "category": "静的検査",
+          "name": "index-brush.html HTML構文",
+          "status": "OK",
+          "detail": "HTMLParserで解析完了",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.616Z"
+        },
+        {
+          "category": "静的検査",
+          "name": "index-brush.html ID重複",
+          "status": "OK",
+          "detail": "重複なし",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.616Z"
+        },
+        {
+          "category": "静的検査",
+          "name": "index-brush.html JavaScript構文",
+          "status": "OK",
+          "detail": "1スクリプト正常",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.616Z"
+        },
+        {
+          "category": "性能",
+          "name": "index-brush.html ファイル容量",
+          "status": "OK",
+          "detail": "61,876 bytes",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.616Z"
+        },
+        {
+          "category": "静的検査",
+          "name": "owner.html採用STEP",
+          "status": "OK",
+          "detail": "期待：STEP ESTHE-NEXT-8",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.617Z"
+        },
+        {
+          "category": "静的検査",
+          "name": "owner.html HTML構文",
+          "status": "OK",
+          "detail": "HTMLParserで解析完了",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.617Z"
+        },
+        {
+          "category": "静的検査",
+          "name": "owner.html ID重複",
+          "status": "OK",
+          "detail": "重複なし",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.617Z"
+        },
+        {
+          "category": "静的検査",
+          "name": "owner.html JavaScript構文",
+          "status": "OK",
+          "detail": "1スクリプト正常",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.619Z"
+        },
+        {
+          "category": "性能",
+          "name": "owner.html ファイル容量",
+          "status": "OK",
+          "detail": "139,507 bytes",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.619Z"
+        },
+        {
+          "category": "静的検査",
+          "name": "owner-ipad.html採用STEP",
+          "status": "OK",
+          "detail": "期待：STEP ESTHE-NEXT-6",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.619Z"
+        },
+        {
+          "category": "静的検査",
+          "name": "owner-ipad.html HTML構文",
+          "status": "OK",
+          "detail": "HTMLParserで解析完了",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.619Z"
+        },
+        {
+          "category": "静的検査",
+          "name": "owner-ipad.html ID重複",
+          "status": "OK",
+          "detail": "重複なし",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.620Z"
+        },
+        {
+          "category": "静的検査",
+          "name": "owner-ipad.html JavaScript構文",
+          "status": "OK",
+          "detail": "1スクリプト正常",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.620Z"
+        },
+        {
+          "category": "性能",
+          "name": "owner-ipad.html ファイル容量",
+          "status": "OK",
+          "detail": "129,934 bytes",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.621Z"
+        },
+        {
+          "category": "静的検査",
+          "name": "staff.html採用STEP",
+          "status": "OK",
+          "detail": "期待：STEP ESTHE-NEXT-6",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.621Z"
+        },
+        {
+          "category": "静的検査",
+          "name": "staff.html HTML構文",
+          "status": "OK",
+          "detail": "HTMLParserで解析完了",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.622Z"
+        },
+        {
+          "category": "静的検査",
+          "name": "staff.html ID重複",
+          "status": "OK",
+          "detail": "重複なし",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.622Z"
+        },
+        {
+          "category": "静的検査",
+          "name": "staff.html JavaScript構文",
+          "status": "OK",
+          "detail": "1スクリプト正常",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.622Z"
+        },
+        {
+          "category": "性能",
+          "name": "staff.html ファイル容量",
+          "status": "OK",
+          "detail": "47,689 bytes",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.623Z"
+        },
+        {
+          "category": "静的検査",
+          "name": "member.html採用STEP",
+          "status": "OK",
+          "detail": "期待：STEP ESTHE-NEXT-7",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.623Z"
+        },
+        {
+          "category": "静的検査",
+          "name": "member.html HTML構文",
+          "status": "OK",
+          "detail": "HTMLParserで解析完了",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.624Z"
+        },
+        {
+          "category": "静的検査",
+          "name": "member.html ID重複",
+          "status": "OK",
+          "detail": "重複なし",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.624Z"
+        },
+        {
+          "category": "静的検査",
+          "name": "member.html JavaScript構文",
+          "status": "OK",
+          "detail": "1スクリプト正常",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.625Z"
+        },
+        {
+          "category": "性能",
+          "name": "member.html ファイル容量",
+          "status": "OK",
+          "detail": "53,999 bytes",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.625Z"
+        },
+        {
+          "category": "静的検査",
+          "name": "system-check.html採用STEP",
+          "status": "OK",
+          "detail": "期待：STEP ESTHE-NEXT-9",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.627Z"
+        },
+        {
+          "category": "静的検査",
+          "name": "system-check.html HTML構文",
+          "status": "OK",
+          "detail": "HTMLParserで解析完了",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.627Z"
+        },
+        {
+          "category": "静的検査",
+          "name": "system-check.html ID重複",
+          "status": "OK",
+          "detail": "重複なし",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.628Z"
+        },
+        {
+          "category": "静的検査",
+          "name": "system-check.html JavaScript構文",
+          "status": "OK",
+          "detail": "1スクリプト正常",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.629Z"
+        },
+        {
+          "category": "性能",
+          "name": "system-check.html ファイル容量",
+          "status": "OK",
+          "detail": "26,143 bytes",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.629Z"
+        },
+        {
+          "category": "セキュリティ",
+          "name": "index-brush.html 管理情報混入",
+          "status": "OK",
+          "detail": "管理API・管理コード情報なし",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.630Z"
+        },
+        {
+          "category": "セキュリティ",
+          "name": "member.html 管理情報混入",
+          "status": "OK",
+          "detail": "管理API・管理コード情報なし",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.631Z"
+        },
+        {
+          "category": "セキュリティ",
+          "name": "owner.html 管理コード削除",
+          "status": "OK",
+          "detail": "削除ボタンあり",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.632Z"
+        },
+        {
+          "category": "セキュリティ",
+          "name": "owner-ipad.html 管理コード削除",
+          "status": "OK",
+          "detail": "削除ボタンあり",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.632Z"
+        },
+        {
+          "category": "セキュリティ",
+          "name": "staff.html 管理コード削除",
+          "status": "OK",
+          "detail": "削除ボタンあり",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.633Z"
+        },
+        {
+          "category": "セキュリティ",
+          "name": "system-check.html 管理コード削除",
+          "status": "OK",
+          "detail": "削除ボタンあり",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.634Z"
+        },
+        {
+          "category": "主要業務ロジック",
+          "name": "予約の過去日時防止",
+          "status": "OK",
+          "detail": "実装確認済み",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.635Z"
+        },
+        {
+          "category": "主要業務ロジック",
+          "name": "電話番号正規化・予約",
+          "status": "OK",
+          "detail": "実装確認済み",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.636Z"
+        },
+        {
+          "category": "主要業務ロジック",
+          "name": "施術前同意",
+          "status": "OK",
+          "detail": "実装確認済み",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.637Z"
+        },
+        {
+          "category": "主要業務ロジック",
+          "name": "受付から完了の進捗",
+          "status": "OK",
+          "detail": "実装確認済み",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.638Z"
+        },
+        {
+          "category": "主要業務ロジック",
+          "name": "施術前確認記録",
+          "status": "OK",
+          "detail": "実装確認済み",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.639Z"
+        },
+        {
+          "category": "主要業務ロジック",
+          "name": "再来店フォロー",
+          "status": "OK",
+          "detail": "実装確認済み",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.639Z"
+        },
+        {
+          "category": "主要業務ロジック",
+          "name": "iPad当日運用",
+          "status": "OK",
+          "detail": "実装確認済み",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.640Z"
+        },
+        {
+          "category": "主要業務ロジック",
+          "name": "スタッフ施術開始ガード",
+          "status": "OK",
+          "detail": "実装確認済み",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.641Z"
+        },
+        {
+          "category": "主要業務ロジック",
+          "name": "会員履歴・前回と同じ予約",
+          "status": "OK",
+          "detail": "実装確認済み",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.642Z"
+        },
+        {
+          "category": "主要業務ロジック",
+          "name": "再予約の同意再確認",
+          "status": "OK",
+          "detail": "実装確認済み",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.643Z"
+        },
+        {
+          "category": "主要業務ロジック",
+          "name": "Worker重複防止",
+          "status": "注意",
+          "detail": "Worker内蔵検査に明示キーなし。画面・静的検査で確認",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.644Z"
+        },
+        {
+          "category": "主要業務ロジック",
+          "name": "Worker過去日時防止",
+          "status": "注意",
+          "detail": "Worker内蔵検査に明示キーなし。画面・静的検査で確認",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.644Z"
+        },
+        {
+          "category": "主要業務ロジック",
+          "name": "Worker電話番号正規化",
+          "status": "OK",
+          "detail": "1項目OK",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.645Z"
+        },
+        {
+          "category": "主要業務ロジック",
+          "name": "Worker公開・権限ガード",
+          "status": "注意",
+          "detail": "Worker内蔵検査に明示キーなし。画面・静的検査で確認",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.646Z"
+        },
+        {
+          "category": "セキュリティ",
+          "name": "誤った管理コード拒否",
+          "status": "OK",
+          "detail": "HTTP 401",
+          "ms": null,
+          "source": "Actions",
+          "checked_at": "2026-07-24T10:44:18.647Z"
+        },
+        {
+          "category": "静的検査",
+          "name": "Actions静的レポート",
+          "status": "OK",
+          "detail": "生成：2026-07-24T14:29:38+09:00 / 51項目",
+          "ms": 36.89999999999418,
+          "source": "live",
+          "checked_at": "2026-07-24T10:44:18.648Z"
+        },
+        {
+          "category": "画面",
+          "name": "system-check",
+          "status": "OK",
+          "detail": "HTTP 200 / 期待 STEP ESTHE-NEXT-9",
+          "ms": 30.90000000000873,
+          "source": "live",
+          "checked_at": "2026-07-24T10:44:18.681Z"
+        },
+        {
+          "category": "性能",
+          "name": "system-check読込",
+          "status": "OK",
+          "detail": "31 ms",
+          "ms": 30.90000000000873,
+          "source": "live",
+          "checked_at": "2026-07-24T10:44:18.683Z"
+        },
+        {
+          "category": "画面",
+          "name": "LINE会員画面",
+          "status": "OK",
+          "detail": "HTTP 200 / 期待 STEP ESTHE-NEXT-7",
+          "ms": 35.09999999999127,
+          "source": "live",
+          "checked_at": "2026-07-24T10:44:18.685Z"
+        },
+        {
+          "category": "性能",
+          "name": "LINE会員画面読込",
+          "status": "OK",
+          "detail": "35 ms",
+          "ms": 35.09999999999127,
+          "source": "live",
+          "checked_at": "2026-07-24T10:44:18.686Z"
+        },
+        {
+          "category": "セキュリティ",
+          "name": "LINE会員画面の管理情報混入",
+          "status": "OK",
+          "detail": "管理API・管理コード情報なし",
+          "ms": null,
+          "source": "live",
+          "checked_at": "2026-07-24T10:44:18.686Z"
+        },
+        {
+          "category": "セキュリティ",
+          "name": "誤った管理コードの拒否",
+          "status": "OK",
+          "detail": "HTTP 401",
+          "ms": 57.5,
+          "source": "live",
+          "checked_at": "2026-07-24T10:44:18.706Z"
+        },
+        {
+          "category": "画面",
+          "name": "店舗iPad画面",
+          "status": "OK",
+          "detail": "HTTP 200 / 期待 STEP ESTHE-NEXT-6",
+          "ms": 58.69999999999709,
+          "source": "live",
+          "checked_at": "2026-07-24T10:44:18.708Z"
+        },
+        {
+          "category": "性能",
+          "name": "店舗iPad画面読込",
+          "status": "OK",
+          "detail": "59 ms",
+          "ms": 58.69999999999709,
+          "source": "live",
+          "checked_at": "2026-07-24T10:44:18.709Z"
+        },
+        {
+          "category": "画面",
+          "name": "お客様予約画面",
+          "status": "OK",
+          "detail": "HTTP 200 / 期待 STEP ESTHE-NEXT-7",
+          "ms": 61.40000000000873,
+          "source": "live",
+          "checked_at": "2026-07-24T10:44:18.710Z"
+        },
+        {
+          "category": "性能",
+          "name": "お客様予約画面読込",
+          "status": "OK",
+          "detail": "61 ms",
+          "ms": 61.40000000000873,
+          "source": "live",
+          "checked_at": "2026-07-24T10:44:18.712Z"
+        },
+        {
+          "category": "セキュリティ",
+          "name": "お客様予約画面の管理情報混入",
+          "status": "OK",
+          "detail": "管理API・管理コード情報なし",
+          "ms": null,
+          "source": "live",
+          "checked_at": "2026-07-24T10:44:18.713Z"
+        },
+        {
+          "category": "画面",
+          "name": "スタッフ画面",
+          "status": "OK",
+          "detail": "HTTP 200 / 期待 STEP ESTHE-NEXT-6",
+          "ms": 149.70000000001164,
+          "source": "live",
+          "checked_at": "2026-07-24T10:44:18.799Z"
+        },
+        {
+          "category": "性能",
+          "name": "スタッフ画面読込",
+          "status": "OK",
+          "detail": "150 ms",
+          "ms": 149.70000000001164,
+          "source": "live",
+          "checked_at": "2026-07-24T10:44:18.800Z"
+        },
+        {
+          "category": "画面",
+          "name": "PCオーナー画面",
+          "status": "OK",
+          "detail": "HTTP 200 / 期待 STEP ESTHE-NEXT-8",
+          "ms": 190,
+          "source": "live",
+          "checked_at": "2026-07-24T10:44:18.839Z"
+        },
+        {
+          "category": "性能",
+          "name": "PCオーナー画面読込",
+          "status": "OK",
+          "detail": "190 ms",
+          "ms": 190,
+          "source": "live",
+          "checked_at": "2026-07-24T10:44:18.841Z"
+        },
+        {
+          "category": "Worker・DB",
+          "name": "Worker health",
+          "status": "OK",
+          "detail": "HTTP 200 / version ESTHE-16-PHONE-NORMALIZE-SEARCH-20260711",
+          "ms": 303.1000000000058,
+          "source": "live",
+          "checked_at": "2026-07-24T10:44:18.952Z"
+        },
+        {
+          "category": "Worker・DB",
+          "name": "電話番号正規化",
+          "status": "OK",
+          "detail": "HTTP 200",
+          "ms": 39.39999999999418,
+          "source": "live",
+          "checked_at": "2026-07-24T10:44:18.993Z"
+        },
+        {
+          "category": "Worker・DB",
+          "name": "店舗・事業所設定",
+          "status": "OK",
+          "detail": "HTTP 200",
+          "ms": 889.0999999999913,
+          "source": "live",
+          "checked_at": "2026-07-24T10:44:19.842Z"
+        },
+        {
+          "category": "Worker・DB",
+          "name": "Worker system-check",
+          "status": "OK",
+          "detail": "HTTP 200",
+          "ms": 1084.0999999999913,
+          "source": "live",
+          "checked_at": "2026-07-24T10:44:20.037Z"
+        },
+        {
+          "category": "主要業務ロジック",
+          "name": "api",
+          "status": "OK",
+          "detail": "Worker判定OK",
+          "ms": null,
+          "source": "Worker",
+          "checked_at": "2026-07-24T10:44:20.038Z"
+        },
+        {
+          "category": "主要業務ロジック",
+          "name": "db",
+          "status": "OK",
+          "detail": "Worker判定OK",
+          "ms": null,
+          "source": "Worker",
+          "checked_at": "2026-07-24T10:44:20.040Z"
+        },
+        {
+          "category": "主要業務ロジック",
+          "name": "shop",
+          "status": "OK",
+          "detail": "Worker判定OK",
+          "ms": null,
+          "source": "Worker",
+          "checked_at": "2026-07-24T10:44:20.041Z"
+        },
+        {
+          "category": "主要業務ロジック",
+          "name": "business_hours",
+          "status": "OK",
+          "detail": "Worker判定OK",
+          "ms": null,
+          "source": "Worker",
+          "checked_at": "2026-07-24T10:44:20.042Z"
+        },
+        {
+          "category": "主要業務ロジック",
+          "name": "menus",
+          "status": "OK",
+          "detail": "Worker判定OK",
+          "ms": null,
+          "source": "Worker",
+          "checked_at": "2026-07-24T10:44:20.043Z"
+        },
+        {
+          "category": "主要業務ロジック",
+          "name": "staff",
+          "status": "OK",
+          "detail": "Worker判定OK",
+          "ms": null,
+          "source": "Worker",
+          "checked_at": "2026-07-24T10:44:20.044Z"
+        },
+        {
+          "category": "主要業務ロジック",
+          "name": "rooms",
+          "status": "OK",
+          "detail": "Worker判定OK",
+          "ms": null,
+          "source": "Worker",
+          "checked_at": "2026-07-24T10:44:20.045Z"
+        },
+        {
+          "category": "主要業務ロジック",
+          "name": "templates",
+          "status": "OK",
+          "detail": "Worker判定OK",
+          "ms": null,
+          "source": "Worker",
+          "checked_at": "2026-07-24T10:44:20.046Z"
+        },
+        {
+          "category": "主要業務ロジック",
+          "name": "phone_normalization",
+          "status": "OK",
+          "detail": "Worker判定OK",
+          "ms": null,
+          "source": "Worker",
+          "checked_at": "2026-07-24T10:44:20.047Z"
+        },
+        {
+          "category": "主要業務ロジック",
+          "name": "demo_customers",
+          "status": "OK",
+          "detail": "Worker判定OK",
+          "ms": null,
+          "source": "Worker",
+          "checked_at": "2026-07-24T10:44:20.048Z"
+        },
+        {
+          "category": "主要業務ロジック",
+          "name": "demo_reservations",
+          "status": "OK",
+          "detail": "Worker判定OK",
+          "ms": null,
+          "source": "Worker",
+          "checked_at": "2026-07-24T10:44:20.049Z"
+        },
+        {
+          "category": "主要業務ロジック",
+          "name": "demo_followups",
+          "status": "OK",
+          "detail": "Worker判定OK",
+          "ms": null,
+          "source": "Worker",
+          "checked_at": "2026-07-24T10:44:20.050Z"
+        },
+        {
+          "category": "主要業務ロジック",
+          "name": "有効メニュー・スタッフ",
+          "status": "OK",
+          "detail": "メニュー 6 / スタッフ 3",
+          "ms": null,
+          "source": "live",
+          "checked_at": "2026-07-24T10:44:20.051Z"
+        },
+        {
+          "category": "主要業務ロジック",
+          "name": "電話番号正規化結果",
+          "status": "OK",
+          "detail": "5サンプル",
+          "ms": null,
+          "source": "live",
+          "checked_at": "2026-07-24T10:44:20.052Z"
+        }
+      ]
+    }
+  }
+}
