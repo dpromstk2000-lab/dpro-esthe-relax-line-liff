@@ -1,0 +1,21 @@
+schema_version: 1
+system: "DPRO エステ LINE"
+current_step: COMPLETE
+hotfix_step: "ESTHE-NEXT-HF1"
+final_version: "DPRO-ESTHE-NEXT-1.0.1"
+completed_at_jst: "2026-07-24T20:08:19+09:00"
+result: OK
+validation:
+  static_ng: 0
+  public_behavior_pass: true
+  session_storage_removed: true
+  input_blank_immediately: true
+  input_blank_after_1s: true
+  input_blank_after_reload: true
+  existing_admin_save_pass: true
+changes:
+  owner_html: true
+  worker: false
+  supabase: false
+  api: false
+backup_tag: "backup-esthe-before-next-hf1-20260724"

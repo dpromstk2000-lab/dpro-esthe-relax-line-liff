@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "system": "DPRO エステ LINE",
+  "step": "ESTHE-NEXT-HF1",
+  "phase": "public-behavior-validation",
+  "pass": true,
+  "initial": {
+    "storage": null,
+    "input": "",
+    "status": "管理コード未入力",
+    "autocomplete": "new-password"
+  },
+  "set_state": {
+    "storage": "1234",
+    "input": "",
+    "status": "管理コード設定済み"
+  },
+  "cleared": {
+    "storage": null,
+    "input": "",
+    "default_value": "",
+    "value_attribute": null,
+    "status": "管理コードを削除しました"
+  },
+  "reloaded": {
+    "storage": null,
+    "input": "",
+    "status": "管理コード未入力",
+    "autocomplete": "new-password"
+  },
+  "screenshot": ".esthe-next-hf1-artifact/owner-admin-code-cleared.png",
+  "screenshot_bytes": 466776
+}

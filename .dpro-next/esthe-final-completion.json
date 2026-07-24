@@ -2,7 +2,7 @@
   "schema_version": 1,
   "system": "DPRO エステ LINE",
   "current_step": "COMPLETE",
-  "final_version": "DPRO-ESTHE-NEXT-1.0.0",
+  "final_version": "DPRO-ESTHE-NEXT-1.0.1",
   "completed_at_jst": "2026-07-24T19:44:20+09:00",
   "result": "OK",
   "completion": {
@@ -149,5 +149,23 @@
     "製品サイトまたは操作体験シートURL変更時はPDF内QR6件を再検査する",
     "一括自動LINE配信は追加せず、個別確認・コピー運用を維持する",
     "異常時は最終バックアップタグから台帳・対象ファイルを復元する"
+  ],
+  "updated_at_jst": "2026-07-24T20:08:19+09:00",
+  "hotfixes": [
+    {
+      "step": "ESTHE-NEXT-HF1",
+      "version": "DPRO-ESTHE-NEXT-1.0.1",
+      "completed_at_jst": "2026-07-24T20:08:19+09:00",
+      "status": "OK",
+      "target": "owner.html",
+      "static_ng": 0,
+      "public_behavior_pass": true,
+      "input_blank_after_1s": true,
+      "input_blank_after_reload": true,
+      "worker_changed": false,
+      "supabase_changed": false,
+      "api_changed": false,
+      "backup_tag": "backup-esthe-before-next-hf1-20260724"
+    }
   ]
 }

@@ -1,7 +1,7 @@
 schema_version: 1
 system: "DPRO エステ LINE"
 current_step: COMPLETE
-final_version: "DPRO-ESTHE-NEXT-1.0.0"
+final_version: "DPRO-ESTHE-NEXT-1.0.1"
 completed_at_jst: "2026-07-24T19:44:20+09:00"
 result: OK
 sales_ready: true
@@ -14,3 +14,15 @@ worker_changed: false
 supabase_changed: false
 api_changed: false
 final_completion_ledger: ".dpro-next/esthe-final-completion.yml"
+
+last_hotfix:
+  step: "ESTHE-NEXT-HF1"
+  version: "DPRO-ESTHE-NEXT-1.0.1"
+  completed_at_jst: "2026-07-24T20:08:19+09:00"
+  result: "OK"
+  target: "owner.html"
+  input_visual_cleared: true
+  input_blank_after_reload: true
+  worker_changed: false
+  supabase_changed: false
+  api_changed: false
