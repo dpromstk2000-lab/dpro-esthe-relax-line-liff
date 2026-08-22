@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "systemCode": "ESTHE",
+  "sha256": "98f6db7c2a42a17e8d23a1b562d137244e947dda3295deaf14821e11965fe05a",
+  "summary": {
+    "pass": 13,
+    "fail": 0,
+    "total": 13
+  },
+  "checks": {
+    "adapter": true,
+    "worker_version": true,
+    "db_version": true,
+    "frontend_version": true,
+    "owner_auth": true,
+    "production_demo_secret_rejected": true,
+    "line_id_token_verify": true,
+    "staff_scope": true,
+    "audit": true,
+    "member_private_boundary": true,
+    "reservation_ownership": true,
+    "no_open_admin": true,
+    "version_independent_probe": true
+  }
+}

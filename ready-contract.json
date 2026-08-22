@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "systemCode": "ESTHE",
+  "productVersion": "DPRO-ESTHE-NEXT-1.0.1",
+  "contractVersion": "DPRO-ESTHE-NEXT-1.0.1-READY-R1",
+  "frontendVersion": "ESTHE-PAGES-READY-R1-20260822",
+  "adapterVersion": "DPRO-CONTROL-ADAPTER-1.0",
+  "expectedWorkerVersion": "ESTHE-READY-R1-WORKER-20260822",
+  "expectedDatabaseVersion": "ESTHE-DB-READY-R1-20260822",
+  "demoScope": true,
+  "productionCustomerBinding": "deferred_until_contract",
+  "updatedAt": "2026-08-22T16:21:32+09:00"
+}

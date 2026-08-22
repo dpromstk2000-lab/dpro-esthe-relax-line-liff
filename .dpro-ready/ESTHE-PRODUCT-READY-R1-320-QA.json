@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "systemCode": "ESTHE",
+  "viewport": 320,
+  "tests": [
+    {
+      "name": "booking",
+      "url": "http://127.0.0.1:4173/index-brush.html",
+      "viewport": 320,
+      "documentScrollWidth": 320,
+      "bodyScrollWidth": 320,
+      "horizontalOverflow": false,
+      "clippedControls": [],
+      "visibleControlCount": 6,
+      "title": "DPRO Esthe Relaxation｜STEP ESTHE-NEXT-7｜index-brush",
+      "pageErrors": [],
+      "screenshot": "booking-320.png",
+      "screenshotSha256": "853958d01596d8e0ec13259e3b9df70fe12b3e1af579f238c345e9864055bf00",
+      "pass": true
+    },
+    {
+      "name": "member",
+      "url": "http://127.0.0.1:4173/member.html?phone=08000003002",
+      "viewport": 320,
+      "documentScrollWidth": 320,
+      "bodyScrollWidth": 320,
+      "horizontalOverflow": false,
+      "clippedControls": [],
+      "visibleControlCount": 13,
+      "title": "DPRO Esthe Relaxation｜STEP ESTHE-NEXT-7｜member.html",
+      "pageErrors": [],
+      "screenshot": "member-320.png",
+      "screenshotSha256": "89e997dc36566b99b98b5ff7e5010f4bc96b85752b0ffa0403fa5af87a23fc1f",
+      "pass": true
+    }
+  ],
+  "pass": true
+}
