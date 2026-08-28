@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>DPRO ESTHE Guide Center</title>
+<style>
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#fffaf7;color:#2d211f;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;line-height:1.7}a{color:inherit}button,input{font:inherit}.wrap{width:min(1120px,calc(100% - 32px));margin:auto}.hero{padding:44px 0 28px;background:linear-gradient(180deg,#fbefe9 0,#fffaf7 100%);border-bottom:1px solid #ead4cb}.eyebrow{font-size:12px;font-weight:900;letter-spacing:.14em;color:#7c4f44}.hero h1{font-size:clamp(30px,6vw,52px);line-height:1.15;margin:8px 0 10px}.lead{margin:0;max-width:760px;color:#6f5b55;font-weight:700}.status{margin-top:20px;padding:14px 16px;border:1px solid #e4c9be;border-radius:16px;background:#fff;display:grid;gap:4px}.status strong{font-size:15px}.status span{font-size:13px;color:#6f5b55}.actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}.btn{min-height:48px;border:1px solid #cda99b;border-radius:14px;background:#fff;color:#5f4038;font-weight:900;cursor:pointer;padding:10px 14px}.btn.primary{background:#7c4f44;color:#fff;border-color:#7c4f44}.btn:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #0f8a6a;outline-offset:3px}.nav{position:sticky;top:0;z-index:5;background:rgba(255,250,247,.95);backdrop-filter:blur(10px);border-bottom:1px solid #ead4cb}.nav .wrap{display:flex;gap:6px;overflow:auto;padding:10px 0}.nav a{white-space:nowrap;text-decoration:none;padding:8px 10px;border-radius:10px;font-size:13px;font-weight:900}.nav a:hover{background:#f8e8e1}main{padding:30px 0 56px}.section{margin-top:34px}.section:first-child{margin-top:0}.section h2{font-size:clamp(23px,4vw,32px);margin:0 0 8px}.section-intro{margin:0 0 16px;color:#75625c}.notice{padding:15px 16px;border-radius:16px;background:#fff1ed;border:1px solid #e6bdb2;font-weight:800}.screen-grid,.step-grid,.faq-grid{display:grid;gap:12px}.screen-grid{grid-template-columns:repeat(5,minmax(0,1fr))}.screen,.step,.faq{background:#fff;border:1px solid #ead4cb;border-radius:18px;padding:16px}.screen strong,.step h3,.faq h3{display:block;margin:0 0 6px}.screen span,.step p,.faq p{font-size:13px;color:#705e58;margin:0}.screen a{display:inline-block;margin-top:10px;font-size:13px;font-weight:900}.searchbox{display:grid;grid-template-columns:1fr auto;gap:10px;margin:14px 0}.searchbox input{min-height:46px;width:100%;border:1px solid #cda99b;border-radius:13px;padding:8px 12px;background:#fff;color:#2d211f}.search-count{align-self:center;font-size:13px;color:#6f5b55;font-weight:800}.step-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.step{position:relative;padding-left:66px;min-height:150px}.num{position:absolute;left:16px;top:16px;width:38px;height:38px;display:grid;place-items:center;border-radius:50%;background:#7c4f44;color:white;font-weight:950}.meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.tag{display:inline-flex;align-items:center;min-height:26px;padding:3px 8px;border-radius:999px;background:#f8ebe5;color:#684038;font-size:11px;font-weight:900}.safe{margin-top:9px;font-size:12px!important;color:#67534d!important;font-weight:800}.faq-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.links{display:flex;flex-wrap:wrap;gap:10px}.linkcard{display:inline-flex;min-height:44px;align-items:center;text-decoration:none;border:1px solid #cda99b;border-radius:12px;background:#fff;padding:8px 12px;font-weight:900;font-size:13px}.foot{border-top:1px solid #ead4cb;padding:24px 0 34px;color:#77645e;font-size:12px}.hidden-by-search{display:none!important}
+@media(max-width:900px){.screen-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.step-grid,.faq-grid{grid-template-columns:1fr}}
+@media(max-width:520px){.wrap{width:min(100% - 20px,1120px)}.hero{padding-top:28px}.actions{grid-template-columns:1fr}.screen-grid{grid-template-columns:1fr}.step{padding-left:58px}.num{left:12px}.nav .wrap{padding-left:2px}.searchbox{grid-template-columns:1fr}.search-count{min-height:20px}}
+</style>
+</head>
+<body data-dpro-esthe-r4="ESTHE-R4-GUIDE-V1.0-20260828">
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">DPRO TUTORIAL STANDARD V1.1 / ESTHE</div>
+    <h1>Guide Center</h1>
+    <p class="lead">予約から再来店フォローまで、公開デモの5画面を安全に確認する操作ガイドです。First10は10ステップ固定で、Tutorialは予約送信・施術状態更新・回数券使用・カルテ保存・フォロー送信などの業務更新を行いません。</p>
+    <div class="status" id="tutorialStatus" role="status" aria-live="polite">
+      <strong id="tutorialStatusTitle">First10の状態を確認しています</strong>
+      <span id="tutorialStatusDetail">Start / Resume / Replayから選べます。</span>
+    </div>
+    <div class="actions" aria-label="First10操作">
+      <button class="btn primary" id="guideStart" type="button">Start｜最初から開始</button>
+      <button class="btn" id="guideResume" type="button">Resume｜途中から再開</button>
+      <button class="btn" id="guideReplay" type="button">Replay｜もう一度見る</button>
+    </div>
+  </div>
+</header>
+<nav class="nav" aria-label="Guide Center内メニュー"><div class="wrap">
+  <a href="#screens">5画面</a><a href="#first10">First10</a><a href="#safety">安全ルール</a><a href="#faq">FAQ</a><a href="#references">参照先</a>
+</div></nav>
+<main class="wrap">
+  <section class="section" id="screens">
+    <h2>公開デモの5画面</h2>
+    <p class="section-intro">First10はこの順番で進みます。画面を開くだけでは業務データは変更されません。</p>
+    <div class="screen-grid" id="screenGridGuide">
+      <article class="screen"><strong>01 予約</strong><span>会員確認 → メニュー → 日時 → カウンセリング → 確認の流れ。</span><a href="index-brush.html?v=esthe-next-10b">予約画面を開く</a></article>
+      <article class="screen"><strong>02 会員</strong><span>次回予約、回数券、来店履歴を確認する入口。</span><a href="member.html">会員画面を開く</a></article>
+      <article class="screen"><strong>03 スタッフ</strong><span>担当予約と「今やること」を確認。管理コードはユーザー自身が入力。</span><a href="staff.html">スタッフ画面を開く</a></article>
+      <article class="screen"><strong>04 店舗iPad</strong><span>本日の来店・施術進捗を店舗内で確認。</span><a href="owner-ipad.html">iPad画面を開く</a></article>
+      <article class="screen"><strong>05 オーナーPC</strong><span>顧客・回数券・再来店フォローへつながる管理画面。</span><a href="owner.html">オーナー画面を開く</a></article>
+    </div>
+  </section>
+
+  <section class="section" id="first10">
+    <h2>First10｜10ステップ</h2>
+    <p class="section-intro">R3で確定したFirst10と同じ順序・同じ役割です。ここに11個目を追加しません。</p>
+    <div class="searchbox"><label><span class="eyebrow">ガイド内検索</span><input id="guideSearch" type="search" autocomplete="off" placeholder="例：会員、管理コード、再来店"></label><div class="search-count" id="searchCount" aria-live="polite">10件を表示</div></div>
+    <div class="step-grid" id="first10Grid">
+      <article class="step" data-step="1" data-route="demo-guide.html" data-target="#heroTitle" data-search="公開 デモ 入口 安全 個人情報"><span class="num">1</span><h3>公開デモの入口</h3><p>最初にデモ全体の順番と、架空データだけを使う安全ルールを確認します。</p><div class="meta"><span class="tag">demo-guide</span><span class="tag">案内のみ</span></div><p class="safe">自動入力・業務更新なし。</p></article>
+      <article class="step" data-step="2" data-route="demo-guide.html" data-target="#screenGrid" data-search="5画面 予約 会員 スタッフ ipad オーナー"><span class="num">2</span><h3>5画面の役割を確認</h3><p>予約、会員、スタッフ、店舗iPad、オーナーPCのつながりを確認します。</p><div class="meta"><span class="tag">demo-guide</span><span class="tag">次は予約</span></div><p class="safe">製品カードを自動クリックしません。</p></article>
+      <article class="step" data-step="3" data-route="index-brush.html?v=esthe-next-10b" data-target=".progress" data-search="予約 5段階 会員 メニュー 日時 カウンセリング 確認"><span class="num">3</span><h3>予約は5段階</h3><p>会員確認から予約確認までの5段階を画面上で把握します。</p><div class="meta"><span class="tag">予約</span><span class="tag">5段階</span></div><p class="safe">次へ・予約送信を自動操作しません。</p></article>
+      <article class="step" data-step="4" data-route="index-brush.html?v=esthe-next-10b" data-target="#viewMember" data-search="会員確認 電話 名前 個人情報"><span class="num">4</span><h3>会員確認から開始</h3><p>電話番号や名前による会員確認の入口を確認します。</p><div class="meta"><span class="tag">予約</span><span class="tag">会員確認</span></div><p class="safe">実在情報の入力・照会・予約を自動実行しません。</p></article>
+      <article class="step" data-step="5" data-route="member.html" data-target="#phoneInput" data-search="会員 マイページ 次回予約 回数券 来店履歴 電話"><span class="num">5</span><h3>会員マイページ</h3><p>次回予約、回数券、来店履歴を確認する画面です。</p><div class="meta"><span class="tag">会員</span><span class="tag">履歴</span></div><p class="safe">電話番号入力・読み込みを自動実行しません。</p></article>
+      <article class="step" data-step="6" data-route="member.html" data-target="#demoBtn" data-search="デモ顧客 履歴 回数券 変更 キャンセル 再予約"><span class="num">6</span><h3>履歴・回数券の入口</h3><p>デモ顧客表示や履歴・回数券の入口を確認します。</p><div class="meta"><span class="tag">会員</span><span class="tag">デモ</span></div><p class="safe">表示・変更・キャンセル・再予約を自動操作しません。</p></article>
+      <article class="step" data-step="7" data-route="staff.html" data-target="#dproAdminAccess" data-search="スタッフ 管理コード 認証 ユーザー入力"><span class="num">7</span><h3>管理コードはユーザー操作</h3><p>管理機能が必要な場合は、既存画面でユーザー自身が管理コードを設定します。</p><div class="meta"><span class="tag">スタッフ</span><span class="tag">認証</span></div><p class="safe">資格情報を推測・注入・保存しません。</p></article>
+      <article class="step" data-step="8" data-route="staff.html" data-target="#fieldCommandCenter" data-search="スタッフ 今やること 担当予約 施術 状態"><span class="num">8</span><h3>スタッフの「今やること」</h3><p>担当予約と次の1操作を優先するスタッフ画面を確認します。</p><div class="meta"><span class="tag">スタッフ</span><span class="tag">現場</span></div><p class="safe">施術開始・状態変更を自動実行しません。</p></article>
+      <article class="step" data-step="9" data-route="owner-ipad.html" data-target="#progressBoardTitle" data-search="ipad 店舗 施術進捗 来店 会計 完了"><span class="num">9</span><h3>店舗iPadで施術進捗</h3><p>本日の進捗を中心に、来店から完了までの見え方を確認します。</p><div class="meta"><span class="tag">店舗iPad</span><span class="tag">進捗</span></div><p class="safe">状態更新・メモ・回数券・デモ準備を自動実行しません。</p></article>
+      <article class="step" data-step="10" data-route="owner.html" data-target="[data-tab=&quot;followups&quot;]" data-search="オーナー pc 再来店 フォロー 顧客 回数券 line"><span class="num">10</span><h3>オーナーPCで再来店フォロー</h3><p>顧客・回数券・再来店フォローにつながる管理画面を確認します。</p><div class="meta"><span class="tag">オーナーPC</span><span class="tag">再来店</span></div><p class="safe">LINE送信・対応済み・回数券使用・保存を自動実行しません。</p></article>
+    </div>
+  </section>
+
+  <section class="section" id="safety">
+    <h2>公開デモの安全ルール</h2>
+    <div class="notice">実在する氏名・電話番号・メールアドレス・肌や身体・健康に関する情報・施術写真は入力しないでください。公開デモでは必ず架空データだけを使用してください。</div>
+    <div class="faq-grid" style="margin-top:12px">
+      <article class="faq"><h3>Tutorialが自動で行わないこと</h3><p>予約送信、照会、施術状態変更、カルテ保存、回数券使用、フォロー送信、設定変更、デモ準備、管理コード入力。</p></article>
+      <article class="faq"><h3>管理コードが必要な画面</h3><p>スタッフ・iPad・オーナー等の管理API利用は製品側の認証条件です。必要な場合のみユーザー自身が既存画面へ入力します。</p></article>
+    </div>
+  </section>
+
+  <section class="section" id="faq">
+    <h2>FAQ</h2>
+    <div class="faq-grid">
+      <article class="faq"><h3>途中で閉じたら最初からですか？</h3><p>いいえ。閉じる／Escでは進行中ステップを保持します。Guide CenterのResumeから続きへ戻れます。</p></article>
+      <article class="faq"><h3>First10をもう一度見られますか？</h3><p>はい。完了後・スキップ後はReplayからSTEP 1へ戻れます。</p></article>
+      <article class="faq"><h3>キーボードだけで操作できますか？</h3><p>できます。Tabで移動、Enterで操作、Escで一時停止できます。ガイドカードの移動は専用ハンドルを使います。</p></article>
+      <article class="faq"><h3>対象が画面にない場合は？</h3><p>Tutorialは安全なフォールバックを使い、業務ボタンを代わりに押すことなく案内を継続します。</p></article>
+    </div>
+  </section>
+
+  <section class="section" id="references">
+    <h2>参照先</h2>
+    <div class="links"><a class="linkcard" href="demo-guide.html">公開デモ案内</a><a class="linkcard" href="system-check.html">system-check</a><a class="linkcard" href="tutorial-start.html">First10 Startページ</a></div>
+    <p class="section-intro" style="margin-top:12px">system-checkは別の確認画面です。Guide Centerから開くだけでは検査・デモ準備を自動実行しません。</p>
+  </section>
+</main>
+<footer class="foot"><div class="wrap">DPRO ESTHE / Guide Center R4 V1.0 / Tutorial-only frontend layer. Product Site・Worker・DB・API・Auth・Role・Permission・Feature Flagは変更しません。</div></footer>
+<script>
+(function(){
+'use strict';
+const MARKER='ESTHE-R4-GUIDE-V1.0-20260828';
+const STORAGE_KEY='dpro_tutorial_esthe_first10_v1_1';
+const TUTORIAL_ID='esthe-first10-v1.1';
+const SCHEMA_VERSION='1.1.0';
+const TOTAL=10;
+const SW='./tutorial-sw.js?v=ESTHE-R3-SW-20260828';
+const STEP_ROUTES={1:'demo-guide.html',2:'demo-guide.html',3:'index-brush.html?v=esthe-next-10b',4:'index-brush.html?v=esthe-next-10b',5:'member.html',6:'member.html',7:'staff.html',8:'staff.html',9:'owner-ipad.html',10:'owner.html'};
+function clamp(n){n=Number(n);return Number.isFinite(n)?Math.max(1,Math.min(TOTAL,Math.round(n))):1}
+function readState(){try{const s=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');if(!s||s.tutorialId!==TUTORIAL_ID||s.schemaVersion!==SCHEMA_VERSION)return null;return s}catch(_){return null}}
+function fresh(){return{tutorialId:TUTORIAL_ID,schemaVersion:SCHEMA_VERSION,status:'in_progress',currentStep:1,completedSteps:[],cardPosition:{x:.5,y:.12},startedAt:new Date().toISOString(),updatedAt:new Date().toISOString(),completedAt:null}}
+function writeState(s){s.updatedAt=new Date().toISOString();localStorage.setItem(STORAGE_KEY,JSON.stringify(s));return s}
+function targetFor(step){const raw=STEP_ROUTES[clamp(step)]||STEP_ROUTES[1];const u=new URL(raw,location.href);u.searchParams.set('dpro_tutorial','1');return u.href}
+async function ensureSW(){if(!('serviceWorker' in navigator))throw new Error('Service Workerに対応していません。');await navigator.serviceWorker.register(SW,{scope:'./'});await navigator.serviceWorker.ready;if(!navigator.serviceWorker.controller){await new Promise(resolve=>{const done=()=>{navigator.serviceWorker.removeEventListener('controllerchange',done);resolve()};navigator.serviceWorker.addEventListener('controllerchange',done);setTimeout(resolve,2500)})}}
+async function go(mode){const title=document.getElementById('tutorialStatusTitle');const detail=document.getElementById('tutorialStatusDetail');try{title.textContent='Tutorialを準備しています';detail.textContent='画面を移動します。';await ensureSW();let s=readState();if(mode==='start'||mode==='replay'){s=fresh()}else if(!s||s.status==='not_started'){s=fresh()}else if(s.status==='completed'||s.status==='skipped'){s=fresh()}else{s.status='in_progress';s.currentStep=clamp(s.currentStep)}writeState(s);location.href=targetFor(s.currentStep)}catch(e){title.textContent='Tutorialを開始できません';detail.textContent=e.message}}
+function renderStatus(){const s=readState();const t=document.getElementById('tutorialStatusTitle');const d=document.getElementById('tutorialStatusDetail');const resume=document.getElementById('guideResume');if(!s||s.status==='not_started'){t.textContent='First10は未開始です';d.textContent='StartでSTEP 1から始められます。';resume.textContent='Resume｜STEP 1から開始';return}const n=clamp(s.currentStep);if(s.status==='in_progress'||s.status==='paused'){t.textContent=`First10はSTEP ${n} / ${TOTAL}まで進行中です`;d.textContent='Resumeで保存されたステップから続けます。';resume.textContent=`Resume｜STEP ${n}から再開`;return}if(s.status==='completed'){t.textContent='First10は完了しています';d.textContent='Replayでもう一度STEP 1から確認できます。';resume.textContent='Resume｜完了済み（Replay）';return}if(s.status==='skipped'){t.textContent='First10はスキップされています';d.textContent='Replayでもう一度STEP 1から確認できます。';resume.textContent='Resume｜スキップ済み（Replay）';return}t.textContent='First10の状態を確認しました';d.textContent='Start / Resume / Replayから選べます。'}
+document.getElementById('guideStart').addEventListener('click',()=>go('start'));
+document.getElementById('guideResume').addEventListener('click',()=>go('resume'));
+document.getElementById('guideReplay').addEventListener('click',()=>go('replay'));
+const search=document.getElementById('guideSearch'),cards=[...document.querySelectorAll('#first10Grid .step')],count=document.getElementById('searchCount');search.addEventListener('input',()=>{const q=search.value.trim().toLowerCase();let shown=0;for(const c of cards){const text=(c.textContent+' '+(c.dataset.search||'')).toLowerCase();const hit=!q||text.includes(q);c.classList.toggle('hidden-by-search',!hit);if(hit)shown++}count.textContent=`${shown}件を表示`});
+renderStatus();
+window.__DPRO_GUIDE_CENTER__={marker:MARKER,total:TOTAL,storageKey:STORAGE_KEY,readState,stepRoutes:{...STEP_ROUTES},businessMutation:0};
+})();
+</script>
+</body>
+</html>
