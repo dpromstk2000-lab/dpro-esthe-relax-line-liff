@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>DPRO ESTHE Tutorial Start</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px;background:#fffaf7;color:#2d211f;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif}
+main{width:min(620px,100%);padding:26px;border:1px solid #ead4cb;border-radius:24px;background:#fff;box-shadow:0 18px 56px rgba(91,61,52,.12)}
+small{color:#7c4f44;font-weight:900;letter-spacing:.1em}h1{margin:8px 0 7px;font-size:clamp(27px,6vw,42px)}p{color:#806b64;line-height:1.7;font-weight:700}
+button{width:100%;min-height:48px;margin-top:8px;border:0;border-radius:14px;background:#7c4f44;color:#fff;font:900 14px system-ui;cursor:pointer}
+button:focus-visible{outline:3px solid #0f8a6a;outline-offset:3px}#status{margin-top:14px;padding:11px;border-radius:12px;background:#fbf0eb;color:#684038;font-size:12px;font-weight:800}
+</style>
+</head>
+<body>
+<main>
+<small>DPRO TUTORIAL STANDARD V1.1</small>
+<h1>ESTHE First10</h1>
+<p>公開デモの5画面を10ステップで確認します。Tutorialは画面を案内するだけで、予約送信・施術状態更新・回数券使用・カルテ保存・フォロー送信などの業務更新は行いません。</p>
+<button id="start" type="button">First10を開始</button>
+<div id="status" role="status">Tutorial環境を準備しています。</div>
+</main>
+<script>
+const SW='./tutorial-sw.js?v=ESTHE-R3-SW-20260828';
+const TARGET='./demo-guide.html?dpro_tutorial=1';
+async function ensureServiceWorker(){
+  if(!('serviceWorker' in navigator)) throw new Error('このブラウザはService Workerに対応していません。');
+  const reg=await navigator.serviceWorker.register(SW,{scope:'./'});
+  await navigator.serviceWorker.ready;
+  if(!navigator.serviceWorker.controller){
+    await new Promise(resolve=>{
+      const done=()=>{navigator.serviceWorker.removeEventListener('controllerchange',done);resolve();};
+      navigator.serviceWorker.addEventListener('controllerchange',done);
+      setTimeout(resolve,3000);
+    });
+  }
+  return reg;
+}
+async function go(){
+  const status=document.getElementById('status');
+  status.textContent='Tutorialを開始します。';
+  try{
+    await ensureServiceWorker();
+    location.href=TARGET;
+  }catch(error){
+    status.textContent='Tutorialを開始できません：'+error.message;
+  }
+}
+document.getElementById('start').addEventListener('click',go);
+(async()=>{
+  try{
+    await ensureServiceWorker();
+    document.getElementById('status').textContent='準備完了。First10を開始できます。';
+    const p=new URLSearchParams(location.search);
+    if(p.get('auto')==='1') go();
+  }catch(error){
+    document.getElementById('status').textContent='準備エラー：'+error.message;
+  }
+})();
+</script>
+</body>
+</html>
