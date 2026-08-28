@@ -25,7 +25,8 @@ jobs:
           set -euo pipefail
           URL="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/tutorial.js?sha=${GITHUB_SHA}"
           for i in $(seq 1 60); do
-            if curl -fsSL "$URL" | grep -q 'ESTHE-R3-V1.1-20260828'; then
+            if curl -fsSL "$URL" -o /tmp/esthe-tutorial-live.js &&
+               grep -q 'ESTHE-R3-V1.1-20260828' /tmp/esthe-tutorial-live.js; then
               echo "Pages marker ready"
               exit 0
             fi
