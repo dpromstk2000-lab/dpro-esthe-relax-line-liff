@@ -1,0 +1,218 @@
+name: ESTHE Tutorial R3 Live QA
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'tutorial.js'
+      - 'tutorial.css'
+      - 'tutorial-sw.js'
+      - 'tutorial-start.html'
+      - '.github/workflows/esthe-tutorial-r3-live-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  live-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Wait for GitHub Pages R3 marker
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/tutorial.js?sha=${GITHUB_SHA}"
+          for i in $(seq 1 60); do
+            if curl -fsSL "$URL" | grep -q 'ESTHE-R3-V1.1-20260828'; then
+              echo "Pages marker ready"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Pages marker not ready" >&2
+          exit 1
+
+      - name: Install Playwright
+        shell: bash
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --save-dev playwright@1.55.0 >/dev/null
+          npx playwright install --with-deps chromium >/dev/null
+
+      - name: Run exact-width LIVE QA
+        shell: bash
+        run: |
+          cat > qa.mjs <<'EOF'
+          import { chromium } from 'playwright';
+          import fs from 'fs';
+
+          const BASE='https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/';
+          const viewports=[
+            {name:'desktop',width:1440,height:1000},
+            {name:'tablet',width:1024,height:768},
+            {name:'mobile390',width:390,height:844},
+            {name:'mobile320',width:320,height:720},
+          ];
+          const report={version:'ESTHE-R3-V1.1-20260828',checkedAt:new Date().toISOString(),viewports:[],journey:null,summary:{pass:true,failures:[]}};
+          const fail=(m)=>{report.summary.pass=false;report.summary.failures.push(m);};
+
+          async function waitTutorial(page){
+            await page.waitForFunction(()=>window.__DPRO_TUTORIAL__?.total===10,{timeout:15000});
+          }
+          async function metric(page){
+            return await page.evaluate(()=>({
+              innerWidth:window.innerWidth,
+              documentScrollWidth:document.documentElement.scrollWidth,
+              bodyScrollWidth:document.body.scrollWidth,
+              total:window.__DPRO_TUTORIAL__?.total,
+              step:window.__DPRO_TUTORIAL__?.state?.currentStep,
+              status:window.__DPRO_TUTORIAL__?.state?.status,
+              target:window.__DPRO_TUTORIAL__?.target,
+              card:(()=>{const e=document.querySelector('#dproTutorialCard');if(!e||e.hidden)return null;const r=e.getBoundingClientRect();return {left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height};})(),
+              highlight:(()=>{const e=document.querySelector('#dproTutorialHighlight');if(!e||e.hidden)return null;const r=e.getBoundingClientRect();return {left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height};})(),
+              activeId:document.activeElement?.id||''
+            }));
+          }
+
+          const browser=await chromium.launch();
+          try{
+            for(const vp of viewports){
+              const context=await browser.newContext({viewport:{width:vp.width,height:vp.height},hasTouch:vp.width<=390,isMobile:false});
+              const page=await context.newPage();
+              const pageerrors=[]; const consoleErrors=[]; const writes=[];
+              page.on('pageerror',e=>pageerrors.push(String(e)));
+              page.on('console',m=>{if(m.type()==='error') consoleErrors.push(m.text());});
+              page.on('request',r=>{if(!['GET','HEAD','OPTIONS'].includes(r.method())) writes.push({method:r.method(),url:r.url()});});
+              await page.goto(BASE+'tutorial-start.html?auto=1',{waitUntil:'domcontentloaded'});
+              await page.waitForURL(/demo-guide\.html.*dpro_tutorial=1/,{timeout:15000});
+              await waitTutorial(page);
+              await page.locator('#dproTutorialLauncher').click();
+              await page.waitForSelector('#dproTutorialCard:not([hidden])');
+              const before=await metric(page);
+
+              // Dedicated handle drag: product controls are not used.
+              const handle=page.locator('#dproTutorialHandle');
+              const box=await handle.boundingBox();
+              const cardBefore=await page.locator('#dproTutorialCard').boundingBox();
+              if(vp.width>390){
+                await page.mouse.move(box.x+box.width/2,box.y+box.height/2);
+                await page.mouse.down();
+                await page.mouse.move(Math.max(15,box.x-55),Math.min(vp.height-60,box.y+70),{steps:5});
+                await page.mouse.up();
+              } else {
+                await page.evaluate(({x,y})=>{
+                  const h=document.querySelector('#dproTutorialHandle');
+                  h.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,pointerId:77,pointerType:'touch',clientX:x,clientY:y,button:0}));
+                  h.dispatchEvent(new PointerEvent('pointermove',{bubbles:true,pointerId:77,pointerType:'touch',clientX:Math.max(14,x-45),clientY:y+55,button:0}));
+                  h.dispatchEvent(new PointerEvent('pointerup',{bubbles:true,pointerId:77,pointerType:'touch',clientX:Math.max(14,x-45),clientY:y+55,button:0}));
+                },{x:box.x+box.width/2,y:box.y+box.height/2});
+              }
+              const cardAfter=await page.locator('#dproTutorialCard').boundingBox();
+              const moved=Math.abs(cardAfter.x-cardBefore.x)+Math.abs(cardAfter.y-cardBefore.y)>4;
+              if(!moved) fail(`${vp.name}: drag did not move card`);
+              if(cardAfter.x<0||cardAfter.y<0||cardAfter.x+cardAfter.width>vp.width+1||cardAfter.y+cardAfter.height>vp.height+1) fail(`${vp.name}: card outside viewport`);
+
+              const after=await metric(page);
+              if(after.innerWidth!==vp.width) fail(`${vp.name}: innerWidth ${after.innerWidth} != ${vp.width}`);
+              if(after.total!==10) fail(`${vp.name}: First10 count ${after.total}`);
+              if(!after.target?.found) fail(`${vp.name}: target unresolved on step1`);
+              if(pageerrors.length) fail(`${vp.name}: pageerror ${pageerrors.join(' | ')}`);
+              if(writes.length) fail(`${vp.name}: unsafe write ${JSON.stringify(writes)}`);
+              if(vp.width<=390){
+                if(after.documentScrollWidth>after.innerWidth) fail(`${vp.name}: document overflow ${after.documentScrollWidth}>${after.innerWidth}`);
+                if(after.bodyScrollWidth>after.innerWidth) fail(`${vp.name}: body overflow ${after.bodyScrollWidth}>${after.innerWidth}`);
+              }
+              report.viewports.push({viewport:vp,before,after,moved,pageerrors,consoleErrors,writes});
+              await context.close();
+            }
+
+            // Full journey / keyboard / focus / Resume / Replay on desktop.
+            const context=await browser.newContext({viewport:{width:1440,height:1000}});
+            const page=await context.newPage();
+            const pageerrors=[]; const writes=[]; const consoleErrors=[];
+            page.on('pageerror',e=>pageerrors.push(String(e)));
+            page.on('console',m=>{if(m.type()==='error') consoleErrors.push(m.text());});
+            page.on('request',r=>{if(!['GET','HEAD','OPTIONS'].includes(r.method())) writes.push({method:r.method(),url:r.url()});});
+            await page.goto(BASE+'tutorial-start.html?auto=1',{waitUntil:'domcontentloaded'});
+            await page.waitForURL(/demo-guide\.html.*dpro_tutorial=1/,{timeout:15000});
+            await waitTutorial(page);
+            await page.locator('#dproTutorialLauncher').focus();
+            await page.keyboard.press('Enter');
+            await page.waitForSelector('#dproTutorialCard:not([hidden])');
+
+            const journey=[];
+            for(let expected=1;expected<=10;expected++){
+              await waitTutorial(page);
+              const m=await metric(page);
+              journey.push({expected,url:page.url(),metric:m});
+              if(m.step!==expected) fail(`journey: expected step ${expected}, got ${m.step}`);
+              if(m.total!==10) fail(`journey: total != 10 at step ${expected}`);
+              if(!m.target?.found) fail(`journey: target unresolved at step ${expected}`);
+              if(m.activeId!=='dproTutorialNext') fail(`journey: focus not recovered at step ${expected}: ${m.activeId}`);
+              if(expected===3){
+                // Close -> launcher focus -> Resume.
+                await page.keyboard.press('Escape');
+                const paused=await metric(page);
+                if(paused.status!=='paused'||paused.activeId!=='dproTutorialLauncher') fail('journey: Esc pause/focus recovery failed');
+                await page.keyboard.press('Enter');
+                await page.waitForSelector('#dproTutorialCard:not([hidden])');
+                const resumed=await metric(page);
+                if(resumed.step!==3||resumed.status!=='in_progress') fail('journey: Resume failed');
+                // Reload + Resume.
+                await page.reload({waitUntil:'domcontentloaded'});
+                await waitTutorial(page);
+                await page.waitForSelector('#dproTutorialCard:not([hidden])');
+                const reloaded=await metric(page);
+                if(reloaded.step!==3||reloaded.status!=='in_progress') fail('journey: reload Resume failed');
+              }
+              if(expected<10){
+                // keyboard-only: Next is focused, Enter advances. Cross-page navigation happens naturally.
+                const oldUrl=page.url();
+                await page.keyboard.press('Enter');
+                await page.waitForFunction((n)=>window.__DPRO_TUTORIAL__?.state?.currentStep===n,expected+1,{timeout:15000});
+                if([2,4,6,8,9].includes(expected)){
+                  if(page.url()===oldUrl) fail(`journey: expected cross-page navigation after step ${expected}`);
+                }
+              } else {
+                await page.keyboard.press('Enter');
+                await page.waitForFunction(()=>window.__DPRO_TUTORIAL__?.state?.status==='completed');
+                const completed=await metric(page);
+                if(completed.activeId!=='dproTutorialLauncher') fail('journey: completion focus recovery failed');
+                await page.keyboard.press('Enter'); // Replay
+                await page.waitForURL(/demo-guide\.html.*dpro_tutorial=1/,{timeout:15000});
+                await waitTutorial(page);
+                await page.waitForFunction(()=>window.__DPRO_TUTORIAL__?.state?.currentStep===1);
+                const replayed=await metric(page);
+                if(replayed.status!=='in_progress'||replayed.step!==1) fail('journey: Complete -> Replay failed');
+
+                // Skip -> Replay.
+                await page.locator('#dproTutorialSkip').click();
+                await page.waitForFunction(()=>window.__DPRO_TUTORIAL__?.state?.status==='skipped');
+                await page.locator('#dproTutorialLauncher').click();
+                await page.waitForFunction(()=>window.__DPRO_TUTORIAL__?.state?.status==='in_progress'&&window.__DPRO_TUTORIAL__?.state?.currentStep===1);
+                const skipReplay=await metric(page);
+                if(skipReplay.step!==1) fail('journey: Skip -> Replay failed');
+              }
+            }
+            if(pageerrors.length) fail(`journey: pageerrors ${pageerrors.join(' | ')}`);
+            if(writes.length) fail(`journey: unsafe writes ${JSON.stringify(writes)}`);
+            report.journey={steps:journey,pageerrors,consoleErrors,writes};
+            await context.close();
+          } finally {
+            await browser.close();
+          }
+          fs.writeFileSync('esthe-r3-live-qa.json',JSON.stringify(report,null,2));
+          console.log(JSON.stringify(report,null,2));
+          if(!report.summary.pass) process.exit(1);
+          EOF
+          node qa.mjs
+
+      - name: Upload R3 QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: esthe-r3-live-qa
+          path: esthe-r3-live-qa.json
+          if-no-files-found: error
