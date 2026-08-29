@@ -143,13 +143,32 @@ def make_qr(url: str, out: Path):
     qr.make_image(fill_color="black", back_color="white").save(out)
 
 
-def draw_qr(c: canvas.Canvas, qr_path: Path, url: str, x: float, y: float, size: float = 94):
+def _wrap_to_width(c: canvas.Canvas, text: str, font: str, size: float, max_width: float) -> list[str]:
+    lines: list[str] = []
+    buf = ""
+    for ch in text:
+        trial = buf + ch
+        if buf and c.stringWidth(trial, font, size) > max_width:
+            lines.append(buf)
+            buf = ch
+        else:
+            buf = trial
+    if buf:
+        lines.append(buf)
+    return lines
+
+
+def draw_qr(c: canvas.Canvas, qr_path: Path, url: str, x: float, y: float, size: float = 94,
+            max_width: float | None = None, label: str = "QRを読み取り、公開URLを開きます"):
     c.drawImage(str(qr_path), x, y, size, size, preserveAspectRatio=True, mask='auto')
-    c.setFont("JP", 6.8)
+    max_width = max_width or size
     c.setFillColor(MUTED)
-    c.drawString(x, y - 11, "QRを読み取り、公開URLを開きます")
-    c.setFont("JP", 5.5)
-    c.drawString(x, y - 21, url)
+    c.setFont("JP", 6.4)
+    c.drawString(x, y - 10, label)
+    url_size = 4.6
+    c.setFont("JP", url_size)
+    for i, line in enumerate(_wrap_to_width(c, url, "JP", url_size, max_width)[:4]):
+        c.drawString(x, y - 19 - i * 6, line)
 
 
 def screenshot_clip(page, selector: str, path: Path, padding: int = 22):
@@ -239,7 +258,7 @@ y -= 21
 y = draw_text(c, "1. QRまたはGuide CenterからTutorialを開く。 2. StartでSTEP 1から開始。 3. 閉じた後はResumeで続きから再開。 4. 完了後はReplayで最初から復習できます。", M, y, 9.2, 46, 14)
 
 # QR block on right, screenshot below.
-draw_qr(c, QR_TUT, TUTORIAL_URL, PAGE_W - M - 104, PAGE_H - 255, 96)
+draw_qr(c, QR_TUT, TUTORIAL_URL, PAGE_W - M - 104, PAGE_H - 255, 96, max_width=104, label="Tutorial Start")
 
 c.setFillColor(BROWN); c.setFont("JP", 11); c.drawString(M, PAGE_H - 220, "操作の基本")
 draw_text(c, "・Next / Backで進む・戻る。 ・右上の閉じる、またはEscで一時停止。 ・カードは専用ハンドルだけでドラッグ可能。 ・Tab / Enterだけでも完了できます。", M, PAGE_H - 239, 8.5, 33, 13)
@@ -261,10 +280,8 @@ draw_header(c, "DPRO ESTHE 導入・操作マニュアル", "First10 / Guide Cen
 add_image(c, SCREENS / "01_guide_center.png", M, 408, PAGE_W - 2*M, 300)
 c.setFillColor(BROWN); c.setFont("JP", 12); c.drawString(M, 382, "このマニュアルの基準")
 draw_text(c, "R4 CENTRAL ACCEPT済みのGuide Centerと、R3 LIVE QA PASS済みのFirst10 exactly 10を正本にしています。Tutorialの操作だけでは業務データを書き換えません。", M, 362, 8.8, 59, 13)
-draw_qr(c, QR_TUT, TUTORIAL_URL, M, 170, 92)
-draw_qr(c, QR_GUIDE, GUIDE_URL, M+155, 170, 92)
-draw_text(c, "Tutorial Start", M, 151, 8.3, 18, 11)
-draw_text(c, "Guide Center", M+155, 151, 8.3, 18, 11)
+draw_qr(c, QR_TUT, TUTORIAL_URL, M, 170, 92, max_width=125, label="Tutorial Start")
+draw_qr(c, QR_GUIDE, GUIDE_URL, M+155, 170, 92, max_width=125, label="Guide Center")
 draw_text(c, "Start: STEP 1から開始 / Resume: 保存されたSTEPから再開 / Replay: 状態をリセットしてSTEP 1から再体験。進捗保存はTutorial専用localStorageのみです。", M+310, 250, 8.4, 28, 12)
 draw_footer(c); c.showPage()
 
