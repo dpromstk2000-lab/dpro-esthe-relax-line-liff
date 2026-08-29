@@ -1,0 +1,26 @@
+{
+  "version": "R5-V1.0",
+  "industry": "ESTHE",
+  "base": "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/",
+  "first10_count": 10,
+  "quick_pages": 1,
+  "detailed_pages": 6,
+  "screenshots": [
+    "01_guide_center.png",
+    "02_tutorial_step1.png",
+    "03_booking_progress.png",
+    "04_member_entry.png",
+    "05_staff_access.png",
+    "06_owner_ipad_title.png",
+    "07_owner_followups_tab.png"
+  ],
+  "pageerrors": [],
+  "consoleErrors": [
+    "Error: 管理コードを入力し、「管理コードを設定」を押してください。\n    at dproRequireAdminCode (https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/staff.html:402:11)\n    at api (https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/staff.html:491:15)\n    at loadSettings (https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/staff.html:517:24)\n    at loadAll (https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/staff.html:507:13)\n    at HTMLDocument.init (https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/staff.html:483:5)"
+  ],
+  "unsafeWrites": [],
+  "businessMutation": 0,
+  "qrPass": true,
+  "automatedRenderPass": true,
+  "humanVisualReview": "PENDING_ASSISTANT_ARTIFACT_REVIEW"
+}

@@ -1,0 +1,71 @@
+{
+  "version": "R5-V1.0",
+  "human_visual_review": "PENDING_ASSISTANT_ARTIFACT_REVIEW",
+  "pages": [
+    {
+      "pdf": "DPRO_TUTORIAL_ESTHE_QUICK_START_V1.0.pdf",
+      "page": 1,
+      "render": "manuals/renders/QUICK_PAGE_01.png",
+      "width": 1489,
+      "height": 2105,
+      "nonwhite_ratio": 0.3242163833272981,
+      "automated_pass": true
+    },
+    {
+      "pdf": "DPRO_TUTORIAL_ESTHE_DETAILED_MANUAL_V1.0.pdf",
+      "page": 1,
+      "render": "manuals/renders/DETAILED_PAGE_01.png",
+      "width": 1489,
+      "height": 2105,
+      "nonwhite_ratio": 0.22423345228428906,
+      "automated_pass": true
+    },
+    {
+      "pdf": "DPRO_TUTORIAL_ESTHE_DETAILED_MANUAL_V1.0.pdf",
+      "page": 2,
+      "render": "manuals/renders/DETAILED_PAGE_02.png",
+      "width": 1489,
+      "height": 2105,
+      "nonwhite_ratio": 0.4614929115971598,
+      "automated_pass": true
+    },
+    {
+      "pdf": "DPRO_TUTORIAL_ESTHE_DETAILED_MANUAL_V1.0.pdf",
+      "page": 3,
+      "render": "manuals/renders/DETAILED_PAGE_03.png",
+      "width": 1489,
+      "height": 2105,
+      "nonwhite_ratio": 0.28022760736294183,
+      "automated_pass": true
+    },
+    {
+      "pdf": "DPRO_TUTORIAL_ESTHE_DETAILED_MANUAL_V1.0.pdf",
+      "page": 4,
+      "render": "manuals/renders/DETAILED_PAGE_04.png",
+      "width": 1489,
+      "height": 2105,
+      "nonwhite_ratio": 0.27448127120658383,
+      "automated_pass": true
+    },
+    {
+      "pdf": "DPRO_TUTORIAL_ESTHE_DETAILED_MANUAL_V1.0.pdf",
+      "page": 5,
+      "render": "manuals/renders/DETAILED_PAGE_05.png",
+      "width": 1489,
+      "height": 2105,
+      "nonwhite_ratio": 0.28464735056287677,
+      "automated_pass": true
+    },
+    {
+      "pdf": "DPRO_TUTORIAL_ESTHE_DETAILED_MANUAL_V1.0.pdf",
+      "page": 6,
+      "render": "manuals/renders/DETAILED_PAGE_06.png",
+      "width": 1489,
+      "height": 2105,
+      "nonwhite_ratio": 0.15111961191253676,
+      "automated_pass": true
+    }
+  ],
+  "pass_automated": true,
+  "failures": []
+}

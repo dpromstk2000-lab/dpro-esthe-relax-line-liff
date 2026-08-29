@@ -1,0 +1,29 @@
+{
+  "version": "R5-V1.0",
+  "pdfs": [
+    {
+      "pdf": "DPRO_TUTORIAL_ESTHE_QUICK_START_V1.0.pdf",
+      "expected": [
+        "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/tutorial-start.html"
+      ],
+      "decoded": [
+        "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/tutorial-start.html"
+      ],
+      "pass": true
+    },
+    {
+      "pdf": "DPRO_TUTORIAL_ESTHE_DETAILED_MANUAL_V1.0.pdf",
+      "expected": [
+        "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/tutorial-start.html",
+        "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/guide-center.html"
+      ],
+      "decoded": [
+        "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/guide-center.html",
+        "https://dpromstk2000-lab.github.io/dpro-esthe-relax-line-liff/tutorial-start.html"
+      ],
+      "pass": true
+    }
+  ],
+  "pass": true,
+  "failures": []
+}
