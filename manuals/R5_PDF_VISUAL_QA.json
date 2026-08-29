@@ -8,7 +8,7 @@
       "render": "manuals/renders/QUICK_PAGE_01.png",
       "width": 1489,
       "height": 2105,
-      "nonwhite_ratio": 0.3242163833272981,
+      "nonwhite_ratio": 0.32386766613120127,
       "automated_pass": true
     },
     {
@@ -17,7 +17,7 @@
       "render": "manuals/renders/DETAILED_PAGE_01.png",
       "width": 1489,
       "height": 2105,
-      "nonwhite_ratio": 0.22423345228428906,
+      "nonwhite_ratio": 0.22277764572821435,
       "automated_pass": true
     },
     {
