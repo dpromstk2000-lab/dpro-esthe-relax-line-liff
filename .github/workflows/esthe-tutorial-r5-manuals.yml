@@ -1,0 +1,107 @@
+name: ESTHE Tutorial R5 Print Manuals
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'tutorial-r5-build.py'
+      - '.github/workflows/esthe-tutorial-r5-manuals.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: esthe-tutorial-r5-manuals
+  cancel-in-progress: false
+
+jobs:
+  build-r5-manuals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout newest main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Verify forward-only baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          R4='12f2089ee7997b5a653a0c728bb50c6589675886'
+          git merge-base --is-ancestor "$R4" origin/main
+          echo "R4 accepted baseline is an ancestor of newest main"
+          echo "R5_START_HEAD=$(git rev-parse origin/main)" >> "$GITHUB_ENV"
+          echo "R5_START_TREE=$(git rev-parse origin/main^{tree})" >> "$GITHUB_ENV"
+
+      - name: Install browser and PDF/QR dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-ipafont-gothic >/dev/null
+          python -m pip install --upgrade pip >/dev/null
+          python -m pip install playwright==1.55.0 reportlab==4.4.3 qrcode[pil]==8.2 pillow==11.3.0 pymupdf==1.26.4 opencv-python-headless==4.12.0.88 >/dev/null
+          python -m playwright install --with-deps chromium >/dev/null
+
+      - name: Build manuals from current LIVE demo and run render/QR QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf manuals
+          python tutorial-r5-build.py
+          test -s manuals/DPRO_TUTORIAL_ESTHE_QUICK_START_V1.0.pdf
+          test -s manuals/DPRO_TUTORIAL_ESTHE_QUICK_START_V1.0.png
+          test -s manuals/DPRO_TUTORIAL_ESTHE_DETAILED_MANUAL_V1.0.pdf
+          test -s manuals/DPRO_TUTORIAL_ESTHE_DETAILED_MANUAL_V1.0_PAGE_01.png
+          python - <<'PY'
+          import json
+          b=json.load(open('manuals/R5_BUILD_REPORT.json',encoding='utf-8'))
+          q=json.load(open('manuals/R5_QR_QA.json',encoding='utf-8'))
+          v=json.load(open('manuals/R5_PDF_VISUAL_QA.json',encoding='utf-8'))
+          assert b['first10_count']==10
+          assert b['businessMutation']==0
+          assert b['unsafeWrites']==[]
+          assert b['pageerrors']==[]
+          assert q['pass'] is True
+          assert v['pass_automated'] is True
+          print('R5 automated build/render/QR gate PASS; human visual review remains required before R6')
+          PY
+
+      - name: Upload R5 evidence artifact before repository write
+        uses: actions/upload-artifact@v4
+        with:
+          name: esthe-r5-manuals-evidence
+          path: manuals/
+          if-no-files-found: error
+          compression-level: 6
+
+      - name: Commit published manuals to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'DPRO Tutorial Actions'
+          git config user.email 'actions@users.noreply.github.com'
+          git add manuals/
+          if git diff --cached --quiet; then
+            echo 'No manual changes to commit.'
+            exit 0
+          fi
+          git commit -m 'DPRO ESTHE Tutorial R5: publish print manuals'
+          git pull --rebase origin main
+          git push origin HEAD:main
+          echo "R5_PUBLISHED_HEAD=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "R5_PUBLISHED_TREE=$(git rev-parse HEAD^{tree})" >> "$GITHUB_ENV"
+
+      - name: Summary
+        if: always()
+        shell: bash
+        run: |
+          echo "R5 start head: ${R5_START_HEAD:-unknown}"
+          echo "R5 start tree: ${R5_START_TREE:-unknown}"
+          echo "Published head: ${R5_PUBLISHED_HEAD:-not-committed}"
+          echo "Published tree: ${R5_PUBLISHED_TREE:-not-committed}"
+          echo "Human visual inspection of every rendered PDF page is still mandatory before R6."
